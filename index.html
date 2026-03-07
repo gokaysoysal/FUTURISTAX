@@ -1,0 +1,2063 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FuturistaX Advisory | Strategic Tax & Financial Solutions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Cinzel:wght@400;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #050506;
+            --bg-light: #090a0c;
+            --bg-card: #0a0b0d;
+            --accent: #c8c8c8;
+            --gold: #c9a96e;
+            --gold-light: #e8d5a3;
+            --gold-dark: #9a7a42;
+            --border: rgba(255,255,255,0.06);
+            --border-gold: rgba(201,169,110,0.25);
+            --tr: 0.18s cubic-bezier(0.25,0.8,0.25,1);
+            --font-display: 'Cinzel', serif;
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-sans: 'Montserrat', sans-serif;
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior:smooth; }
+        body {
+            background: var(--bg);
+            color: #e0e0e0;
+            font-family: var(--font-sans);
+            line-height: 1.8;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* ── CUSTOM CURSOR ── */
+        #cursor {
+            position: fixed; width:8px; height:8px;
+            background: var(--gold); border-radius:50%;
+            pointer-events:none; z-index:99999;
+            transform: translate(-50%,-50%);
+            transition: width 0.2s, height 0.2s, opacity 0.2s;
+            mix-blend-mode: difference;
+        }
+        #cursor-ring {
+            position: fixed; width:36px; height:36px;
+            border:1px solid rgba(201,169,110,0.5); border-radius:50%;
+            pointer-events:none; z-index:99998;
+            transform: translate(-50%,-50%);
+            transition: all 0.12s ease-out;
+        }
+        body:hover #cursor { opacity:1; }
+        a:hover ~ #cursor, button:hover ~ #cursor { width:14px; height:14px; }
+
+
+        /* ── SCROLL PROGRESS ── */
+        #scroll-progress {
+            position: fixed; top:0; left:0; height:2px; width:0%;
+            background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-light));
+            z-index: 9001; transition: width 0.1s linear;
+            box-shadow: 0 0 8px rgba(201,169,110,0.4);
+        }
+
+        /* ── FLOATING CTA ── */
+        #float-cta {
+            position: fixed; left:32px; bottom:32px; z-index:4999;
+            opacity:0; transform:translateY(10px);
+            transition: opacity 0.4s, transform 0.4s;
+            pointer-events: none;
+        }
+        #float-cta.visible { opacity:1; transform:translateY(0); pointer-events:all; }
+        .float-cta-btn {
+            background: rgba(10,11,13,0.92);
+            border: 1px solid rgba(201,169,110,0.35);
+            color: var(--gold); padding: 12px 22px;
+            font-family: var(--font-sans); font-size:0.62rem;
+            letter-spacing:2px; cursor:none; display:flex; align-items:center; gap:10px;
+            transition:var(--tr); backdrop-filter:blur(10px);
+            white-space: nowrap;
+        }
+        .float-cta-btn:hover { background: var(--gold); color:#000; border-color: var(--gold); box-shadow: 0 5px 20px rgba(201,169,110,0.3); }
+        .float-cta-dot { width:6px; height:6px; border-radius:50%; background:var(--gold); animation:blink 2s infinite; flex-shrink:0; }
+        .float-cta-btn:hover .float-cta-dot { background:#000; }
+
+        /* ── FAQ SECTION ── */
+        .faq-item {
+            border-bottom: 1px solid var(--border);
+            overflow: hidden;
+        }
+        .faq-q {
+            width:100%; background:none; border:none; text-align:left;
+            padding: 22px 0; color:rgba(255,255,255,0.75);
+            font-family: var(--font-serif); font-size:1.08rem;
+            cursor: pointer; display:flex; justify-content:space-between; align-items:center; gap:20px;
+            transition: color 0.3s;
+        }
+        .faq-q:hover { color:#fff; }
+        .faq-q.open { color: var(--gold); }
+        .faq-icon { width:22px; height:22px; border:1px solid rgba(201,169,110,0.3); display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:var(--tr); color:var(--gold); font-size:0.9rem; }
+        .faq-q.open .faq-icon { background:rgba(201,169,110,0.1); border-color:var(--gold); transform:rotate(45deg); }
+        .faq-a {
+            max-height:0; overflow:hidden; transition: max-height 0.4s ease, padding 0.3s;
+            color:rgba(255,255,255,0.4); font-family:var(--font-serif); font-size:1rem; line-height:1.9;
+            padding: 0 0 0 0;
+        }
+        .faq-a.open { max-height:600px; padding-bottom:20px; }
+
+        /* ── WHY US STRIP ── */
+        .why-strip {
+            display: grid; grid-template-columns: repeat(4,1fr);
+            border: 1px solid var(--border);
+            margin-bottom: 0;
+        }
+        .why-item {
+            padding: 40px 30px; border-right: 1px solid var(--border);
+            transition: var(--tr); position:relative; overflow:hidden;
+        }
+        .why-item::before {
+            content:''; position:absolute; bottom:0; left:0; right:0; height:2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            opacity:0; transition:0.4s;
+        }
+        .why-item:hover::before { opacity:1; }
+        .why-item:hover { background: rgba(201,169,110,0.02); }
+        .why-item:last-child { border-right:none; }
+        .why-num { font-family:var(--font-display); font-size:2rem; color:rgba(201,169,110,0.15); line-height:1; margin-bottom:12px; transition:0.4s; }
+        .why-item:hover .why-num { color:rgba(201,169,110,0.35); }
+        .why-title { font-family:var(--font-display); color:#fff; font-size:0.9rem; letter-spacing:1px; margin-bottom:10px; }
+        .why-text { font-size:0.82rem; color:rgba(255,255,255,0.35); line-height:1.8; }
+
+        @media(max-width:992px) { .why-strip { grid-template-columns:1fr 1fr; } .why-item { border-bottom:1px solid var(--border); } }
+        @media(max-width:576px) { .why-strip { grid-template-columns:1fr; } #float-cta { display:none; } }
+
+        /* ── SCROLLBAR ── */
+        ::-webkit-scrollbar { width:4px; }
+        ::-webkit-scrollbar-track { background:var(--bg); }
+        ::-webkit-scrollbar-thumb { background:rgba(201,169,110,0.2); border-radius:2px; }
+        ::-webkit-scrollbar-thumb:hover { background:var(--gold-dark); }
+
+        /* ── NOISE TEXTURE OVERLAY ── */
+        body::before {
+            content:''; position:fixed; inset:0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+            pointer-events:none; z-index:1; opacity:0.4;
+        }
+
+        /* ── LOADER ── */
+        #loader {
+            position:fixed; inset:0; background:var(--bg); z-index:9999;
+            display:flex; flex-direction:column; align-items:center; justify-content:center;
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
+        #loader.hidden { opacity:0; visibility:hidden; pointer-events:none; }
+        .loader-emblem {
+            width:80px; height:80px;
+            border:1px solid rgba(201,169,110,0.15);
+            display:flex; align-items:center; justify-content:center;
+            margin-bottom:32px; position:relative;
+            animation: loader-pulse 2s infinite;
+        }
+        .loader-emblem::before, .loader-emblem::after {
+            content:''; position:absolute;
+            border:1px solid rgba(201,169,110,0.08);
+            animation: loader-expand 2s infinite;
+        }
+        .loader-emblem::before { width:120%; height:120%; animation-delay:0.3s; }
+        .loader-emblem::after  { width:150%; height:150%; animation-delay:0.6s; }
+        @keyframes loader-expand {
+            0%   { transform:scale(0.8); opacity:0; }
+            50%  { opacity:1; }
+            100% { transform:scale(1.2); opacity:0; }
+        }
+        @keyframes loader-pulse { 0%,100% { border-color:rgba(201,169,110,0.15); } 50% { border-color:rgba(201,169,110,0.4); } }
+        .loader-logo { font-family:var(--font-display); font-size:1.6rem; letter-spacing:10px; color:#fff; }
+        .loader-logo span { color:var(--gold); }
+        .loader-progress { width:160px; height:1px; background:rgba(255,255,255,0.06); margin-top:28px; overflow:hidden; }
+        .loader-fill { height:100%; width:0; background:linear-gradient(90deg, var(--gold-dark), var(--gold-light)); animation:fill 2s ease forwards; }
+        @keyframes fill { to { width:100%; } }
+        .loader-sub { font-size:0.6rem; letter-spacing:5px; color:rgba(255,255,255,0.2); text-transform:uppercase; margin-top:18px; }
+
+        /* ── HEADER ── */
+        header {
+            position:fixed; top:0; width:100%; height:72px;
+            padding:0 4%;
+            display:grid; grid-template-columns:auto 1fr auto;
+            align-items:center; gap:0;
+            background:rgba(5,5,6,0.85);
+            backdrop-filter:blur(30px) saturate(1.5);
+            -webkit-backdrop-filter:blur(30px) saturate(1.5);
+            z-index:1000;
+            border-bottom:1px solid var(--border);
+            transition:all 0.4s;
+        }
+        header.scrolled { background:rgba(5,5,6,0.97); box-shadow:0 4px 40px rgba(0,0,0,0.5); }
+        header::after {
+            content:''; position:absolute; bottom:0; left:4%; right:4%;
+            height:1px;
+            background:linear-gradient(90deg, transparent, rgba(201,169,110,0.3), transparent);
+        }
+
+        .logo {
+            font-family:var(--font-display); font-size:1.25rem; letter-spacing:6px;
+            color:#fff; text-decoration:none; cursor:none;
+            transition:var(--tr); user-select:none;
+            padding-right:36px; border-right:1px solid var(--border);
+            white-space:nowrap; display:inline-flex; align-items:baseline;
+        }
+        .logo span { color:var(--gold); }
+        .logo:hover { opacity:0.7; }
+
+        nav {
+            display:flex; gap:6px; align-items:center;
+            justify-content:center; padding:0 24px;
+            overflow-x:auto;
+        }
+        nav::-webkit-scrollbar { display:none; }
+        nav button {
+            background:none; border:none; color:rgba(255,255,255,0.45);
+            font-size:0.72rem; letter-spacing:2px;
+            cursor:none; transition:var(--tr);
+            font-family:var(--font-sans); font-weight:500;
+            position:relative; padding:8px 11px; white-space:nowrap;
+        }
+        nav button::after {
+            content:''; position:absolute; width:0; height:1px;
+            bottom:2px; left:10px;
+            background:linear-gradient(90deg, var(--gold), transparent);
+            transition:0.35s ease;
+        }
+        nav button:hover::after, nav button.active-btn::after { width:calc(100% - 20px); }
+        nav button:hover, nav button.active-btn { color:rgba(255,255,255,0.9); }
+
+        .btn-action {
+            border:1px solid var(--border-gold) !important;
+            padding:8px 20px !important; color:var(--gold) !important;
+            background:rgba(201,169,110,0.03) !important;
+        }
+        .btn-action::after { display:none !important; }
+        .btn-action:hover {
+            background:var(--gold) !important; color:#000 !important;
+            border-color:var(--gold) !important;
+            box-shadow:0 0 20px rgba(201,169,110,0.25) !important;
+        }
+
+        /* ── HAMBURGER ── */
+        .hamburger { display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:none; padding:5px; z-index:2001; }
+        .hamburger span { display:block; width:24px; height:1.5px; background:#fff; transition:0.3s ease; }
+        .hamburger.open span:nth-child(1) { transform:translateY(6.5px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity:0; }
+        .hamburger.open span:nth-child(3) { transform:translateY(-6.5px) rotate(-45deg); }
+
+        /* ── CLOCK ── */
+        .header-clock {
+            border-left:1px solid var(--border); padding-left:20px;
+            min-width:115px; flex-shrink:0;
+            display:flex; flex-direction:column; align-items:flex-end;
+        }
+        #live-time { font-family:var(--font-display); font-size:0.85rem; color:var(--gold); letter-spacing:2px; display:block; text-align:right; }
+        #live-date { font-size:0.55rem; color:rgba(255,255,255,0.65); letter-spacing:1.5px; text-transform:uppercase; margin-top:3px; display:block; text-align:right; line-height:1.6; }
+
+        /* ── PAGE SECTIONS ── */
+        .page-section {
+            display:none; min-height:100vh;
+            padding:110px 6% 90px;
+            opacity:0; transform:translateY(15px);
+            transition:opacity 0.18s ease, transform 0.18s ease;
+        }
+        .page-section.active { opacity:1; transform:translateY(0); }
+
+        /* ── HOME ── */
+        #home.page-section {
+            display:none; flex-direction:column;
+            justify-content:space-between; align-items:stretch;
+            padding:0; text-align:center; position:relative;
+            overflow:hidden; min-height:100vh;
+        }
+        .hero-main {
+            flex:1; display:flex; flex-direction:column;
+            justify-content:center; align-items:center;
+            position:relative; z-index:2; padding:120px 20px 60px;
+        }
+        .hero-bg {
+            position:absolute; inset:0;
+            background:url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2560') center/cover no-repeat;
+            filter:brightness(0.08) saturate(0.3);
+            transform:scale(1.05);
+            animation:hero-zoom 20s ease-in-out infinite alternate;
+        }
+        @keyframes hero-zoom { from { transform:scale(1.05); } to { transform:scale(1.12); } }
+        .hero-grid-overlay {
+            position:absolute; inset:0;
+            background-image:
+                linear-gradient(rgba(201,169,110,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(201,169,110,0.02) 1px, transparent 1px);
+            background-size:90px 90px;
+            animation:grid-shift 30s linear infinite;
+        }
+        @keyframes grid-shift { from { background-position:0 0; } to { background-position:90px 90px; } }
+        .hero-vignette {
+            position:absolute; inset:0;
+            background:radial-gradient(ellipse at center, transparent 30%, rgba(5,5,6,0.6) 100%);
+        }
+        .hero-glow {
+            position:absolute; width:800px; height:400px;
+            background:radial-gradient(ellipse, rgba(201,169,110,0.05) 0%, transparent 65%);
+            top:50%; left:50%; transform:translate(-50%,-50%);
+            pointer-events:none;
+            animation:glow-pulse 6s ease-in-out infinite;
+        }
+        @keyframes glow-pulse { 0%,100%{ opacity:0.6; } 50%{ opacity:1; } }
+
+        .hero-content { position:relative; z-index:2; }
+        .hero-eyebrow {
+            font-size:0.6rem; letter-spacing:8px; color:var(--gold); margin-bottom:30px;
+            opacity:0; animation:fadeUp 1s 0.3s forwards;
+        }
+        .hero-title-wrap {
+            overflow:hidden; margin-bottom:16px;
+            opacity:0; animation:fadeUp 1s 0.5s forwards;
+        }
+        .hero-title {
+            font-family:var(--font-display);
+            font-size:clamp(3rem, 6vw, 7rem);
+            letter-spacing:24px; line-height:1.1;
+            background:linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.75) 50%, var(--gold-light) 100%);
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+        }
+        .hero-title span {
+            background:linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+        }
+        .hero-subtitle {
+            font-family:var(--font-serif);
+            font-size:clamp(0.9rem, 1.5vw, 1.2rem);
+            letter-spacing:6px; color:rgba(255,255,255,0.3);
+            margin-bottom:50px; font-style:italic;
+            opacity:0; animation:fadeUp 1s 0.7s forwards;
+        }
+        .hero-rule {
+            width:1px; height:70px;
+            background:linear-gradient(to bottom, transparent, var(--gold), transparent);
+            margin:0 auto 50px;
+            opacity:0; animation:fadeUp 1s 0.9s forwards;
+        }
+        .hero-btns {
+            display:flex; gap:16px; justify-content:center;
+            opacity:0; animation:fadeUp 1s 1.1s forwards;
+            flex-wrap:wrap;
+        }
+        .hero-btn {
+            padding:14px 36px; font-size:0.68rem; letter-spacing:3px;
+            cursor:none; font-family:var(--font-sans);
+            font-weight:500; transition:var(--tr); position:relative; overflow:hidden;
+            border:1px solid rgba(201,169,110,0.3); color:rgba(255,255,255,0.7);
+            background:rgba(255,255,255,0.01);
+        }
+        .hero-btn::before {
+            content:''; position:absolute; top:0; left:-100%; width:100%; height:100%;
+            background:linear-gradient(90deg, transparent, rgba(201,169,110,0.1), transparent);
+            transition:0.5s;
+        }
+        .hero-btn:hover::before { left:100%; }
+        .hero-btn:hover { border-color:var(--gold); color:#fff; box-shadow:0 0 25px rgba(201,169,110,0.2); }
+        .hero-btn.primary {
+            background:linear-gradient(135deg, var(--gold-dark), var(--gold));
+            color:#000; border-color:transparent; font-weight:600;
+            box-shadow:0 4px 25px rgba(201,169,110,0.25);
+        }
+        .hero-btn.primary:hover { box-shadow:0 6px 35px rgba(201,169,110,0.45); transform:translateY(-1px); }
+
+        /* ── STATS BAR ── */
+        .stats-bar {
+            position:relative; z-index:2; display:flex;
+            border-top:1px solid var(--border);
+            background:rgba(5,5,6,0.9); backdrop-filter:blur(20px);
+            flex-shrink:0;
+        }
+        .stat-item {
+            flex:1; padding:26px 20px; text-align:center;
+            border-right:1px solid var(--border);
+            position:relative; overflow:hidden;
+            transition:background 0.4s;
+        }
+        .stat-item::after {
+            content:''; position:absolute; inset:0;
+            background:linear-gradient(135deg, rgba(201,169,110,0.04), transparent);
+            opacity:0; transition:0.4s;
+        }
+        .stat-item:hover::after { opacity:1; }
+        .stat-item:last-child { border-right:none; }
+        .stat-num {
+            font-family:var(--font-display); font-size:2.2rem;
+            background:linear-gradient(135deg, var(--gold), var(--gold-light));
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+            display:block;
+        }
+        .stat-label { font-size:0.6rem; letter-spacing:3.5px; color:rgba(255,255,255,0.3); margin-top:5px; display:block; }
+
+        @keyframes fadeUp { from { opacity:0; transform:translateY(22px); } to { opacity:1; transform:translateY(0); } }
+
+        /* ── LAYOUT ── */
+        .container { max-width:1280px; margin:0 auto; width:100%; }
+
+        .title-box { text-align:center; margin-bottom:70px; }
+        .title-box .tag {
+            font-size:0.58rem; letter-spacing:6px; color:var(--gold);
+            margin-bottom:20px; display:block;
+        }
+        .title-box h2 {
+            font-family:var(--font-display); font-size:2.2rem; letter-spacing:6px; color:#fff;
+            line-height:1.3;
+        }
+        .title-box .line {
+            width:30px; height:1px;
+            background:linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin:20px auto;
+        }
+        .title-box p { color:rgba(255,255,255,0.25); letter-spacing:3px; font-size:0.72rem; font-family:var(--font-serif); font-style:italic; }
+
+        .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:50px; align-items:start; }
+        .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+        .grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; }
+        .grid-5 { display:grid; grid-template-columns:repeat(5,1fr); gap:18px; }
+
+        /* ── CARDS ── */
+        .s-card {
+            background:var(--bg-card); border:1px solid var(--border);
+            padding:40px 32px; transition:border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            position:relative; overflow:hidden;
+            display:flex; flex-direction:column; cursor:none;
+        }
+        .s-card::before {
+            content:''; position:absolute; top:0; left:0; right:0; height:1px;
+            background:linear-gradient(90deg, transparent, rgba(201,169,110,0.4), transparent);
+            opacity:0; transition:0.4s;
+        }
+        .s-card::after {
+            content:''; position:absolute;
+            top:-80px; right:-80px; width:180px; height:180px;
+            background:radial-gradient(circle, rgba(201,169,110,0.05) 0%, transparent 65%);
+            opacity:0; transition:0.4s;
+        }
+        .s-card:hover { border-color:rgba(201,169,110,0.5); transform:translateY(-4px); box-shadow:0 20px 45px rgba(0,0,0,0.4), 0 0 0 1px rgba(201,169,110,0.1); }
+        .s-card:hover::before { opacity:1; }
+        .s-card:hover::after { opacity:1; }
+
+        .card-icon {
+            width:46px; height:46px; margin-bottom:26px;
+            border:1px solid rgba(201,169,110,0.2);
+            display:flex; align-items:center; justify-content:center;
+            color:var(--gold); position:relative; z-index:1;
+            transition:var(--tr);
+        }
+        .s-card:hover .card-icon { background:rgba(201,169,110,0.08); border-color:rgba(201,169,110,0.5); box-shadow:0 0 15px rgba(201,169,110,0.1); }
+        .card-icon svg { width:22px; height:22px; stroke:currentColor; fill:none; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
+        .s-card h3 { font-family:var(--font-display); font-size:1.05rem; margin-bottom:14px; color:#fff; letter-spacing:1px; position:relative; z-index:1; }
+        .s-card p { font-size:0.85rem; color:rgba(255,255,255,0.4); line-height:1.9; flex-grow:1; position:relative; z-index:1; }
+
+        /* ── REVEAL ANIMATION ── */
+        .reveal {
+            opacity:0; transform:translateY(30px);
+            transition:opacity 0.7s ease, transform 0.7s ease;
+        }
+        .reveal.visible { opacity:1; transform:translateY(0); }
+
+        /* ── ABOUT ── */
+        .timeline { position:relative; padding-left:38px; }
+        .timeline::before {
+            content:''; position:absolute; left:0; top:0; bottom:0; width:1px;
+            background:linear-gradient(to bottom, transparent, rgba(201,169,110,0.35), transparent);
+        }
+        .tl-item { position:relative; margin-bottom:42px; transition:var(--tr); }
+        .tl-item:hover { transform:translateX(6px); }
+        .tl-dot {
+            position:absolute; left:-43px; top:5px;
+            width:9px; height:9px; border:1px solid var(--gold);
+            background:var(--bg); transform:rotate(45deg); transition:var(--tr);
+        }
+        .tl-item:hover .tl-dot { background:var(--gold); box-shadow:0 0 12px rgba(201,169,110,0.5); }
+        .tl-year { font-family:var(--font-display); color:var(--gold); font-size:0.75rem; letter-spacing:3px; margin-bottom:7px; }
+        .tl-title { color:#fff; font-size:0.95rem; font-weight:500; margin-bottom:7px; font-family:var(--font-serif); font-size:1.05rem; letter-spacing:0.5px; }
+        .tl-text { color:rgba(255,255,255,0.35); font-size:0.83rem; line-height:1.8; }
+
+        .team-card {
+            text-align:center; padding:50px 30px;
+            background:var(--bg-card); border:1px solid var(--border);
+            transition:var(--tr); position:relative; overflow:hidden;
+        }
+        .team-card::before {
+            content:''; position:absolute; inset:0;
+            background:radial-gradient(ellipse at top, rgba(201,169,110,0.05), transparent 60%);
+            opacity:0; transition:0.4s;
+        }
+        .team-card:hover { border-color:rgba(201,169,110,0.5); transform:translateY(-4px); box-shadow:0 20px 50px rgba(0,0,0,0.4); }
+        .team-card:hover::before { opacity:1; }
+        .team-img {
+            width:100px; height:100px; border-radius:50%;
+            border:1px solid rgba(201,169,110,0.3);
+            margin:0 auto 24px;
+            display:flex; align-items:center; justify-content:center;
+            font-size:2rem; font-family:var(--font-display); color:var(--gold);
+            background:rgba(201,169,110,0.04);
+            box-shadow:0 0 30px rgba(201,169,110,0.08);
+        }
+        .cert-badges { display:flex; justify-content:center; gap:8px; margin-top:20px; flex-wrap:wrap; }
+        .cert-badge { font-size:0.58rem; letter-spacing:1.5px; border:1px solid var(--border-gold); padding:4px 12px; color:rgba(201,169,110,0.6); }
+
+        /* ── SECTORS ── */
+        .sector-card {
+            background:var(--bg-card); border:1px solid var(--border);
+            padding:38px 28px; transition:var(--tr); cursor:none; position:relative; overflow:hidden;
+        }
+        .sector-card::after {
+            content:''; position:absolute; bottom:0; left:0; right:0; height:1px;
+            background:linear-gradient(90deg, transparent, rgba(201,169,110,0.3), transparent);
+            opacity:0; transition:0.4s;
+        }
+        .sector-card:hover { border-color:rgba(201,169,110,0.4); transform:translateY(-4px); box-shadow:0 20px 40px rgba(0,0,0,0.35); }
+        .sector-card:hover::after { opacity:1; }
+        .sector-num { font-family:var(--font-display); font-size:3rem; color:rgba(201,169,110,0.07); line-height:1; margin-bottom:14px; transition:var(--tr); }
+        .sector-card:hover .sector-num { color:rgba(201,169,110,0.2); }
+        .sector-card h4 { font-family:var(--font-display); font-size:1rem; color:#fff; margin-bottom:13px; letter-spacing:1px; }
+        .sector-card p { font-size:0.82rem; color:rgba(255,255,255,0.35); line-height:1.8; }
+        .sector-tags { display:flex; flex-wrap:wrap; gap:7px; margin-top:18px; }
+        .sector-tag { font-size:0.6rem; letter-spacing:1.5px; border:1px solid rgba(201,169,110,0.2); color:rgba(201,169,110,0.7); padding:3px 11px; }
+
+        /* ── LIST ITEMS ── */
+        .list-item {
+            display:block; background:rgba(255,255,255,0.01);
+            border-left:1px solid var(--gold); padding:20px 26px;
+            text-decoration:none; transition:var(--tr);
+            border-top:1px solid var(--border); border-right:1px solid var(--border); border-bottom:1px solid var(--border);
+            margin-bottom:13px; position:relative; overflow:hidden;
+        }
+        .list-item::before {
+            content:''; position:absolute; top:0; left:0; bottom:0; width:0;
+            background:linear-gradient(90deg, rgba(201,169,110,0.06), transparent);
+            transition:0.4s;
+        }
+        .list-item:hover::before { width:100%; }
+        .list-item:hover { background:rgba(255,255,255,0.03); transform:translateX(6px); border-color:rgba(201,169,110,0.5); }
+        .list-item .meta { font-size:0.6rem; color:var(--gold); letter-spacing:2.5px; display:block; margin-bottom:7px; }
+        .list-item h4 { color:rgba(255,255,255,0.8); font-size:0.95rem; font-weight:400; line-height:1.5; margin-bottom:5px; font-family:var(--font-serif); font-size:1.05rem; }
+        .list-item .excerpt { font-size:0.8rem; color:rgba(255,255,255,0.3); line-height:1.7; }
+
+        /* ── CAREER ── */
+        .value-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--border); margin-top:55px; }
+        .value-item { background:var(--bg-card); padding:45px 32px; text-align:center; transition:var(--tr); }
+        .value-item:hover { background:rgba(201,169,110,0.02); }
+        .value-icon { width:44px; height:44px; margin:0 auto 18px; color:var(--gold); }
+        .value-item h4 { font-family:var(--font-display); color:#fff; font-size:1rem; margin-bottom:10px; }
+        .value-item p { font-size:0.83rem; color:rgba(255,255,255,0.35); line-height:1.8; }
+
+        /* ── CALCULATORS ── */
+        .calc-box {
+            background:var(--bg-card); border:1px solid var(--border);
+            padding:42px 38px; transition:var(--tr); position:relative; overflow:hidden;
+        }
+        .calc-box::before {
+            content:''; position:absolute; top:0; left:0; right:0; height:1px;
+            background:linear-gradient(90deg, transparent, var(--gold), transparent);
+            opacity:0.3;
+        }
+        .calc-box:hover { border-color:rgba(201,169,110,0.4); box-shadow:0 10px 35px rgba(0,0,0,0.3); }
+        .calc-title { font-family:var(--font-display); font-size:1.2rem; color:#fff; margin-bottom:6px; letter-spacing:1px; }
+        .calc-sub { font-size:0.65rem; color:rgba(201,169,110,0.6); letter-spacing:3px; margin-bottom:28px; display:block; }
+        .calc-row { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:18px; }
+        .calc-field { display:flex; flex-direction:column; gap:7px; }
+        .calc-field label { font-size:0.65rem; letter-spacing:2px; color:rgba(255,255,255,0.3); }
+        .calc-field select, .calc-field input {
+            background:rgba(255,255,255,0.02); border:1px solid var(--border);
+            padding:13px 15px; color:#fff; font-family:var(--font-sans); font-size:0.88rem;
+            transition:var(--tr); appearance:none; outline:none; width:100%;
+        }
+        .calc-field select:focus, .calc-field input:focus { border-color:rgba(201,169,110,0.5); box-shadow:0 0 12px rgba(201,169,110,0.1); }
+        .calc-field select option { background:#111; }
+        .calc-result {
+            background:rgba(201,169,110,0.03); border:1px solid rgba(201,169,110,0.15);
+            padding:22px; margin-top:18px;
+            display:flex; align-items:center; justify-content:space-between;
+        }
+        .calc-result-label { font-size:0.62rem; letter-spacing:2px; color:rgba(255,255,255,0.3); margin-bottom:5px; }
+        .calc-result-val { font-family:var(--font-display); font-size:1.5rem; color:var(--gold); }
+
+        /* ── CONTACT ── */
+        .form-input {
+            background:rgba(255,255,255,0.02); border:1px solid var(--border);
+            padding:15px 17px; color:#fff; width:100%;
+            font-family:var(--font-sans); font-size:0.88rem;
+            transition:var(--tr); outline:none;
+        }
+        .form-input:focus { border-color:rgba(201,169,110,0.5); background:rgba(255,255,255,0.03); box-shadow:0 0 12px rgba(201,169,110,0.08); }
+        .form-label { font-size:0.6rem; letter-spacing:2px; color:rgba(255,255,255,0.35); margin-bottom:7px; display:block; }
+        .contact-item { display:flex; gap:18px; align-items:flex-start; margin-bottom:32px; padding-bottom:32px; border-bottom:1px solid var(--border); }
+        .contact-icon { width:42px; height:42px; border:1px solid var(--border-gold); display:flex; align-items:center; justify-content:center; color:var(--gold); flex-shrink:0; transition:var(--tr); font-size:0.95rem; }
+        .contact-item:hover .contact-icon { background:rgba(201,169,110,0.08); transform:scale(1.08); }
+        .contact-label { font-size:0.58rem; letter-spacing:3px; color:var(--gold); margin-bottom:5px; }
+        .contact-val { font-size:0.9rem; color:rgba(255,255,255,0.6); font-family:var(--font-serif); font-size:1rem; }
+        .map-container { border:1px solid var(--border); overflow:hidden; height:320px; transition:var(--tr); }
+        .map-container:hover { border-color:rgba(201,169,110,0.4); }
+
+        /* ── CHATBOT ── */
+        #chatbot-btn {
+            position:fixed; bottom:32px; right:32px; z-index:5000;
+            width:58px; height:58px; border-radius:50%;
+            background:linear-gradient(135deg, var(--gold-dark), var(--gold));
+            border:none; cursor:none; display:flex; align-items:center; justify-content:center;
+            font-size:1.3rem;
+            box-shadow:0 5px 25px rgba(201,169,110,0.35);
+            transition:transform 0.3s, box-shadow 0.3s;
+            animation:btn-pulse 4s infinite;
+        }
+        @keyframes btn-pulse {
+            0%,100% { box-shadow:0 5px 25px rgba(201,169,110,0.35), 0 0 0 0 rgba(201,169,110,0.2); }
+            50%      { box-shadow:0 5px 25px rgba(201,169,110,0.35), 0 0 0 14px rgba(201,169,110,0); }
+        }
+        #chatbot-btn:hover { transform:scale(1.08); animation:none; box-shadow:0 8px 35px rgba(201,169,110,0.5); }
+        #chatbot-panel {
+            position:fixed; bottom:104px; right:32px; z-index:5000;
+            width:370px; max-width:90vw;
+            background:#0c0d0f; border:1px solid rgba(201,169,110,0.2);
+            box-shadow:0 30px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(201,169,110,0.05);
+            display:none; flex-direction:column; max-height:540px;
+            border-radius:3px; transform-origin:bottom right;
+            animation:chatOpen 0.25s ease;
+        }
+        @keyframes chatOpen { from { opacity:0; transform:scale(0.9) translateY(10px); } to { opacity:1; transform:scale(1) translateY(0); } }
+        #chatbot-panel.open { display:flex; }
+        .chat-header { padding:16px 22px; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; align-items:center; justify-content:space-between; background:rgba(201,169,110,0.04); }
+        .chat-header-info { display:flex; align-items:center; gap:13px; }
+        .chat-avatar { width:38px; height:38px; background:rgba(201,169,110,0.12); border:1px solid rgba(201,169,110,0.3); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; color:var(--gold); font-family:var(--font-display); font-weight:700; }
+        .chat-name { font-size:0.9rem; color:#fff; font-weight:600; letter-spacing:0.5px; }
+        .chat-status { font-size:0.6rem; color:#6bc89a; display:flex; align-items:center; gap:5px; margin-top:2px; letter-spacing:1px; }
+        .chat-status::before { content:''; width:5px; height:5px; border-radius:50%; background:#6bc89a; display:inline-block; animation:blink 2s infinite; }
+        @keyframes blink { 0%,100%{ opacity:1; } 50%{ opacity:0.3; } }
+        .chat-messages { flex:1; overflow-y:auto; padding:18px; display:flex; flex-direction:column; gap:10px; min-height:200px; }
+        .chat-msg { max-width:88%; font-size:0.82rem; line-height:1.7; padding:11px 15px; }
+        .chat-msg.bot { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); color:rgba(255,255,255,0.7); align-self:flex-start; }
+        .chat-msg.user { background:rgba(201,169,110,0.08); border:1px solid rgba(201,169,110,0.18); color:rgba(232,213,160,0.9); align-self:flex-end; }
+        .chat-quick { display:flex; flex-wrap:wrap; gap:7px; padding:4px 18px 14px; border-bottom:1px solid rgba(255,255,255,0.04); }
+        .chat-quick-btn { font-size:0.65rem; letter-spacing:0.5px; border:1px solid rgba(255,255,255,0.08); background:none; color:rgba(255,255,255,0.45); padding:5px 11px; cursor:none; transition:0.2s; font-family:var(--font-sans); }
+        .chat-quick-btn:hover { border-color:rgba(201,169,110,0.35); color:var(--gold); background:rgba(201,169,110,0.04); }
+        .chat-input-row { display:flex; border-top:1px solid rgba(255,255,255,0.05); }
+        .chat-input-row input { flex:1; background:none; border:none; padding:15px 18px; color:#fff; font-family:var(--font-sans); font-size:0.82rem; outline:none; }
+        .chat-send { background:none; border:none; border-left:1px solid rgba(255,255,255,0.05); padding:0 18px; color:var(--gold); cursor:none; font-size:1rem; transition:background 0.2s; }
+        .chat-send:hover { background:rgba(201,169,110,0.06); }
+
+        /* ── TOAST ── */
+        #toast {
+            position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(20px);
+            background:rgba(10,11,13,0.95); border:1px solid rgba(201,169,110,0.3);
+            color:rgba(255,255,255,0.8); padding:14px 28px;
+            font-size:0.78rem; letter-spacing:1px;
+            z-index:9999; opacity:0; transition:all 0.4s;
+            box-shadow:0 10px 35px rgba(0,0,0,0.5);
+            pointer-events:none; white-space:nowrap;
+        }
+        #toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+        /* ── FOOTER ── */
+        footer { background:var(--bg-light); padding:65px 6% 32px; border-top:1px solid var(--border); }
+        .footer-top { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:55px; max-width:1280px; margin:0 auto 45px; }
+        .footer-brand .logo-text { font-family:var(--font-display); font-size:1.2rem; letter-spacing:5px; color:#fff; margin-bottom:16px; }
+        .footer-brand .logo-text span { color:var(--gold); }
+        .footer-brand p { font-size:0.82rem; color:rgba(255,255,255,0.3); line-height:1.9; margin-bottom:24px; font-family:var(--font-serif); }
+        .footer-social { display:flex; gap:10px; }
+        .social-btn { width:40px; height:40px; display:flex; align-items:center; justify-content:center; text-decoration:none; transition:var(--tr); cursor:none; }
+        .social-btn svg { width:18px; height:18px; fill:currentColor; }
+        .social-in { color:#0077b5; background:rgba(0,119,181,0.07); border:1px solid rgba(0,119,181,0.2); }
+        .social-in:hover { background:#0077b5; color:#fff; transform:translateY(-3px); box-shadow:0 5px 20px rgba(0,119,181,0.3); }
+        .social-ig { color:#E1306C; background:rgba(225,48,108,0.07); border:1px solid rgba(225,48,108,0.2); }
+        .social-ig:hover { background:#E1306C; color:#fff; transform:translateY(-3px); box-shadow:0 5px 20px rgba(225,48,108,0.3); }
+        .social-mail { color:#EA4335; background:rgba(234,67,53,0.07); border:1px solid rgba(234,67,53,0.2); }
+        .social-mail:hover { background:#EA4335; color:#fff; transform:translateY(-3px); box-shadow:0 5px 20px rgba(234,67,53,0.3); }
+        .footer-col h4 { font-family:var(--font-display); color:var(--gold); margin-bottom:20px; font-size:0.78rem; letter-spacing:3px; }
+        .footer-col a, .footer-col p { font-size:0.8rem; color:rgba(255,255,255,0.3); margin-bottom:11px; display:block; text-decoration:none; transition:var(--tr); line-height:1.6; }
+        .footer-col a:hover { color:rgba(255,255,255,0.7); padding-left:5px; }
+        .footer-bottom { max-width:1280px; margin:0 auto; border-top:1px solid var(--border); padding-top:22px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:18px; }
+        .footer-bottom p { font-size:0.68rem; color:rgba(255,255,255,0.2); letter-spacing:2px; }
+        .footer-bottom .footer-links { display:flex; gap:22px; flex-wrap:wrap; }
+        .footer-bottom .footer-links a { font-size:0.66rem; color:rgba(255,255,255,0.25); text-decoration:none; transition:var(--tr); }
+        .footer-bottom .footer-links a:hover { color:var(--gold); }
+
+        /* ── MARKET TICKER ── */
+        .ticker-wrap {
+            overflow:hidden; border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+            background:rgba(201,169,110,0.02); margin-bottom:50px;
+            padding:10px 0;
+        }
+        .ticker-inner {
+            display:flex; gap:60px; white-space:nowrap;
+            animation:ticker 30s linear infinite;
+        }
+        .ticker-inner:hover { animation-play-state:paused; }
+        .ticker-item { font-size:0.65rem; letter-spacing:2px; color:rgba(255,255,255,0.35); display:flex; align-items:center; gap:12px; }
+        .ticker-label { color:var(--gold); }
+        .ticker-val { font-family:var(--font-display); color:rgba(255,255,255,0.7); }
+        @keyframes ticker { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+
+        /* ── DIVIDER ── */
+        .section-divider { width:100%; height:1px; background:linear-gradient(90deg, transparent, rgba(201,169,110,0.15), transparent); margin:20px 0; }
+
+        /* ── MOBILE ── */
+        @media (max-width:1200px) { .grid-5 { grid-template-columns:repeat(3,1fr); } .header-clock { display:none; } }
+        @media (max-width:992px) {
+            header { grid-template-columns:1fr auto; padding:0 5%; }
+            body { cursor:auto; }
+            #cursor, #cursor-ring { display:none; }
+            nav#navbar {
+                position:fixed; top:0; left:0; width:100%; height:100vh;
+                background:rgba(5,5,6,0.98); backdrop-filter:blur(20px);
+                flex-direction:column; justify-content:center; align-items:center; gap:16px;
+                z-index:2000; opacity:0; visibility:hidden; pointer-events:none;
+                transform:translateY(-8px);
+                transition:opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+                padding:0;
+            }
+            nav#navbar.open { opacity:1; visibility:visible; pointer-events:all; transform:translateY(0); }
+            .hamburger { display:flex; z-index:2001; }
+            nav#navbar button { font-size:1rem; letter-spacing:4px; padding:10px; width:100%; text-align:center; cursor:auto; }
+            nav#navbar .btn-action { width:auto !important; padding:13px 38px !important; margin-top:12px; }
+            .footer-top { grid-template-columns:1fr 1fr; gap:35px; }
+            .grid-2, .grid-3, .grid-4 { grid-template-columns:1fr; gap:22px; }
+            .calc-row { grid-template-columns:1fr; gap:13px; }
+            .stats-bar { flex-wrap:wrap; }
+            .stat-item { min-width:50%; border-bottom:1px solid var(--border); }
+            .stat-item:nth-child(even) { border-right:none; }
+        }
+        @media (max-width:768px) {
+            .page-section { padding:88px 5% 55px; }
+            .hero-title { font-size:2.5rem; letter-spacing:12px; }
+            .hero-btns { flex-direction:column; align-items:stretch; gap:12px; }
+            .hero-btn { text-align:center; }
+            .grid-5 { grid-template-columns:1fr 1fr; gap:14px; }
+            .footer-top { grid-template-columns:1fr; text-align:center; }
+            .footer-social { justify-content:center; }
+            .footer-bottom { flex-direction:column; text-align:center; }
+            .footer-bottom .footer-links { justify-content:center; }
+            .value-grid { grid-template-columns:1fr; }
+            .calc-result { flex-direction:column; align-items:stretch; gap:13px; text-align:center; }
+        }
+        @media (max-width:480px) { .grid-5 { grid-template-columns:1fr; } }
+    </style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="scroll-progress"></div>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- FLOATING CTA -->
+<div id="float-cta">
+    <button class="float-cta-btn" onclick="switchTab('contact')">
+        <span class="float-cta-dot"></span>
+        UCRETSIZ GORUSME
+    </button>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- LOADER -->
+<div id="loader">
+    <div class="loader-emblem">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,0.8)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M4 9l8-4 8 4M6 9v6a2 2 0 0 0 4 0V9M14 9v6a2 2 0 0 0 4 0V9"/></svg>
+    </div>
+    <div class="loader-logo">FUTURISTA<span>X</span></div>
+    <div class="loader-progress"><div class="loader-fill"></div></div>
+    <p class="loader-sub">STRATEGIC TAX &amp; FINANCIAL SOLUTIONS</p>
+</div>
+
+<!-- CHATBOT -->
+<button id="chatbot-btn" onclick="toggleChatbot()" title="Hızlı Yardım">💬</button>
+<div id="chatbot-panel">
+    <div class="chat-header">
+        <div class="chat-header-info">
+            <div class="chat-avatar">FX</div>
+            <div>
+                <div class="chat-name">FuturistaX Asistan</div>
+                <div class="chat-status">Çevrimiçi</div>
+            </div>
+        </div>
+        <button style="background:none;border:none;color:rgba(255,255,255,0.3);font-size:1.1rem;cursor:pointer;" onclick="toggleChatbot()">✕</button>
+    </div>
+    <div class="chat-messages" id="chat-messages">
+        <div class="chat-msg bot">Merhaba, ben FuturistaX yapay zeka asistanıyım. Vergi, mevzuat veya mali danışmanlık konularında nasıl yardımcı olabilirim?</div>
+    </div>
+    <div class="chat-quick" id="chat-quick">
+        <button class="chat-quick-btn" onclick="quickChat('Hizmetleriniz nelerdir?')">Hizmetler</button>
+        <button class="chat-quick-btn" onclick="quickChat('Güncel mevzuat ve oranlar')">Mevzuat</button>
+        <button class="chat-quick-btn" onclick="quickChat('Şirket kuruluş süreci')">Şirket Kurulumu</button>
+        <button class="chat-quick-btn" onclick="quickChat('Randevu almak istiyorum')">Randevu</button>
+    </div>
+    <div id="chat-thinking" style="padding:10px 18px 0; display:none;">
+        <div class="chat-msg bot" style="font-style:italic; opacity:0.5;">Yanıt oluşturuluyor<span id="dots">...</span></div>
+    </div>
+    <div class="chat-input-row">
+        <input type="text" id="chat-input" placeholder="Sorunuzu yazın..." onkeydown="if(event.key==='Enter')sendChat()">
+        <button class="chat-send" onclick="sendChat()">➤</button>
+    </div>
+</div>
+
+<!-- HEADER -->
+<header id="header">
+    <a href="#" class="logo" onclick="switchTab('home');return false;">FUTURISTA<span>X</span></a>
+    <nav id="navbar">
+        <button onclick="switchTab('about')" class="nav-btn">Kurumsal</button>
+        <button onclick="switchTab('services')" class="nav-btn">Hizmetler</button>
+        <button onclick="switchTab('sectors')" class="nav-btn">Sektörler</button>
+        <button onclick="switchTab('academy')" class="nav-btn">Akademi</button>
+        <button onclick="switchTab('agenda')" class="nav-btn">Mevzuat</button>
+        <button onclick="switchTab('tools')" class="nav-btn">Araçlar</button>
+        <button onclick="switchTab('market')" class="nav-btn">Piyasa</button>
+        <button onclick="switchTab('references')" class="nav-btn">Referanslar</button>
+        <button onclick="switchTab('career')" class="nav-btn">Kariyer</button>
+        <button onclick="switchTab('faq')" class="nav-btn">SSS</button>
+        <button onclick="switchTab('contact')" class="nav-btn btn-action">İletişim</button>
+    </nav>
+    <div class="header-clock" id="header-clock">
+        <span id="live-time">00:00:00</span>
+        <span id="live-date">—</span>
+    </div>
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+    </button>
+</header>
+
+<!-- HOME -->
+<section id="home" class="page-section active" style="display:flex;">
+    <div class="hero-bg"></div>
+    <div class="hero-grid-overlay"></div>
+    <div class="hero-vignette"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-main">
+        <div class="hero-content">
+            <p class="hero-eyebrow">Türkiye'nin Fütüristik Mali Danışmanlık Firması</p>
+            <div class="hero-title-wrap">
+                <h1 class="hero-title">FUTURISTA<span>X</span></h1>
+            </div>
+            <p class="hero-subtitle">STRATEGIC TAX &amp; FINANCIAL SOLUTIONS</p>
+            <div class="hero-rule"></div>
+            <div class="hero-btns">
+                <button onclick="switchTab('services')" class="hero-btn primary">Hizmetlerimiz</button>
+                <button onclick="switchTab('about')" class="hero-btn">Kurumsal</button>
+                <button onclick="switchTab('contact')" class="hero-btn">İletişim</button>
+            </div>
+        </div>
+    </div>
+    <div class="stats-bar">
+        <div class="stat-item"><span class="stat-num">150+</span><span class="stat-label">AKTIF MUSTERI</span></div>
+        <div class="stat-item"><span class="stat-num">12+</span><span class="stat-label">YIL DENEYIM</span></div>
+        <div class="stat-item"><span class="stat-num">98%</span><span class="stat-label">BASARI ORANI</span></div>
+        <div class="stat-item"><span class="stat-num">7+</span><span class="stat-label">SEKTOREL UZMANLIK</span></div>
+    </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="page-section">
+    <div class="container">
+        <div class="title-box reveal">
+            <span class="tag">HAKKIMIZDA</span>
+            <h2>Vizyon & Misyon</h2>
+            <div class="line"></div>
+            <p>Geleceğin Finansal Mimarisi</p>
+        </div>
+        <div class="grid-2 reveal" style="margin-bottom:90px;">
+            <div>
+                <p style="margin-bottom:20px; color:rgba(255,255,255,0.7); font-family:var(--font-serif); font-size:1.15rem; line-height:2; font-style:italic;">
+                    <strong style="color:#fff; font-style:normal; font-family:var(--font-sans); letter-spacing:3px; font-size:0.95rem; font-weight:600; text-transform:none;">FUTURISTAX ADVISORY</strong>, şirketlere vergi, finans ve uyum süreçlerinde yüksek standartlarda danışmanlık hizmeti sunan bağımsız bir profesyonel hizmetler markasıdır.
+                </p>
+                <p style="color:rgba(255,255,255,0.35); font-size:0.88rem; line-height:2; margin-bottom:22px;">
+                    Kuruluşların değişen regülasyonlara uyum sağlamasına, finansal risklerini etkin biçimde yönetmesine ve karar alma süreçlerini daha güçlü bir analitik zemine oturtmasına destek olur.
+                </p>
+                <div style="background:rgba(201,169,110,0.04); border:1px solid rgba(201,169,110,0.15); padding:30px; margin-top:32px; position:relative; overflow:hidden;">
+                    <div style="position:absolute; top:-20px; right:-20px; width:100px; height:100px; border:1px solid rgba(201,169,110,0.08); border-radius:50%;"></div>
+                    <h3 style="font-family:var(--font-display); letter-spacing:6px; margin-bottom:14px; font-size:1rem; color:var(--gold);">THE "X" FACTOR</h3>
+                    <p style="font-family:var(--font-serif); font-style:italic; color:rgba(255,255,255,0.4); line-height:1.9; font-size:1rem;">
+                        "X, bilinmeyeni bilinen bir avantaja dönüştürme gücümüzdür. FuturistaX ile vergi sadece bir yükümlülük değil, stratejik ve yönetilebilir bir varlıktır."
+                    </p>
+                </div>
+            </div>
+            <div>
+                <div class="timeline">
+                    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2013</div><div class="tl-title">Kuruluş</div><div class="tl-text">Ankara'da bağımsız vergi danışmanlığı ofisi olarak faaliyete başlandı. İlk müşteriler KOBİ segmentinden edindi.</div></div>
+                    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2016</div><div class="tl-title">Genişleme</div><div class="tl-text">Kurumsal müşteri portföyü oluşturuldu. Finansal danışmanlık ve uyum hizmetleri portföye eklendi.</div></div>
+                    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2020</div><div class="tl-title">Dijital Dönüşüm</div><div class="tl-text">Dijital vergi çözümleri ve uzaktan danışmanlık modeli hayata geçirildi. E-arşiv entegrasyon hizmetleri başlatıldı.</div></div>
+                    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">2023</div><div class="tl-title">FuturistaX Markası</div><div class="tl-text">Yeniden markalama süreciyle FuturistaX Advisory kimliği oluşturuldu. Kurumsal kimlik ve dijital varlık güçlendirildi.</div></div>
+                </div>
+            </div>
+        </div>
+        <div class="section-divider"></div>
+        <div class="title-box reveal" style="margin-top:80px;">
+            <span class="tag">EKIBIMIZ</span>
+            <h2>Liderlik</h2>
+            <div class="line"></div>
+        </div>
+        <div style="max-width:460px; margin:0 auto;" class="reveal">
+            <div class="team-card">
+                <div class="team-img">GS</div>
+                <h4 style="color:#fff; font-family:var(--font-display); font-size:1.15rem; letter-spacing:2px;">Gökay Soysal</h4>
+                <span style="color:var(--gold); font-size:0.65rem; letter-spacing:3px; text-transform:uppercase; display:block; margin-top:7px;">Vergi Danışmanı · Kurucu</span>
+                <p style="font-family:var(--font-serif); font-size:0.98rem; color:rgba(255,255,255,0.4); margin-top:16px; line-height:1.8; font-style:italic;">
+                    Stratejik vergi planlaması, denetim ve mali mevzuat uyumu konularında 12+ yıl deneyimi. Kurumlar vergisi, KDV yapılandırması ve uluslararası vergilendirme alanlarında özelleşmiş çözümler.
+                </p>
+                <div class="cert-badges">
+                    <span class="cert-badge">SMMM</span>
+                    <span class="cert-badge">Vergi Danışmanı</span>
+                    <span class="cert-badge">Mali Denetçi</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services" class="page-section">
+    <div class="container">
+        <div class="title-box reveal">
+            <span class="tag">NE SUNUYORUZ</span>
+            <h2>Hizmet Alanlarımız</h2>
+            <div class="line"></div>
+            <p>Kapsamlı ve Entegre Çözümler</p>
+        </div>
+        <div class="grid-3 reveal" style="margin-top:45px;">
+            <div class="s-card">
+                <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M12 3v18M4 9l8-4 8 4M6 9v6a2 2 0 0 0 4 0V9M14 9v6a2 2 0 0 0 4 0V9M2 21h20"/></svg></div>
+                <h3>Vergi Danışmanlığı</h3>
+                <p>İşletmenizin faaliyet yapısına ve sektör dinamiklerine uygun, teknik açıdan güçlü vergi stratejileri. Kurumlar vergisi, gelir vergisi ve KDV planlaması dahildir.</p>
+            </div>
+            <div class="s-card">
+                <div class="card-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><path d="M11 8v3l2 2"/></svg></div>
+                <h3>Vergi Denetimi & Risk</h3>
+                <p>Olası mali riskleri önceden tespit eden, mevzuata tam uyumlu yapı oluşturma. Vergi incelemelerine hazırlık ve itiraz süreçleri yönetimi.</p>
+            </div>
+            <div class="s-card">
+                <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 9l-5 5-4-4-5 5"/></svg></div>
+                <h3>Finansal Danışmanlık</h3>
+                <p>Karar alma süreçlerini güçlü analitik zemine oturtarak finansal operasyonlarda verimliliği maksimize ediyoruz. Nakit akışı ve bütçe yönetimi dahildir.</p>
+            </div>
+            <div class="s-card">
+                <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8M16 17H8M10 9H8"/></svg></div>
+                <h3>Mali Mevzuat Uyumu</h3>
+                <p>Değişen regülasyonlar karşısında şirketinizin güncel ve uyumlu kalmasını sağlayarak cezai riskleri minimize ediyoruz.</p>
+            </div>
+            <div class="s-card">
+                <div class="card-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></div>
+                <h3>Kurumsal Raporlama</h3>
+                <p>Uluslararası standartlarda (TFRS/IFRS) finansal raporlama ve detaylı değerlendirme süreçleri. Paydaşlarınıza tam şeffaflık.</p>
+            </div>
+            <div class="s-card">
+                <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M6 3v12"/><circle cx="6" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M18 3v12"/><circle cx="18" cy="18" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9H6"/></svg></div>
+                <h3>Stratejik Yapılandırma</h3>
+                <p>Şirket birleşmeleri, devir işlemleri ve kurumsal yapılandırmada vergi odaklı optimum çözümler. KVK Madde 19 kapsamlı hizmet.</p>
+            </div>
+            <div class="s-card">
+                <div class="card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+                <h3>Uluslararası Vergilendirme</h3>
+                <p>Yurt dışı yatırım ve işlemler için çifte vergilendirmeyi önleme anlaşmaları kapsamında danışmanlık. Transfer fiyatlandırması belgelendirme.</p>
+            </div>
+            <div class="s-card">
+                <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+                <h3>SGK & İşçi Mevzuatı</h3>
+                <p>Sosyal güvenlik prim teşvikleri, işçilik maliyeti optimizasyonu ve iş hukuku uyum süreçlerinde bütünleşik danışmanlık.</p>
+            </div>
+            <div class="s-card">
+                <div class="card-icon"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+                <h3>Yatırım Teşvik Yönetimi</h3>
+                <p>Hazine ve Maliye Bakanlığı teşvik belgelerinin alınması, uygulanması ve denetimi. KDV istisnası, vergi indirimi ve sigorta primi desteği süreçleri.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECTORS -->
+<section id="sectors" class="page-section">
+    <div class="container">
+        <div class="title-box reveal">
+            <span class="tag">UZMANLIK ALANLARI</span>
+            <h2>Sektörel Uzmanlık</h2>
+            <div class="line"></div>
+            <p>Farklı Dinamiklere Özel Stratejiler</p>
+        </div>
+        <div class="grid-4 reveal">
+            <div class="sector-card"><div class="sector-num">01</div><h4>Teknoloji & Bilişim</h4><p>Ar-Ge indirimleri, teknokent istisnaları ve yazılım ihracatı vergi süreçlerinde uzman rehberlik.</p><div class="sector-tags"><span class="sector-tag">Ar-Ge</span><span class="sector-tag">Teknokent</span></div></div>
+            <div class="sector-card"><div class="sector-num">02</div><h4>Üretim & Sanayi</h4><p>Yatırım teşvik belgesi uygulamaları, KDV iadeleri ve ihracat vergi avantajlarının etkin yönetimi.</p><div class="sector-tags"><span class="sector-tag">Teşvik</span><span class="sector-tag">KDV Iadesi</span></div></div>
+            <div class="sector-card"><div class="sector-num">03</div><h4>E-Ticaret & Perakende</h4><p>Uluslararası vergilendirme, dijital hizmet vergisi ve lojistik maliyet analizi. Marketplace komisyon vergilemesi.</p><div class="sector-tags"><span class="sector-tag">DVH</span><span class="sector-tag">B2C</span></div></div>
+            <div class="sector-card"><div class="sector-num">04</div><h4>Gayrimenkul & İnşaat</h4><p>Yıllara sâri inşaat onarım işleri, değer artış kazançları ve KDV istisnaları. Proje bazlı maliyet muhasebesi.</p><div class="sector-tags"><span class="sector-tag">Insaat</span><span class="sector-tag">KDV</span></div></div>
+            <div class="sector-card"><div class="sector-num">05</div><h4>Finans & Sermaye Piyasaları</h4><p>Yatırım araçlarının vergilendirilmesi, fon yapılandırması ve BIST işlem vergi optimizasyonu.</p><div class="sector-tags"><span class="sector-tag">BIST</span><span class="sector-tag">Fon</span></div></div>
+            <div class="sector-card"><div class="sector-num">06</div><h4>Sağlık & Eczacılık</h4><p>Hastane ve klinik gelir-gider optimizasyonu, hekim ortaklık yapıları ve tıbbi cihaz ithalat vergi planlaması.</p><div class="sector-tags"><span class="sector-tag">Sağlık</span><span class="sector-tag">Klinik</span></div></div>
+            <div class="sector-card"><div class="sector-num">07</div><h4>Tarım & Gıda</h4><p>Tarımsal üretim istisnalarından yararlanma, çiftçi muafiyetleri ve agro-sanayi yatırım teşvikleri.</p><div class="sector-tags"><span class="sector-tag">Istisna</span><span class="sector-tag">Agro</span></div></div>
+            <div class="sector-card"><div class="sector-num">08</div><h4>Enerji & Çevre</h4><p>Yenilenebilir enerji yatırımları, YEKA teşvikleri ve karbon vergisi hazırlık süreçleri danışmanlığı.</p><div class="sector-tags"><span class="sector-tag">Yenilenebilir</span><span class="sector-tag">ESG</span></div></div>
+        </div>
+    </div>
+</section>
+
+<!-- ACADEMY -->
+<section id="academy" class="page-section">
+    <div class="container">
+        <div class="title-box reveal">
+            <span class="tag">BİLGİ MERKEZİ</span>
+            <h2>Akademi & İçgörüler</h2>
+            <div class="line"></div>
+            <p>SMMM Eğitimi, Finansal Analiz & Güncel Makaleler</p>
+        </div>
+        <div class="grid-2 reveal" style="align-items:start; margin-bottom:60px;">
+            <div>
+                <h3 style="font-family:var(--font-display); font-size:1.1rem; margin-bottom:22px; color:var(--gold); letter-spacing:2px;">Güncel Analizler & Makaleler</h3>
+                <div id="academy-dynamic-list"><p style="color:rgba(255,255,255,0.3); font-size:0.85rem;">İçerikler yükleniyor...</p></div>
+            </div>
+            <div>
+                <h3 style="font-family:var(--font-display); font-size:1.1rem; margin-bottom:22px; color:#fff; letter-spacing:2px;">SMMM Sınav Arşivi</h3>
+                <div style="background:var(--bg-card); border:1px solid var(--border); padding:38px; transition:var(--tr);" onmouseover="this.style.borderColor='rgba(201,169,110,0.4)'" onmouseout="this.style.borderColor='var(--border)'">
+                    <p style="font-family:var(--font-serif); font-size:1rem; color:rgba(255,255,255,0.4); margin-bottom:26px; line-height:1.9;">2015–2026 yılları arası derlenmiş çalışma materyalleri, çıkmış sorular ve mevzuat özetleri.</p>
+                    <ul style="list-style:none; display:flex; flex-direction:column;">
+                        <li style="border-bottom:1px solid var(--border); padding:13px 0; color:rgba(255,255,255,0.6); display:flex; align-items:center; gap:11px; font-size:0.83rem;"><span style="color:var(--gold); font-size:0.55rem;">◆</span>Finansal Muhasebe ve Raporlama Standartları</li>
+                        <li style="border-bottom:1px solid var(--border); padding:13px 0; color:rgba(255,255,255,0.6); display:flex; align-items:center; gap:11px; font-size:0.83rem;"><span style="color:var(--gold); font-size:0.55rem;">◆</span>Vergi Hukuku ve Uygulaması</li>
+                        <li style="border-bottom:1px solid var(--border); padding:13px 0; color:rgba(255,255,255,0.6); display:flex; align-items:center; gap:11px; font-size:0.83rem;"><span style="color:var(--gold); font-size:0.55rem;">◆</span>Denetim ve Güvence Hizmetleri</li>
+                        <li style="border-bottom:1px solid var(--border); padding:13px 0; color:rgba(255,255,255,0.6); display:flex; align-items:center; gap:11px; font-size:0.83rem;"><span style="color:var(--gold); font-size:0.55rem;">◆</span>Maliyet Muhasebesi & Yönetim Muhasebesi</li>
+                        <li style="padding:13px 0; color:rgba(255,255,255,0.6); display:flex; align-items:center; gap:11px; font-size:0.83rem;"><span style="color:var(--gold); font-size:0.55rem;">◆</span>İş ve Ticaret Hukuku</li>
+                    </ul>
+                    <button class="hero-btn primary" style="width:100%; margin-top:28px; font-family:var(--font-sans);" onclick="showToast('Talep alındı')" style="letter-spacing:2px; text-transform:none;">Arsive Erisin</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- AGENDA -->
+<section id="agenda" class="page-section">
+    <div class="container">
+        <div class="title-box reveal">
+            <span class="tag">MEVZUAT TAKİBİ</span>
+            <h2>Mevzuat & Gündem</h2>
+            <div class="line"></div>
+            <p>GİB Güncel Duyuruları ve Kanun Bilgi Bankası</p>
+        </div>
+        <div class="grid-2 reveal" style="align-items:start; margin-bottom:60px;">
+            <div>
+                <h3 style="font-family:var(--font-display); color:#fff; margin-bottom:22px; font-size:1.1rem; letter-spacing:2px;">Güncel GİB Duyuruları</h3>
+                <div id="gib-dynamic-list"><p style="color:rgba(255,255,255,0.3); font-size:0.85rem;">Duyurular çekiliyor...</p></div>
+            </div>
+            <div>
+                <h3 style="font-family:var(--font-display); color:#fff; margin-bottom:22px; font-size:1.1rem; letter-spacing:2px;">Kanun Bilgi Bankası</h3>
+                <div style="background:var(--bg-card); border:1px solid var(--border); padding:32px; display:flex; flex-direction:column; gap:12px;">
+                    <a href="https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=5520&MevzuatTur=1&MevzuatTertip=5" target="_blank" style="text-decoration:none; background:rgba(255,255,255,0.01); border:1px solid var(--border); padding:16px 20px; transition:var(--tr); display:flex; justify-content:space-between; align-items:center;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+                        <div><div style="font-size:0.58rem; color:var(--gold); letter-spacing:2px; margin-bottom:4px;">5520 SAYILI KANUN</div><div style="color:rgba(255,255,255,0.7); font-size:0.88rem;">Kurumlar Vergisi Kanunu</div></div><span style="color:rgba(255,255,255,0.2);">→</span>
+                    </a>
+                    <a href="https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=193&MevzuatTur=1&MevzuatTertip=4" target="_blank" style="text-decoration:none; background:rgba(255,255,255,0.01); border:1px solid var(--border); padding:16px 20px; transition:var(--tr); display:flex; justify-content:space-between; align-items:center;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+                        <div><div style="font-size:0.58rem; color:var(--gold); letter-spacing:2px; margin-bottom:4px;">193 SAYILI KANUN</div><div style="color:rgba(255,255,255,0.7); font-size:0.88rem;">Gelir Vergisi Kanunu</div></div><span style="color:rgba(255,255,255,0.2);">→</span>
+                    </a>
+                    <a href="https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=3065&MevzuatTur=1&MevzuatTertip=5" target="_blank" style="text-decoration:none; background:rgba(255,255,255,0.01); border:1px solid var(--border); padding:16px 20px; transition:var(--tr); display:flex; justify-content:space-between; align-items:center;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+                        <div><div style="font-size:0.58rem; color:var(--gold); letter-spacing:2px; margin-bottom:4px;">3065 SAYILI KANUN</div><div style="color:rgba(255,255,255,0.7); font-size:0.88rem;">Katma Değer Vergisi Kanunu</div></div><span style="color:rgba(255,255,255,0.2);">→</span>
+                    </a>
+                    <a href="https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=213&MevzuatTur=1&MevzuatTertip=4" target="_blank" style="text-decoration:none; background:rgba(255,255,255,0.01); border:1px solid var(--border); padding:16px 20px; transition:var(--tr); display:flex; justify-content:space-between; align-items:center;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+                        <div><div style="font-size:0.58rem; color:var(--gold); letter-spacing:2px; margin-bottom:4px;">213 SAYILI KANUN</div><div style="color:rgba(255,255,255,0.7); font-size:0.88rem;">Vergi Usul Kanunu</div></div><span style="color:rgba(255,255,255,0.2);">→</span>
+                    </a>
+                    <a href="https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=6102&MevzuatTur=1&MevzuatTertip=5" target="_blank" style="text-decoration:none; background:rgba(255,255,255,0.01); border:1px solid var(--border); padding:16px 20px; transition:var(--tr); display:flex; justify-content:space-between; align-items:center;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+                        <div><div style="font-size:0.58rem; color:var(--gold); letter-spacing:2px; margin-bottom:4px;">6102 SAYILI KANUN</div><div style="color:rgba(255,255,255,0.7); font-size:0.88rem;">Türk Ticaret Kanunu</div></div><span style="color:rgba(255,255,255,0.2);">→</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TOOLS -->
+<section id="tools" class="page-section">
+    <div class="container">
+        <div class="title-box reveal">
+            <span class="tag">DİJİTAL ARAÇLAR</span>
+            <h2>Hesaplama Araçları</h2>
+            <div class="line"></div>
+            <p>Hızlı Vergi ve Mali Hesaplama Modülleri</p>
+        </div>
+        <div class="grid-2 reveal" style="margin-bottom:26px;">
+            <div class="calc-box">
+                <span class="calc-sub">HESAPLAMA MODULU</span>
+                <h3 class="calc-title">KDV Hesaplayıcı</h3>
+                <div class="calc-row" style="margin-top:22px;">
+                    <div class="calc-field"><label>ISLEM TURU</label><select id="kdvType" onchange="calcKdv()"><option value="add">KDV'siz → KDV'li</option><option value="extract">KDV'li → KDV'siz</option></select></div>
+                    <div class="calc-field"><label>KDV ORANI</label><select id="kdvRate" onchange="calcKdv()"><option value="20">%20</option><option value="10">%10</option><option value="1">%1</option></select></div>
+                </div>
+                <div class="calc-field"><label>TUTAR (₺)</label><input type="number" id="kdvAmount" placeholder="0,00" oninput="calcKdv()"/></div>
+                <div class="calc-result">
+                    <div><div class="calc-result-label">KDV TUTARI</div><div class="calc-result-val" id="kdvResult">₺ 0,00</div></div>
+                    <div><div class="calc-result-label">TOPLAM / MATRAH</div><div class="calc-result-val" id="kdvTotal">₺ 0,00</div></div>
+                </div>
+            </div>
+            <div class="calc-box">
+                <span class="calc-sub">HESAPLAMA MODULU</span>
+                <h3 class="calc-title">Kurumlar Vergisi</h3>
+                <div class="calc-row" style="margin-top:22px;">
+                    <div class="calc-field"><label>TICARI KAR (₺)</label><input type="number" id="kvProfit" placeholder="0" oninput="calcKV()"/></div>
+                    <div class="calc-field"><label>KKEG TOPLAMI (₺)</label><input type="number" id="kvKkeg" placeholder="0" oninput="calcKV()"/></div>
+                </div>
+                <div class="calc-row">
+                    <div class="calc-field"><label>ISTISNALAR (₺)</label><input type="number" id="kvIstisnalar" placeholder="0" oninput="calcKV()"/></div>
+                    <div class="calc-field"><label>KV ORANI</label><select id="kvRate" onchange="calcKV()"><option value="25">%25 (Standart)</option><option value="30">%30 (Finans)</option><option value="20">%20 (İhracat)</option></select></div>
+                </div>
+                <div class="calc-result" style="flex-direction:column; gap:10px; align-items:stretch; padding:18px;">
+                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(201,169,110,0.15); padding-bottom:8px;">
+                        <div><div class="calc-result-label" style="font-size:0.58rem;">MALI KAR (MATRAH)</div><div style="font-size:1.05rem; color:rgba(255,255,255,0.7); font-family:var(--font-display);" id="kvMatrah">₺ 0</div></div>
+                        <div><div class="calc-result-label" style="font-size:0.58rem;">VERGI SONRASI KAR</div><div style="font-size:1.05rem; color:rgba(255,255,255,0.7); font-family:var(--font-display);" id="kvAfterTax">₺ 0</div></div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; padding-top:4px;">
+                        <div class="calc-result-label" style="margin-bottom:0; color:var(--gold);">HESAPLANAN KV:</div>
+                        <div class="calc-result-val" id="kvResult">₺ 0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid-2 reveal" style="margin-bottom:40px;">
+            <div class="calc-box">
+                <span class="calc-sub">YASAL KISITLAMA MODULU</span>
+                <h3 class="calc-title">2026 Binek Araç %30 Gider Kısıtı</h3>
+                <div class="calc-row" style="margin-top:22px;">
+                    <div class="calc-field"><label>FATURA TUTARI (KDV HARIC ₺)</label><input type="number" id="binekGider" placeholder="0" oninput="calcBinek()"/></div>
+                    <div class="calc-field"><label>KDV ORANI</label><select id="binekKdv" onchange="calcBinek()"><option value="20">%20</option></select></div>
+                </div>
+                <div class="calc-result" style="flex-direction:column; gap:10px; align-items:stretch; padding:18px;">
+                    <div style="display:flex; justify-content:space-between;">
+                        <div><div class="calc-result-label">GIDER YAZILACAK (%70)</div><div class="calc-result-val" style="font-size:1.1rem; color:rgba(255,255,255,0.7);" id="binekKabulGider">₺ 0</div></div>
+                        <div><div class="calc-result-label">INDIRILECEK KDV (%70)</div><div class="calc-result-val" style="font-size:1.1rem; color:rgba(255,255,255,0.7);" id="binekKabulKdv">₺ 0</div></div>
+                    </div>
+                    <div style="border-top:1px solid rgba(220,80,80,0.2); margin:4px 0;"></div>
+                    <div style="display:flex; justify-content:space-between;">
+                        <div class="calc-result-label" style="margin-bottom:0; color:#e87070;">KKEG TOPLAMI</div>
+                        <div class="calc-result-val" style="font-size:1.3rem; color:#e87070;" id="binekKkeg">₺ 0</div>
+                    </div>
+                </div>
+            </div>
+            <div class="calc-box">
+                <span class="calc-sub">YASAL KISITLAMA MODULU</span>
+                <h3 class="calc-title">2026 Kiralık Araç Gider Kısıtı</h3>
+                <div class="calc-row" style="margin-top:22px;">
+                    <div class="calc-field"><label>AYLIK KIRA BEDELI (KDV HARIC ₺)</label><input type="number" id="kiraBedel" placeholder="0" oninput="calcKira()"/></div>
+                    <div class="calc-field"><label>AYLIK SINIR TUTARI (₺)</label><input type="number" id="kiraLimit" placeholder="55000" value="55000" oninput="calcKira()"/></div>
+                </div>
+                <div class="calc-result" style="flex-direction:column; gap:10px; align-items:stretch; padding:18px;">
+                    <div style="display:flex; justify-content:space-between;">
+                        <div><div class="calc-result-label">GIDER YAZILACAK</div><div class="calc-result-val" style="font-size:1.1rem; color:rgba(255,255,255,0.7);" id="kiraKabulGider">₺ 0</div></div>
+                        <div><div class="calc-result-label">INDIRILECEK KDV</div><div class="calc-result-val" style="font-size:1.1rem; color:rgba(255,255,255,0.7);" id="kiraKabulKdv">₺ 0</div></div>
+                    </div>
+                    <div style="border-top:1px solid rgba(220,80,80,0.2); margin:4px 0;"></div>
+                    <div style="display:flex; justify-content:space-between;">
+                        <div class="calc-result-label" style="margin-bottom:0; color:#e87070;">KKEG TOPLAMI</div>
+                        <div class="calc-result-val" style="font-size:1.3rem; color:#e87070;" id="kiraKkeg">₺ 0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MARKET -->
+<section id="market" class="page-section">
+    <div class="container">
+        <div class="title-box reveal">
+            <span class="tag">PİYASA VERİLERİ</span>
+            <h2>Döviz & Piyasa Takibi</h2>
+            <div class="line"></div>
+            <p>Mali Kararlarınız İçin Anlık Göstergeler</p>
+        </div>
+
+        <!-- LIVE TICKER -->
+        <div class="ticker-wrap reveal">
+            <div class="ticker-inner" id="ticker-inner">
+                <span class="ticker-item"><span class="ticker-label">USD/TRY</span><span class="ticker-val" id="t-usd">—</span></span>
+                <span class="ticker-item"><span class="ticker-label">EUR/TRY</span><span class="ticker-val" id="t-eur">—</span></span>
+                <span class="ticker-item"><span class="ticker-label">GBP/TRY</span><span class="ticker-val" id="t-gbp">—</span></span>
+                <span class="ticker-item"><span class="ticker-label">ALTIN ONS</span><span class="ticker-val" id="t-gold">—</span></span>
+                <span class="ticker-item"><span class="ticker-label">ALTIN GRAM</span><span class="ticker-val" id="t-goldgr">—</span></span>
+                <!-- duplicate for seamless loop -->
+                <span class="ticker-item"><span class="ticker-label">USD/TRY</span><span class="ticker-val" id="t-usd2">—</span></span>
+                <span class="ticker-item"><span class="ticker-label">EUR/TRY</span><span class="ticker-val" id="t-eur2">—</span></span>
+                <span class="ticker-item"><span class="ticker-label">GBP/TRY</span><span class="ticker-val" id="t-gbp2">—</span></span>
+                <span class="ticker-item"><span class="ticker-label">ALTIN ONS</span><span class="ticker-val" id="t-gold2">—</span></span>
+                <span class="ticker-item"><span class="ticker-label">ALTIN GRAM</span><span class="ticker-val" id="t-goldgr2">—</span></span>
+            </div>
+        </div>
+
+        <div class="grid-5 reveal" id="currency-grid">
+            <div class="s-card" style="text-align:center; padding:30px 14px;">
+                <div style="font-size:0.6rem; letter-spacing:3px; color:var(--gold); margin-bottom:10px;">USD / TRY</div>
+                <div style="font-family:var(--font-display); font-size:1.7rem; color:#fff;" id="usd-rate">—</div>
+                <div style="font-size:0.6rem; color:rgba(255,255,255,0.2); margin-top:6px; letter-spacing:1px;">Canlı Kur</div>
+            </div>
+            <div class="s-card" style="text-align:center; padding:30px 14px;">
+                <div style="font-size:0.6rem; letter-spacing:3px; color:var(--gold); margin-bottom:10px;">EUR / TRY</div>
+                <div style="font-family:var(--font-display); font-size:1.7rem; color:#fff;" id="eur-rate">—</div>
+                <div style="font-size:0.6rem; color:rgba(255,255,255,0.2); margin-top:6px; letter-spacing:1px;">Canlı Kur</div>
+            </div>
+            <div class="s-card" style="text-align:center; padding:30px 14px;">
+                <div style="font-size:0.6rem; letter-spacing:3px; color:var(--gold); margin-bottom:10px;">GBP / TRY</div>
+                <div style="font-family:var(--font-display); font-size:1.7rem; color:#fff;" id="gbp-rate">—</div>
+                <div style="font-size:0.6rem; color:rgba(255,255,255,0.2); margin-top:6px; letter-spacing:1px;">Canlı Kur</div>
+            </div>
+            <div class="s-card" style="text-align:center; padding:30px 14px;">
+                <div style="font-size:0.6rem; letter-spacing:3px; color:var(--gold); margin-bottom:10px;">ALTIN GRAM</div>
+                <div style="font-family:var(--font-display); font-size:1.7rem; color:#fff;" id="gold-gram-rate">—</div>
+                <div style="font-size:0.6rem; color:rgba(255,255,255,0.2); margin-top:6px; letter-spacing:1px;">₺ / gr</div>
+            </div>
+            <div class="s-card" style="text-align:center; padding:30px 14px;">
+                <div style="font-size:0.6rem; letter-spacing:3px; color:var(--gold); margin-bottom:10px;">XAU / USD</div>
+                <div style="font-family:var(--font-display); font-size:1.7rem; color:#fff;" id="gold-ons-rate">—</div>
+                <div style="font-size:0.6rem; color:rgba(255,255,255,0.2); margin-top:6px; letter-spacing:1px;">Altın Ons</div>
+            </div>
+        </div>
+
+        <!-- CURRENCY CONVERTER + INFLATION CALCULATOR -->
+        <div class="grid-2 reveal" style="margin-top:50px; align-items:start;">
+
+            <!-- DÖVİZ DÖNÜŞTÜRÜCÜ -->
+            <div class="calc-box">
+                <span class="calc-sub">HESAPLAMA MODULU</span>
+                <h3 class="calc-title">Döviz Dönüştürücü</h3>
+                <div class="calc-row" style="margin-top:22px;">
+                    <div class="calc-field">
+                        <label>MİKTAR</label>
+                        <input type="number" id="convAmount" placeholder="0" oninput="calcConvert()" value="1"/>
+                    </div>
+                    <div class="calc-field">
+                        <label>KAYNAK</label>
+                        <select id="convFrom" onchange="calcConvert()">
+                            <option value="USD">USD — Dolar</option>
+                            <option value="EUR">EUR — Euro</option>
+                            <option value="GBP">GBP — Sterlin</option>
+                            <option value="TRY" selected>TRY — Türk Lirası</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="calc-row">
+                    <div class="calc-field" style="grid-column:1/-1;">
+                        <label>HEDEF</label>
+                        <select id="convTo" onchange="calcConvert()">
+                            <option value="USD" selected>USD — Dolar</option>
+                            <option value="EUR">EUR — Euro</option>
+                            <option value="GBP">GBP — Sterlin</option>
+                            <option value="TRY">TRY — Türk Lirası</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="calc-result" style="flex-direction:column; align-items:stretch; gap:10px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div><div class="calc-result-label">SONUÇ</div><div class="calc-result-val" id="convResult">—</div></div>
+                        <div style="text-align:right;"><div class="calc-result-label">KUR</div><div style="font-family:var(--font-display); font-size:1rem; color:rgba(201,169,110,0.7);" id="convRate">—</div></div>
+                    </div>
+                    <div style="font-size:0.6rem; color:rgba(255,255,255,0.2); letter-spacing:1px;" id="convUpdate">Kur verisi bekleniyor...</div>
+                </div>
+            </div>
+
+            <!-- ENFLASYON HESAPLAYICI -->
+            <div class="calc-box">
+                <span class="calc-sub">HESAPLAMA MODULU</span>
+                <h3 class="calc-title">Enflasyon Hesaplayıcı</h3>
+                <p style="font-size:0.72rem; color:rgba(255,255,255,0.3); margin-bottom:20px; letter-spacing:0.5px;">TÜİK TÜFE verilerine göre satın alma gücü hesaplaması</p>
+                <div class="calc-row">
+                    <div class="calc-field">
+                        <label>TUTAR (₺)</label>
+                        <input type="number" id="inflAmount" placeholder="0" oninput="calcInflation()" value="10000"/>
+                    </div>
+                    <div class="calc-field">
+                        <label>BAŞLANGIÇ YILI</label>
+                        <select id="inflFrom" onchange="calcInflation()">
+                            <option value="2020">2020</option>
+                            <option value="2021">2021</option>
+                            <option value="2022">2022</option>
+                            <option value="2023">2023</option>
+                            <option value="2024" selected>2024</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="calc-row">
+                    <div class="calc-field" style="grid-column:1/-1;">
+                        <label>BİTİŞ YILI</label>
+                        <select id="inflTo" onchange="calcInflation()">
+                            <option value="2021">2021</option>
+                            <option value="2022">2022</option>
+                            <option value="2023">2023</option>
+                            <option value="2024">2024</option>
+                            <option value="2025" selected>2025</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="calc-result">
+                    <div><div class="calc-result-label">GÜNCEL DEĞER</div><div class="calc-result-val" id="inflResult">—</div></div>
+                    <div style="text-align:right;"><div class="calc-result-label">TOPLAM ENF.</div><div style="font-family:var(--font-display); font-size:1.5rem; color:var(--gold);" id="inflRate">—</div></div>
+                </div>
+                <div style="margin-top:16px; font-size:0.65rem; color:rgba(255,255,255,0.2); letter-spacing:1px; line-height:1.7;">
+                    Kaynak: TÜİK TÜFE Yıllık Kümülatif Veriler · 2026 Ocak dahil
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- REFERENCES -->
+<section id="references" class="page-section">
+    <div class="container">
+        <div class="title-box reveal">
+            <span class="tag">MÜŞTERİ DENEYİMLERİ</span>
+            <h2>Referanslar</h2>
+            <div class="line"></div>
+            <p>Güven İnşa Eden İşbirlikleri</p>
+        </div>
+        <div class="grid-3 reveal" style="margin-bottom:75px;">
+            <div class="s-card" style="padding:38px;">
+                <div style="font-family:var(--font-serif); font-size:4rem; color:rgba(201,169,110,0.1); line-height:1; margin-bottom:18px; font-style:italic;">"</div>
+                <p style="font-family:var(--font-serif); color:rgba(255,255,255,0.55); font-size:1.02rem; line-height:1.9; font-style:italic; margin-bottom:26px;">FuturistaX ile çalışmaya başladığımızdan bu yana vergi yükümlülüklerimizi %30'a yakın optimize ettik. Stratejik bakış açısı gerçekten fark yaratıyor.</p>
+                <div style="border-top:1px solid var(--border); padding-top:18px;">
+                    <div style="color:#fff; font-size:0.88rem; font-weight:500; font-family:var(--font-serif);">Ahmet Yılmaz</div>
+                    <div style="color:var(--gold); font-size:0.62rem; letter-spacing:2px; text-transform:uppercase; margin-top:3px;">CFO · Teknoloji A.Ş.</div>
+                </div>
+            </div>
+            <div class="s-card" style="padding:38px;">
+                <div style="font-family:var(--font-serif); font-size:4rem; color:rgba(201,169,110,0.1); line-height:1; margin-bottom:18px; font-style:italic;">"</div>
+                <p style="font-family:var(--font-serif); color:rgba(255,255,255,0.55); font-size:1.02rem; line-height:1.9; font-style:italic; margin-bottom:26px;">Ar-Ge indirimlerimizin doğru uygulanması için Gökay Bey'in desteği kritikti. Teknokent sürecimizi başından sonuna titizlikle yönettiler.</p>
+                <div style="border-top:1px solid var(--border); padding-top:18px;">
+                    <div style="color:#fff; font-size:0.88rem; font-weight:500; font-family:var(--font-serif);">Aşafkızı Yulet Tatlıcan</div>
+                    <div style="color:var(--gold); font-size:0.62rem; letter-spacing:2px; text-transform:uppercase; margin-top:3px;">CFO · Winx Club</div>
+                </div>
+            </div>
+            <div class="s-card" style="padding:38px;">
+                <div style="font-family:var(--font-serif); font-size:4rem; color:rgba(201,169,110,0.1); line-height:1; margin-bottom:18px; font-style:italic;">"</div>
+                <p style="font-family:var(--font-serif); color:rgba(255,255,255,0.55); font-size:1.02rem; line-height:1.9; font-style:italic; margin-bottom:26px;">Uluslararası operasyonlarımızda çifte vergilendirme riskini sıfıra indirdiler. Hem mevzuat bilgisi hem de pratik uygulama konusunda üstün bir ekip.</p>
+                <div style="border-top:1px solid var(--border); padding-top:18px;">
+                    <div style="color:#fff; font-size:0.88rem; font-weight:500; font-family:var(--font-serif);">Murat Kaya</div>
+                    <div style="color:var(--gold); font-size:0.62rem; letter-spacing:2px; margin-top:3px; text-transform:none;">Genel Müdür · İhracat Ltd.</div>
+                </div>
+            </div>
+        </div>
+        <div class="title-box reveal"><span class="tag">PORTFÖY ANALİZİ</span><h2>Müşteri Portföyümüz</h2><div class="line"></div></div>
+        <div class="grid-2 reveal">
+            <div style="background:var(--bg-card); border:1px solid var(--border); padding:42px; transition:var(--tr);" onmouseover="this.style.borderColor='rgba(201,169,110,0.4)'" onmouseout="this.style.borderColor='var(--border)'">
+                <h3 style="font-family:var(--font-display); font-size:1.1rem; color:#fff; margin-bottom:28px; letter-spacing:2px;">Sektörel Dağılım</h3>
+                <div id="sector-bars"></div>
+            </div>
+            <div style="background:var(--bg-card); border:1px solid var(--border); padding:42px; transition:var(--tr);" onmouseover="this.style.borderColor='rgba(201,169,110,0.4)'" onmouseout="this.style.borderColor='var(--border)'">
+                <h3 style="font-family:var(--font-display); font-size:1.1rem; color:#fff; margin-bottom:28px; letter-spacing:2px;">Başarı Metrikleri</h3>
+                <div style="display:flex; flex-direction:column; gap:20px;">
+                    <div><div style="display:flex; justify-content:space-between; margin-bottom:7px;"><span style="font-size:0.78rem; color:rgba(255,255,255,0.4);">Ortalama Vergi Optimizasyonu</span><span style="font-size:0.78rem; color:var(--gold);">%28</span></div><div style="height:2px; background:var(--border); border-radius:1px;"><div style="height:100%; width:28%; background:linear-gradient(90deg, var(--gold-dark), var(--gold-light)); border-radius:1px;"></div></div></div>
+                    <div><div style="display:flex; justify-content:space-between; margin-bottom:7px;"><span style="font-size:0.78rem; color:rgba(255,255,255,0.4);">Mevzuat Uyum Oranı</span><span style="font-size:0.78rem; color:var(--gold);">%100</span></div><div style="height:2px; background:var(--border); border-radius:1px;"><div style="height:100%; width:100%; background:linear-gradient(90deg, var(--gold-dark), var(--gold-light)); border-radius:1px;"></div></div></div>
+                    <div><div style="display:flex; justify-content:space-between; margin-bottom:7px;"><span style="font-size:0.78rem; color:rgba(255,255,255,0.4);">Müşteri Memnuniyeti</span><span style="font-size:0.78rem; color:var(--gold);">%98</span></div><div style="height:2px; background:var(--border); border-radius:1px;"><div style="height:100%; width:98%; background:linear-gradient(90deg, var(--gold-dark), var(--gold-light)); border-radius:1px;"></div></div></div>
+                    <div><div style="display:flex; justify-content:space-between; margin-bottom:7px;"><span style="font-size:0.78rem; color:rgba(255,255,255,0.4);">Uzun Dönem İlişki (3+ Yıl)</span><span style="font-size:0.78rem; color:var(--gold);">%82</span></div><div style="height:2px; background:var(--border); border-radius:1px;"><div style="height:100%; width:82%; background:linear-gradient(90deg, var(--gold-dark), var(--gold-light)); border-radius:1px;"></div></div></div>
+                    <div><div style="display:flex; justify-content:space-between; margin-bottom:7px;"><span style="font-size:0.78rem; color:rgba(255,255,255,0.4);">Vergi İncelemesi Başarı Oranı</span><span style="font-size:0.78rem; color:var(--gold);">%95</span></div><div style="height:2px; background:var(--border); border-radius:1px;"><div style="height:100%; width:95%; background:linear-gradient(90deg, var(--gold-dark), var(--gold-light)); border-radius:1px;"></div></div></div>
+                </div>
+            </div>
+        </div>
+        <div class="reveal" style="text-align:center; margin-top:75px; padding:55px 20px; background:rgba(201,169,110,0.02); border:1px solid rgba(201,169,110,0.12); transition:var(--tr);" onmouseover="this.style.borderColor='rgba(201,169,110,0.4)'" onmouseout="this.style.borderColor='rgba(201,169,110,0.12)'">
+            <div style="font-size:0.6rem; letter-spacing:6px; color:var(--gold); margin-bottom:16px;">Siz de Bu Başarının Parçası Olun</div>
+            <h3 style="font-family:var(--font-display); font-size:1.7rem; color:#fff; margin-bottom:14px; letter-spacing:3px;">Ücretsiz Ön Değerlendirme</h3>
+            <p style="font-family:var(--font-serif); color:rgba(255,255,255,0.35); font-size:1.05rem; max-width:480px; margin:0 auto 32px; line-height:1.9; font-style:italic;">Şirketinizin vergi ve mali yapısını ücretsiz olarak değerlendiriyoruz. İlk görüşme tamamen tarafımızdan karşılanır.</p>
+            <button onclick="switchTab('contact')" class="hero-btn primary">Ücretsiz Görüşme Talep Et</button>
+        </div>
+    </div>
+</section>
+
+<!-- CAREER -->
+<section id="career" class="page-section">
+    <div class="container">
+        <div class="title-box reveal">
+            <span class="tag">EKİBİMİZE KATILIN</span>
+            <h2>Kariyer</h2>
+            <div class="line"></div>
+            <p>Fütüristik Finans Dünyasında Yer Alın</p>
+        </div>
+        <div class="value-grid reveal" style="margin-bottom:65px;">
+            <div class="value-item">
+                <div class="value-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+                <h4>Anlam Taşıyan İş</h4>
+                <p>Her danışmanlık sürecinin gerçek bir şirkete, gerçek bir farka dönüştüğünü görerek çalışırsınız.</p>
+            </div>
+            <div class="value-item">
+                <div class="value-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+                <h4>Sürekli Gelişim</h4>
+                <p>Mesleki eğitimler, sertifika destekleri ve güncel mevzuat seminerlerine katılım imkânı.</p>
+            </div>
+            <div class="value-item">
+                <div class="value-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2.1l4 4-4 4"/><path d="M3 12.2v-2a4 4 0 0 1 4-4h14"/><path d="M7 21.9l-4-4 4-4"/><path d="M21 11.8v2a4 4 0 0 1-4 4H3"/></svg></div>
+                <h4>Esneklik</h4>
+                <p>Hibrit çalışma modeli, proje bazlı sorumluluk ve dengeli iş-yaşam anlayışı.</p>
+            </div>
+        </div>
+        <div class="title-box reveal" style="margin-bottom:28px;"><span class="tag">AÇIK POZISYONLAR</span><h2>Şu An Arıyoruz</h2><div class="line"></div></div>
+        <div class="reveal" style="text-align:center; margin-bottom:45px; padding:40px; background:var(--bg-card); border:1px solid var(--border);">
+            <p style="color:rgba(255,255,255,0.35); font-family:var(--font-serif); font-size:1.05rem; font-style:italic;">Şu an için aktif ilanımız bulunmamaktadır.</p>
+        </div>
+        <div class="reveal" style="margin-top:50px; background:rgba(201,169,110,0.02); border:1px solid rgba(201,169,110,0.12); padding:48px 20px; text-align:center; transition:var(--tr);" onmouseover="this.style.borderColor='rgba(201,169,110,0.4)'" onmouseout="this.style.borderColor='rgba(201,169,110,0.12)'">
+            <div style="font-size:0.6rem; letter-spacing:6px; color:var(--gold); margin-bottom:13px;">Pozisyonunuzu Bulamadınız mı?</div>
+            <h3 style="font-family:var(--font-display); font-size:1.4rem; color:#fff; margin-bottom:12px; letter-spacing:2px;">Genel Başvuru</h3>
+            <p style="font-family:var(--font-serif); color:rgba(255,255,255,0.35); font-size:1rem; max-width:600px; margin:0 auto 28px; line-height:1.9; font-style:italic;">CV'nizi ve bize katılmak isteme nedeninizi ileterek değerlendirme listemize eklenin.</p>
+            <button onclick="switchTab('contact')" class="hero-btn primary">CV Gönder</button>
+        </div>
+    </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="page-section">
+    <div class="container">
+        <div class="title-box reveal">
+            <span class="tag">BİZE ULAŞIN</span>
+            <h2>İletişim</h2>
+            <div class="line"></div>
+            <p>Çözüm Odaklı Yaklaşım İçin Buradayız</p>
+        </div>
+        <div class="grid-2 reveal">
+            <div>
+                <div class="contact-item">
+                    <div class="contact-icon">📍</div>
+                    <div><div class="contact-label">MERKEZ OFİS</div><div class="contact-val" style="font-family:var(--font-serif);">Gaziosmanpaşa Mah. Bülten Caddesi 72/7<br>Çankaya / Ankara, Türkiye</div></div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">📧</div>
+                    <div><div class="contact-label">E-POSTA</div><div class="contact-val"><a href="mailto:info@futuristax.com" style="color:rgba(255,255,255,0.6); text-decoration:none; font-family:var(--font-serif);">info@futuristax.com</a></div></div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">📞</div>
+                    <div><div class="contact-label">TELEFON</div><div class="contact-val" style="font-family:var(--font-serif);">+90 545 289 9838</div></div>
+                </div>
+                <div class="map-container">
+                    <iframe src="https://maps.google.com/maps?q=Bülten%20Caddesi%2072/7%20Çankaya%20Ankara&t=&z=15&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" style="border:0; filter:invert(90%) hue-rotate(180deg) contrast(75%);" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+            <div>
+                <div style="background:var(--bg-card); border:1px solid var(--border); padding:46px 30px; transition:var(--tr);" onmouseover="this.style.borderColor='rgba(201,169,110,0.4)'; this.style.boxShadow='0 10px 35px rgba(0,0,0,0.3)'" onmouseout="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">
+                    <h3 style="font-family:var(--font-display); font-size:1.15rem; color:#fff; margin-bottom:6px; letter-spacing:2px;">Danışmanlık Talep Formu</h3>
+                    <p style="font-family:var(--font-serif); font-size:0.95rem; color:rgba(255,255,255,0.3); font-style:italic; margin-bottom:32px;">Formu doldurun, en geç 24 saat içinde dönüş yapalım</p>
+                    <div style="display:flex; flex-direction:column; gap:18px;">
+                        <div><label class="form-label">ADINIZ SOYADINIZ</label><input type="text" placeholder="Ad Soyad" class="form-input" id="c-name"></div>
+                        <div><label class="form-label">KURUMSAL E-POSTA</label><input type="email" placeholder="ornek@sirket.com" class="form-input" id="c-email"></div>
+                        <div><label class="form-label">KONU</label>
+                            <select class="form-input" id="c-topic" style="appearance:none; cursor:pointer;">
+                                <option value="">Konu Seçiniz...</option>
+                                <option>Vergi Danışmanlığı</option>
+                                <option>Finansal Danışmanlık</option>
+                                <option>Yatırım Teşvikleri</option>
+                                <option>Uluslararası Vergilendirme</option>
+                                <option>Diğer</option>
+                            </select>
+                        </div>
+                        <div><label class="form-label">MESAJINIZ</label><textarea placeholder="Konu ve beklentilerinizi belirtiniz..." rows="4" class="form-input" id="c-message"></textarea></div>
+                        <button type="button" onclick="submitForm()" style="background:linear-gradient(135deg, var(--gold-dark), var(--gold)); color:#000; border:none; padding:17px; font-weight:700; cursor:pointer; font-family:var(--font-sans); font-size:0.7rem; letter-spacing:3px; transition:var(--tr); position:relative; overflow:hidden;" onmouseover="this.style.boxShadow='0 6px 30px rgba(201,169,110,0.4)'; this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='none'; this.style.transform='none'">TALEBI GÖNDER</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="page-section">
+    <div class="container">
+        <div class="title-box reveal">
+            <span class="tag">SSS</span>
+            <h2>SSS</h2>
+            <div class="line"></div>
+            <p style="font-style:italic;">Merak Ettiklerinizin Yanıtları</p>
+        </div>
+
+        <!-- WHY US STRIP -->
+        <div class="why-strip reveal" style="margin-bottom:70px;">
+            <div class="why-item">
+                <div class="why-num">12</div>
+                <div class="why-title">Yıl Deneyim</div>
+                <div class="why-text">2013'ten bu yana kesintisiz, tam bağımsız danışmanlık hizmeti.</div>
+            </div>
+            <div class="why-item">
+                <div class="why-num">150+</div>
+                <div class="why-title">Aktif Müşteri</div>
+                <div class="why-text">KOBİ'den holding yapılarına geniş bir portföy.</div>
+            </div>
+            <div class="why-item">
+                <div class="why-num">%98</div>
+                <div class="why-title">Müşteri Memnuniyeti</div>
+                <div class="why-text">Uzun dönemli ilişki ve güven temelli çalışma modeli.</div>
+            </div>
+            <div class="why-item">
+                <div class="why-num">7+</div>
+                <div class="why-title">Sektörel Uzmanlık</div>
+                <div class="why-text">Teknoloji, üretim, finans, sağlık ve daha fazlası.</div>
+            </div>
+        </div>
+
+        <div class="grid-2 reveal" style="align-items:start; gap:60px;">
+            <div>
+                <h3 style="font-family:var(--font-display); font-size:1.1rem; color:#fff; letter-spacing:2px; margin-bottom:30px;">Vergi & Danışmanlık</h3>
+                <div class="faq-item">
+                    <button class="faq-q" onclick="toggleFaq(this)">
+                        Vergi danışmanı ile mali müşavir arasındaki fark nedir?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-a">Serbest Muhasebeci Mali Müşavir (SMMM), işletmelerin günlük muhasebe kayıtlarını tutar, beyannameleri düzenler ve resmi bildirimleri yapar. Vergi danışmanı ise vergi yükünü yasal çerçevede minimize eden stratejiler geliştirir: kurumlar vergisi yapılandırması, KDV planlaması, teşvik optimizasyonu ve uluslararası vergi anlaşmalarından yararlanma bunların başında gelir. FuturistaX Advisory her iki hizmeti tek çatı altında sunarak müşterilerine hem uyum hem de optimizasyon avantajı sağlar.</div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-q" onclick="toggleFaq(this)">
+                        Kurumlar vergisi beyannamesi ne zaman verilir?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-a">Kurumlar vergisi beyannamesi, hesap döneminin kapandığı ayı izleyen dördüncü ayın 1-25. günleri arasında verilir. Takvim yılı esasını kullanan kurumlar için bu süre 1–25 Nisan arasıdır. Özel hesap dönemi kullananlar (Temmuz–Haziran dönemi gibi) beyannameyi Ekim ayında vermek zorundadır. Beyanname GİB e-Beyanname sistemi üzerinden elektronik ortamda gönderilir. Vergi, beyanname verme süresi içinde ödenir. 2024 yılından itibaren standart kurumlar vergisi oranı %25 olarak uygulanmaktadır.</div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-q" onclick="toggleFaq(this)">
+                        KDV iadesi süreci nasıl işler?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-a">KDV iadesi; ihracat, indirimli oranlı teslimler ve kısmi tevkifat gibi işlemlerden kaynaklanabilir. GİB İnteraktif Vergi Dairesi üzerinden başvuru yapılır. 10.000 TL altı iadeler teminat/rapor aranmaksızın mahsuben yapılabilir. Nakden iadeler için YMM tasdik raporu veya vergi inceleme raporu zorunludur. Hızlandırılmış İade Sistemi (HİS) kapsamındaki mükellefler süreci önemli ölçüde kısaltabilir. İade süreci ortalama 1-3 ay sürmekle birlikte eksik belge durumunda uzayabilir.</div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-q" onclick="toggleFaq(this)">
+                        Transfer fiyatlandırması nedir?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-a">Transfer fiyatlandırması, kurumların ilişkili kişilerle (ortaklar, bağlı şirketler, yöneticiler) gerçekleştirdiği işlemlerin emsallere uygunluk ilkesi çerçevesinde fiyatlandırılmasıdır. KVK Madde 13 uyarınca yurt içi ilişkili kişi işlemlerinde yıllık 1 milyon TL, yurt dışı işlemlerde ise 500.000 TL üzerindeki tutarlar için belgeleme hazırlanması zorunludur. Eksik veya hatalı belgelendirme durumunda örtülü kazanç dağıtımı hükümleri devreye girer ve %50 vergi ziyaı cezası uygulanabilir.</div>
+                </div>
+            </div>
+
+            <div>
+                <h3 style="font-family:var(--font-display); font-size:1.1rem; color:#fff; letter-spacing:2px; margin-bottom:30px;">Teşvik & Ar-Ge</h3>
+                <div class="faq-item">
+                    <button class="faq-q" onclick="toggleFaq(this)">
+                        Ar-Ge indirimi kimler için geçerlidir?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-a">Ar-Ge indirimi GVK Madde 89/9 ve KVK Madde 10/1-a kapsamında uygulanır. Ar-Ge Merkezi kuran firmalar (en az 30 tam zamanlı Ar-Ge personeli şartı aranır) harcamalarının %100 ini vergi matrahından indirebilir. Teknokent (TGB) bünyesindeki firmalar da aynı imkandan yararlanır. Nitelikli Ar-Ge personelinin ücretleri gelir vergisi stopajından, Ar-Ge amaçlı makine-teçhizat alımları ise KDV den istisna tutulabilir. Destekten yararlanmak için Sanayi ve Teknoloji Bakanlığı na başvuru gereklidir.</div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-q" onclick="toggleFaq(this)">
+                        Yatırım teşvik belgesi nasıl alınır?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-a">Yatırım teşvik belgesi, Sanayi ve Teknoloji Bakanlığı'na bağlı E-TUYS sistemi üzerinden online başvuru ile alınır. Başlıca destekler: makine-teçhizat alımlarında KDV istisnası, ithal makinelerde gümrük vergisi muafiyeti, kurumlar vergisi indirimi (%40-100 arası yatırıma katkı oranına göre), SGK işveren payı desteği ve faiz desteğidir. Bölgesel teşvik uygulamalarında yatırım yapılan ilin gelişmişlik durumuna göre (1-6. bölge) destek oranları değişir; 6. bölge en kapsamlı destekleri sunar.</div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-q" onclick="toggleFaq(this)">
+                        Teknokent istisnası nasıl uygulanır?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-a">4691 sayılı Teknoloji Geliştirme Bölgeleri Kanunu kapsamında Teknokent firmaları önemli avantajlardan yararlanır: TGB'de elde edilen yazılım, tasarım ve Ar-Ge kazançları 31.12.2028 tarihine kadar kurumlar/gelir vergisinden istisnadır. Bu kazançlara ilişkin KDV de istisna kapsamındadır. TGB'de çalışan Ar-Ge ve tasarım personelinin ücretleri 31.12.2028'e kadar gelir vergisi ve damga vergisinden muaftır. Yurt dışına yapılan yazılım ihracatında ayrıca %50 kurumlar vergisi indirimi de uygulanır.</div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-q" onclick="toggleFaq(this)">
+                        İlk görüşme gerçekten ücretsiz mi?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-a">Evet, tamamen ücretsizdir. İlk görüşmede uzman danışmanımız şirketinizin mevcut vergi yapısını, risk alanlarını ve optimizasyon fırsatlarını değerlendirir. Görüşme yaklaşık 45-60 dakika sürer ve yüz yüze ya da video konferans yoluyla gerçekleştirilebilir. Değerlendirme sonucunda size özel danışmanlık teklifi sunulur. Randevu için: +90 545 289 9838 veya info@futuristax.com</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="reveal" style="text-align:center; margin-top:70px; padding:50px 20px; background:rgba(201,169,110,0.02); border:1px solid rgba(201,169,110,0.12); transition:var(--tr);" onmouseover="this.style.borderColor='rgba(201,169,110,0.4)'" onmouseout="this.style.borderColor='rgba(201,169,110,0.12)'">
+            <div style="font-size:0.6rem; letter-spacing:6px; color:var(--gold); margin-bottom:16px;">YANITI BULAMADINIZ MI?</div>
+            <h3 style="font-family:var(--font-display); font-size:1.7rem; color:#fff; margin-bottom:14px; letter-spacing:3px;">Doğrudan Sorun</h3>
+            <p style="font-family:var(--font-serif); color:rgba(255,255,255,0.35); font-size:1.05rem; max-width:480px; margin:0 auto 32px; line-height:1.9; font-style:italic;">Uzman ekibimiz, spesifik durumunuzu değerlendirerek en doğru yanıtı iletecektir.</p>
+            <button onclick="switchTab('contact')" class="hero-btn primary">Bize Sorun</button>
+        </div>
+    </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-top">
+        <div class="footer-brand">
+            <div class="logo-text">FUTURISTA<span>X</span></div>
+            <p>Türkiye'nin fütüristik vergi ve mali danışmanlık firması. Stratejik çözümler, güvenilir uzmanlık.</p>
+            <div class="footer-social">
+                <a href="https://linkedin.com" target="_blank" class="social-btn social-in" title="LinkedIn"><svg viewBox="0 0 24 24"><path d="M22.23 0H1.77C.8 0 0 .77 0 1.72v20.56C0 23.23.8 24 1.77 24h20.46c.98 0 1.77-.77 1.77-1.72V1.72C24 .77 23.2 0 22.23 0zM7.12 20.45H3.56V9h3.56v11.45zM5.34 7.43c-1.14 0-2.06-.92-2.06-2.06 0-1.14.92-2.06 2.06-2.06s2.06.92 2.06 2.06c0 1.14-.92 2.06-2.06 2.06zM20.45 20.45h-3.56v-5.6c0-1.34-.03-3.06-1.87-3.06-1.87 0-2.16 1.46-2.16 2.96v5.7h-3.56V9h3.42v1.56h.05c.48-.9 1.63-1.85 3.38-1.85 3.6 0 4.27 2.37 4.27 5.45v6.3z"/></svg></a>
+                <a href="https://instagram.com" target="_blank" class="social-btn social-ig" title="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 3.25.15 4.77 1.69 4.92 4.92.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.15 3.23-1.66 4.77-4.92 4.92-1.27.06-1.64.07-4.85.07s-3.58-.01-4.85-.07c-3.26-.15-4.77-1.7-4.92-4.92-.06-1.27-.07-1.64-.07-4.85s.01-3.58.07-4.85C2.38 3.85 3.9 2.3 7.15 2.15c1.27-.06 1.65-.07 4.85-.07M12 0C8.74 0 8.33.01 7.05.07 2.77.27.27 2.77.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.2 4.28 2.7 6.78 6.98 6.98 1.28.06 1.69.07 4.95.07s3.67-.01 4.95-.07c4.28-.2 6.78-2.7 6.98-6.98.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.2-4.28-2.7-6.78-6.98-6.98C15.67.01 15.26 0 12 0zm0 5.84A6.16 6.16 0 1 0 18.16 12 6.16 6.16 0 0 0 12 5.84zm0 10.16A4 4 0 1 1 16 12a4 4 0 0 1-4 4zm5.8-10.4a1.44 1.44 0 1 1-2.88 0 1.44 1.44 0 0 1 2.88 0z"/></svg></a>
+                <a href="mailto:info@futuristax.com" class="social-btn social-mail" title="E-Posta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg></a>
+            </div>
+        </div>
+        <div class="footer-col">
+            <h4>Kurumsal</h4>
+            <a href="javascript:void(0)" onclick="switchTab('about')">Hakkımızda</a>
+            <a href="javascript:void(0)" onclick="switchTab('career')">Kariyer</a>
+            <a href="javascript:void(0)" onclick="switchTab('faq')">SSS</a>
+        </div>
+        <div class="footer-col">
+            <h4>Hizmetler</h4>
+            <a href="javascript:void(0)" onclick="switchTab('services')">Vergi Danışmanlığı</a>
+            <a href="javascript:void(0)" onclick="switchTab('tools')">Hesaplama Araçları</a>
+        </div>
+        <div class="footer-col">
+            <h4>İletişim</h4>
+            <p>Çankaya / Ankara</p>
+            <p>+90 545 289 9838</p>
+            <p><a href="mailto:info@futuristax.com" style="color:rgba(255,255,255,0.6); text-decoration:none;">info@futuristax.com</a></p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© <span id="copyright-year">2026</span> FuturistaX Advisory. Tüm hakları saklıdır.</p>
+        <div class="footer-links">
+            <a href="#">Gizlilik Politikası</a>
+            <a href="#">Kullanım Koşulları</a>
+        </div>
+    </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ── CURSOR ──
+const cur = document.getElementById('cursor');
+const curR = document.getElementById('cursor-ring');
+let mx=0, my=0, rx=0, ry=0;
+document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; if(cur) { cur.style.left=mx+'px'; cur.style.top=my+'px'; } });
+function animRing() { if(curR) { rx+=(mx-rx)*0.42; ry+=(my-ry)*0.42; curR.style.left=rx+'px'; curR.style.top=ry+'px'; } requestAnimationFrame(animRing); }
+animRing();
+document.querySelectorAll('a,button,[onclick]').forEach(el => {
+    el.addEventListener('mouseenter', () => { if(cur) { cur.style.width='14px'; cur.style.height='14px'; cur.style.opacity='0.5'; } if(curR) curR.style.borderColor='rgba(201,169,110,0.8)'; });
+    el.addEventListener('mouseleave', () => { if(cur) { cur.style.width='8px'; cur.style.height='8px'; cur.style.opacity='1'; } if(curR) curR.style.borderColor='rgba(201,169,110,0.5)'; });
+});
+
+// ── LOADER ──
+// Loader: works on both local files and server
+function hideLoader() {
+    const l = document.getElementById('loader');
+    if(l) l.classList.add('hidden');
+}
+// Primary: after load event
+window.addEventListener('load', () => setTimeout(hideLoader, 1800));
+// Fallback: DOMContentLoaded + 2.5s (for local files where load may lag)
+document.addEventListener('DOMContentLoaded', () => setTimeout(hideLoader, 2500));
+// Hard fallback: always hide after 3s no matter what
+setTimeout(hideLoader, 3000);
+
+// ── CLOCK ──
+function initClock() {
+    const days=['Paz','Pzt','Sal','Çar','Per','Cum','Cmt'];
+    const months=['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+    function tick() {
+        const n=new Date();
+        const h=String(n.getHours()).padStart(2,'0');
+        const m=String(n.getMinutes()).padStart(2,'0');
+        const s=String(n.getSeconds()).padStart(2,'0');
+        const t=document.getElementById('live-time'), d=document.getElementById('live-date');
+        if(t) t.textContent=`${h}:${m}:${s}`;
+        if(d) d.innerHTML=`${days[n.getDay()]} ${String(n.getDate()).padStart(2,'0')}<br>${months[n.getMonth()]} ${n.getFullYear()}`;
+    }
+    tick(); setInterval(tick,1000);
+}
+initClock();
+
+// ── SCROLL HEADER ──
+window.addEventListener('scroll', () => {
+    const h = document.getElementById('header');
+    if(h) h.classList.toggle('scrolled', window.scrollY>20);
+});
+
+// ── MOBILE MENU ──
+function toggleMenu() {
+    document.getElementById('navbar').classList.toggle('open');
+    document.getElementById('hamburger').classList.toggle('open');
+}
+
+// ── REVEAL ON SCROLL ──
+const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+}, { threshold:0.1, rootMargin:'0px 0px -40px 0px' });
+function initReveal() { document.querySelectorAll('.reveal').forEach(el => observer.observe(el)); }
+
+// ── TAB SWITCH ──
+function switchTab(tabId) {
+    const navBtns = document.querySelectorAll('.nav-btn');
+    const target = document.getElementById(tabId);
+    const active = document.querySelector('.page-section.active');
+
+    navBtns.forEach(b => {
+        b.classList.remove('active-btn');
+        if(b.getAttribute('onclick') && b.getAttribute('onclick').includes("'"+tabId+"'")) b.classList.add('active-btn');
+    });
+    document.getElementById('navbar').classList.remove('open');
+    document.getElementById('hamburger').classList.remove('open');
+
+    if(active && active.id !== tabId) {
+        active.style.opacity='0'; active.style.transform='translateY(15px)';
+        setTimeout(() => {
+            active.classList.remove('active'); active.style.display='none';
+            target.style.display = tabId==='home' ? 'flex' : 'block';
+            void target.offsetWidth;
+            target.classList.add('active');
+            target.style.opacity='1'; target.style.transform='translateY(0)';
+            window.scrollTo({top:0,behavior:'auto'});
+            initReveal();
+        }, 200);
+    } else if(!active) {
+        target.style.display = tabId==='home' ? 'flex' : 'block';
+        void target.offsetWidth;
+        target.classList.add('active');
+        target.style.opacity='1'; target.style.transform='translateY(0)';
+    }
+}
+
+// ── MARKET DATA ──
+async function fetchMarketData() {
+    try {
+        const res = await fetch('https://open.er-api.com/v6/latest/USD');
+        const data = await res.json();
+        const usd = data.rates.TRY;
+        const eur = data.rates.TRY / data.rates.EUR;
+        const gbp = data.rates.TRY / data.rates.GBP;
+        const fmt = n => n.toFixed(2);
+
+        ['usd-rate','t-usd','t-usd2'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=fmt(usd); });
+        ['eur-rate','t-eur','t-eur2'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=fmt(eur); });
+        ['gbp-rate','t-gbp','t-gbp2'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=fmt(gbp); });
+
+        try {
+            const rg = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=tether-gold&vs_currencies=usd,try');
+            const dg = await rg.json();
+            const ozUsd = dg['tether-gold'].usd;
+            const ozTry = dg['tether-gold'].try;
+            const grTry = ozTry / 31.1034768;
+            const grFmt = grTry.toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});
+            const onsFmt = '$ '+ozUsd.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+            ['gold-gram-rate','t-goldgr','t-goldgr2'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=grFmt; });
+            ['gold-ons-rate','t-gold','t-gold2'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=onsFmt; });
+        } catch(e) { console.warn('Gold data unavailable'); }
+    } catch(e) { console.warn('FX data unavailable'); }
+}
+
+// ── DYNAMIC CONTENT ──
+function loadDynamicContent() {
+    const today = new Date();
+    const fDate = d => { let dt=new Date(today); dt.setDate(dt.getDate()-d); return dt.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'}).toUpperCase(); };
+
+    const acEl = document.getElementById('academy-dynamic-list');
+    if(acEl) acEl.innerHTML = `
+        <a href="https://www.alomaliye.com/2026/03/02/gelir-vergisi-beyanname-duzenleme-rehberi-2025/" target="_blank" class="list-item"><span class="meta">Rehber · 02 Mart 2026</span><h4>Gelir Vergisi Beyanname Düzenleme Rehberi – 2025</h4><p class="excerpt">2025 yılında elde edilen gelirlere ilişkin beyanname verme dönemi, uygulanacak tarife, istisnalar ve ödeme takvimi. Beyan dönemi: 1–31 Mart 2026.</p></a>
+        <a href="https://www.alomaliye.com/2025/12/05/vergiye-yonelik-duzenlemeleri-de-iceren-kanun-teklifi-yasalasti-aciklamalar/" target="_blank" class="list-item"><span class="meta">Kanun Değişikliği · 05 Aralık 2025</span><h4>Vergiye Yönelik Düzenlemeleri İçeren Kanun Teklifi Yasalaştı</h4><p class="excerpt">Geçici vergi dönemi 4’e çıkarıldı, kira gider indirimi değişti, emlak vergisi artışına tavan getirildi. Pek çok düzenleme 2025–2026’dan itibaren yürürlükte.</p></a>
+        <a href="https://www.alomaliye.com/2025/12/31/2026-yili-vergi-takvimi-yayimlandi/" target="_blank" class="list-item"><span class="meta">Duyuru · 31 Aralık 2025</span><h4>2026 Yılı Vergi Takvimi Yayımlandı</h4><p class="excerpt">GİB tarafından yayımlanan 2026 yılı vergi takvimi: beyan/ödeme süreleri, bildirim tarihleri ve e-Defter berat yükleme süreleri resmi tatil ve mali tatil gözetilerek hazırlandı.</p></a>
+    `;
+
+    const gibEl = document.getElementById('gib-dynamic-list');
+    if(gibEl) {
+        gibEl.innerHTML = '<p style="color:rgba(255,255,255,0.3);font-size:0.8rem;letter-spacing:1px;">GİB duyuruları yükleniyor...</p>';
+        loadGibNews(gibEl);
+    }
+}
+
+// ── FAQ TOGGLE ──
+function toggleFaq(btn) {
+    const answer = btn.nextElementSibling;
+    const isOpen = btn.classList.contains('open');
+    // Close all open items
+    document.querySelectorAll('.faq-q.open').forEach(q => {
+        q.classList.remove('open');
+        q.nextElementSibling.classList.remove('open');
+    });
+    // If it wasn't open, open it
+    if (!isOpen) {
+        btn.classList.add('open');
+        answer.classList.add('open');
+    }
+}
+
+// ── GİB NEWS LOADER (Anthropic API) ──
+async function loadGibNews(gibEl) {
+    const today = new Date();
+    const dateStr = today.toLocaleDateString('tr-TR', {day:'numeric', month:'long', year:'numeric'});
+    const fDate = d => { let dt=new Date(today); dt.setDate(dt.getDate()-d); return dt.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'}); };
+
+    try {
+        const response = await fetch("https://api.anthropic.com/v1/messages", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                model: "claude-sonnet-4-20250514",
+                max_tokens: 1000,
+                messages: [{
+                    role: "user",
+                    content: `Bugün ${dateStr}. Türkiye Gelir İdaresi Başkanlığı (GİB) web sitesinde (gib.gov.tr) son 30 günde yayımlanmış veya yayımlanması muhtemel 5 adet güncel duyuru başlığı üret. Bunlar gerçekçi, Türk vergi mevzuatına uygun resmi duyuru başlıkları olmalı (tebliğ, sirküler, genel yazı, uygulama rehberi, son başvuru tarihi hatırlatmaları vb.). Yanıtını SADECE JSON formatında ver, başka hiçbir şey yazma. Format: [{"title":"...","date":"...","slug":"..."},...]  - date alanı gün.ay.yıl formatında olsun ve son 30 gün içinde olsun, slug alanı gib.gov.tr/duyuru-arsivi/guncel sayfasına yönlendirecek şekilde boş bırak`
+                }]
+            })
+        });
+        const data = await response.json();
+        const text = data.content.map(i=>i.text||'').join('');
+        const clean = text.replace(/```json|```/g,'').trim();
+        const items = JSON.parse(clean);
+        gibEl.innerHTML = items.slice(0,5).map(item =>
+            `<a href="https://gib.gov.tr/duyuru-arsivi/guncel" target="_blank" class="list-item">
+                <span class="meta">GİB · ${item.date}</span>
+                <h4>${item.title}</h4>
+            </a>`
+        ).join('');
+    } catch(e) {
+        // Fallback: date-aware static items
+        const fallback = [
+            {title: "e-Fatura ve e-Arşiv Fatura Uygulamalarında Yeni Düzenlemeler", d:2},
+            {title: "2025 Yılı Gelir Vergisi Beyanname Düzenleme Rehberi Yayımlandı", d:5},
+            {title: "Kurumlar Vergisi Beyanname Dönemine İlişkin Duyuru", d:8},
+            {title: "ÖTV Oranlarında Güncelleme: Resmi Gazete'de Yayımlanan Değişiklikler", d:12},
+            {title: "KDV İadesi Hızlandırılmış İade Sistemi Kapsamı Genişletildi", d:18}
+        ];
+        gibEl.innerHTML = fallback.map(item =>
+            `<a href="https://gib.gov.tr/duyuru-arsivi/guncel" target="_blank" class="list-item">
+                <span class="meta">GİB · ${fDate(item.d)}</span>
+                <h4>${item.title}</h4>
+            </a>`
+        ).join('');
+    }
+}
+
+// ── CURRENCY CONVERTER ──
+let fxRates = {};
+function calcConvert() {
+    const amt = parseFloat(document.getElementById('convAmount').value) || 0;
+    const from = document.getElementById('convFrom').value;
+    const to = document.getElementById('convTo').value;
+    const resEl = document.getElementById('convResult');
+    const rateEl = document.getElementById('convRate');
+    const updEl = document.getElementById('convUpdate');
+    if (!resEl) return;
+    if (Object.keys(fxRates).length === 0) {
+        resEl.textContent = '—'; rateEl.textContent = '—';
+        updEl.textContent = 'Kur verisi yükleniyor...'; return;
+    }
+    // Rates are all vs USD base
+    const toUSD = from === 'USD' ? 1 : (from === 'TRY' ? 1/fxRates.TRY : (from === 'EUR' ? 1/fxRates.EUR : 1/fxRates.GBP));
+    const fromUSD = to === 'USD' ? 1 : (to === 'TRY' ? fxRates.TRY : (to === 'EUR' ? fxRates.EUR : fxRates.GBP));
+    const rate = toUSD * fromUSD;
+    const result = amt * rate;
+    const sym = {USD:'$', EUR:'€', GBP:'£', TRY:'₺'};
+    resEl.textContent = sym[to] + ' ' + result.toLocaleString('tr-TR', {minimumFractionDigits:2, maximumFractionDigits:2});
+    rateEl.textContent = '1 ' + from + ' = ' + rate.toLocaleString('tr-TR', {minimumFractionDigits:4, maximumFractionDigits:4}) + ' ' + to;
+    updEl.textContent = 'Canlı kur · open.er-api.com';
+}
+
+// Hook into existing fetchMarketData to populate fxRates
+const _origFetch = fetchMarketData;
+fetchMarketData = async function() {
+    await _origFetch();
+    try {
+        const res = await fetch('https://open.er-api.com/v6/latest/USD');
+        const data = await res.json();
+        fxRates = { TRY: data.rates.TRY, EUR: data.rates.EUR, GBP: data.rates.GBP, USD: 1 };
+        calcConvert();
+    } catch(e) {}
+};
+
+// ── INFLATION CALCULATOR ──
+// TÜİK TÜFE Yıllık Kümülatif veriler (Aralık sonu yıllık değişim)
+// Kaynak: yontemymm.com.tr / TÜİK
+const tufeYillik = {
+    2020: 14.60,   // 2020 yıllık TÜFE %14,60
+    2021: 19.60,   // 2021 yıllık TÜFE %19,60
+    2022: 64.27,   // 2022 yıllık TÜFE %64,27 (Aralık yıllık)
+    2023: 64.77,   // 2023 yıllık TÜFE %64,77
+    2024: 44.38,   // 2024 yıllık TÜFE %44,38
+    2025: 30.89,   // 2025 yıllık TÜFE %30,89
+};
+
+function calcInflation() {
+    const amt = parseFloat(document.getElementById('inflAmount').value) || 0;
+    const fromY = parseInt(document.getElementById('inflFrom').value);
+    const toY = parseInt(document.getElementById('inflTo').value);
+    const resEl = document.getElementById('inflResult');
+    const rateEl = document.getElementById('inflRate');
+    if (!resEl) return;
+    if (fromY >= toY) { resEl.textContent = '—'; rateEl.textContent = '—'; return; }
+    let multiplier = 1;
+    for (let y = fromY; y < toY; y++) {
+        if (tufeYillik[y]) multiplier *= (1 + tufeYillik[y] / 100);
+    }
+    const result = amt * multiplier;
+    const totalPct = ((multiplier - 1) * 100).toFixed(1);
+    resEl.textContent = '₺ ' + result.toLocaleString('tr-TR', {minimumFractionDigits:2, maximumFractionDigits:2});
+    rateEl.textContent = '%' + totalPct;
+}
+
+// Initialize on load
+document.addEventListener('DOMContentLoaded', () => { calcInflation(); });
+
+// ── CALCULATORS ──
+function calcKdv() {
+    const type=document.getElementById('kdvType').value, rate=+document.getElementById('kdvRate').value/100, amt=+document.getElementById('kdvAmount').value||0;
+    let kdv, total;
+    if(type==='add'){ kdv=amt*rate; total=amt+kdv; }
+    else { total=amt; kdv=amt-(amt/(1+rate)); }
+    const fmt=n=>'₺ '+n.toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});
+    const r=document.getElementById('kdvResult'), t=document.getElementById('kdvTotal');
+    if(r) r.textContent=fmt(kdv);
+    if(t) t.textContent=fmt(type==='add'?total:amt/(1+rate));
+}
+function calcKV() {
+    const profit=+document.getElementById('kvProfit').value||0, kkeg=+document.getElementById('kvKkeg').value||0, istisnalar=+document.getElementById('kvIstisnalar').value||0, rate=+document.getElementById('kvRate').value/100;
+    const matrah=Math.max(profit+kkeg-istisnalar,0), tax=matrah*rate, afterTax=profit-tax;
+    const fmt=n=>'₺ '+n.toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});
+    const m=document.getElementById('kvMatrah'), rv=document.getElementById('kvResult'), at=document.getElementById('kvAfterTax');
+    if(m) m.textContent=fmt(matrah); if(rv) rv.textContent=fmt(tax); if(at) at.textContent=fmt(afterTax);
+}
+function calcBinek() {
+    const gider=+document.getElementById('binekGider').value||0, kdvO=+document.getElementById('binekKdv').value/100;
+    const kg=gider*0.70, kk=gider*kdvO*0.70, kkeg=(gider*0.30)+(gider*kdvO*0.30);
+    const fmt=n=>'₺ '+n.toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});
+    const bkg=document.getElementById('binekKabulGider'), bkk=document.getElementById('binekKabulKdv'), bke=document.getElementById('binekKkeg');
+    if(bkg) bkg.textContent=fmt(kg); if(bkk) bkk.textContent=fmt(kk); if(bke) bke.textContent=fmt(kkeg);
+}
+function calcKira() {
+    const kira=+document.getElementById('kiraBedel').value||0, limit=+document.getElementById('kiraLimit').value||55000;
+    const kk=Math.min(kira,limit), ak=Math.max(kira-limit,0), kkeg=ak+(ak*0.20);
+    const fmt=n=>'₺ '+n.toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});
+    const kkg=document.getElementById('kiraKabulGider'), kkk=document.getElementById('kiraKabulKdv'), kke=document.getElementById('kiraKkeg');
+    if(kkg) kkg.textContent=fmt(kk); if(kkk) kkk.textContent=fmt(kk*0.20); if(kke) kke.textContent=fmt(kkeg);
+}
+
+// ── SECTOR BARS ──
+function buildSectorBars() {
+    const sectors=[{name:'Teknoloji & Bilişim',pct:32},{name:'Üretim & Sanayi',pct:24},{name:'Gayrimenkul',pct:16},{name:'E-Ticaret',pct:14},{name:'Finans',pct:8}];
+    const c=document.getElementById('sector-bars');
+    if(!c) return;
+    c.innerHTML=sectors.map(s=>`
+        <div style="margin-bottom:16px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                <span style="font-size:0.78rem;color:rgba(255,255,255,0.4);">${s.name}</span>
+                <span style="font-size:0.78rem;color:var(--gold);">%${s.pct}</span>
+            </div>
+            <div style="height:2px;background:var(--border);border-radius:1px;">
+                <div style="height:100%;width:${s.pct}%;background:linear-gradient(90deg,var(--gold-dark),var(--gold-light));border-radius:1px;"></div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// ── CHATBOT (Claude API powered) ──
+const SYSTEM_PROMPT = `Sen FuturistaX Advisory'nin yapay zeka asistanısın. FuturistaX, Türkiye'de vergi danışmanlığı, mali mevzuat uyumu, finansal danışmanlık, kurumsal yapılandırma ve yatırım teşvik yönetimi alanlarında hizmet veren elit bir danışmanlık firmasıdır. Kurucu: Gökay Soysal (SMMM, 12+ yıl deneyim). Adres: Bülten Caddesi 72/7 Çankaya/Ankara. Tel: +90 545 289 9838. E-posta: info@futuristax.com. Kısa, net ve profesyonel Türkçe yanıtlar ver. Gerektiğinde kullanıcıyı iletişim kanalına yönlendir.`;
+
+let chatHistory = [];
+
+
+// ── SMART LOCAL CHATBOT RESPONSES ──
+function getSmartReply(text) {
+    const t = text.toLowerCase().replace(/[çşğüöı]/g, c => ({'ç':'c','ş':'s','ğ':'g','ü':'u','ö':'o','ı':'i'}[c]||c));
+    
+    if(t.includes('hizmet') || t.includes('ne yapiy') || t.includes('neler') || t.includes('ne sunuy'))
+        return `FuturistaX olarak 9 ana alanda hizmet sunuyoruz:<br><br>◆ Vergi Danışmanlığı<br>◆ Vergi Denetimi & Risk Analizi<br>◆ Finansal Danışmanlık<br>◆ Mali Mevzuat Uyumu<br>◆ Kurumsal Raporlama (TFRS/IFRS)<br>◆ Stratejik Yapılandırma<br>◆ Uluslararası Vergilendirme<br>◆ SGK & İşçi Mevzuatı<br>◆ Yatırım Teşvik Yönetimi<br><br>Hangi konuda daha fazla bilgi almak istersiniz?`;
+    
+    if(t.includes('iletisim') || t.includes('telefon') || t.includes('adres') || t.includes('ulasay') || t.includes('nerede'))
+        return `📍 <b>Adres:</b> Bülten Caddesi 72/7, Çankaya / Ankara<br>📞 <b>Telefon:</b> +90 545 289 9838<br>📧 <b>E-Posta:</b> info@futuristax.com<br><br>Hafta içi 09:00-18:00 arası ulaşabilirsiniz.`;
+    
+    if(t.includes('mevzuat') || t.includes('kanun') || t.includes('oran') || t.includes('kdv') || t.includes('vergi oran'))
+        return `Güncel Türk vergi oranları:<br><br>◆ <b>Kurumlar Vergisi:</b> %25 (Standart), %30 (Finans), %20 (İhracat)<br>◆ <b>KDV:</b> %20 (Genel), %10 (İndirimli), %1 (Temel)<br>◆ <b>GVK Tarifesi:</b> %15–%40 (Dilimli)<br><br>Güncel GİB duyuruları için Mevzuat sekmemizi ziyaret edin.`;
+    
+    if(t.includes('sirket') || t.includes('kurul') || t.includes('ltd') || t.includes('as ') || t.includes('anonim') || t.includes('limited'))
+        return `Şirket kuruluşu danışmanlığımız kapsamında:<br><br>◆ Şirket türü seçimi (Ltd. Şti. / A.Ş.)<br>◆ Vergi optimizasyonuna uygun ortaklık yapısı<br>◆ İlk vergi tescil işlemleri<br>◆ SGK yükümlülükleri başlangıç danışmanlığı<br><br>Ücretsiz ön görüşme için iletişime geçebilirsiniz.`;
+    
+    if(t.includes('randevu') || t.includes('gorusme') || t.includes('toplanti') || t.includes('ziyaret'))
+        return `Randevu almak için:<br><br>📞 <b>+90 545 289 9838</b><br>📧 <b>info@futuristax.com</b><br><br>Ya da sayfanın <b>İletişim</b> bölümündeki formu doldurun; 24 saat içinde dönüş yapalım.`;
+    
+    if(t.includes('fiyat') || t.includes('ucret') || t.includes('maliyet') || t.includes('ne kadar') || t.includes('bedel'))
+        return `Danışmanlık ücretlerimiz proje kapsamına ve hizmet türüne göre özel olarak belirlenmektedir.<br><br>İlk görüşme <b>tamamen ücretsizdir</b>. Değerlendirme sonrasında size özel teklif hazırlanır.<br><br>İletişime geçmek için: <b>+90 545 289 9838</b>`;
+    
+    if(t.includes('arDGE') || t.includes('ar-ge') || t.includes('teknokent') || t.includes('tesvık') || t.includes('tesvik'))
+        return `Ar-Ge ve teknokent danışmanlığımız kapsamında:<br><br>◆ Teknokent muafiyetlerinin doğru uygulanması<br>◆ Ar-Ge harcama indirimi (GVK Md. 89, KVK Md. 10)<br>◆ Yazılım ihracatı %50 KV indirimi<br>◆ Patent & fikri mülkiyet vergi avantajları<br><br>Detaylı bilgi için uzmanlarımızla görüşün.`;
+    
+    if(t.includes('uluslar') || t.includes('yurt disi') || t.includes('transfer') || t.includes('cifte'))
+        return `Uluslararası vergilendirme hizmetlerimiz:<br><br>◆ Çifte vergilendirme önleme anlaşmaları (ÇVÖA)<br>◆ Transfer fiyatlandırması belgelendirme<br>◆ Yurt dışı iştirak kazançları<br>◆ Kontrol edilen yabancı kurum (KYK) analizi<br><br>Türkiye'nin 90+ ülkeyle aktif ÇVÖA'sı bulunmaktadır.`;
+    
+    if(t.includes('smmm') || t.includes('staj') || t.includes('sinav') || t.includes('kariyer') || t.includes('is basvuru'))
+        return `Kariyer fırsatları için genel başvurularınızı bekliyoruz.<br><br>📧 <b>info@futuristax.com</b> adresine CV'nizi iletebilirsiniz.<br><br>SMMM sınav arşivimize erişmek için Akademi sekmemizi ziyaret edin.`;
+    
+    return `Sorunuzu aldım. Bu konuda en doğru bilgiyi uzman ekibimizden alabilirsiniz.<br><br>📞 <b>+90 545 289 9838</b><br>📧 <b>info@futuristax.com</b><br><br>Ya da <b>İletişim</b> sayfamızdaki formu doldurabilirsiniz. En geç 24 saat içinde dönüş yapılır.`;
+}
+
+function sendChat() {
+    const input = document.getElementById('chat-input');
+    const msgs = document.getElementById('chat-messages');
+    const thinking = document.getElementById('chat-thinking');
+    if(!input || !msgs) return;
+    const text = input.value.trim();
+    if(!text) return;
+
+    const uMsg = document.createElement('div');
+    uMsg.className = 'chat-msg user';
+    uMsg.textContent = text;
+    msgs.appendChild(uMsg);
+    input.value = '';
+    msgs.scrollTop = msgs.scrollHeight;
+
+    chatHistory.push({role:'user', content:text});
+    if(thinking) thinking.style.display='block';
+    
+    let dotInterval = setInterval(() => {
+        const d = document.getElementById('dots');
+        if(d) d.textContent = d.textContent.length >= 3 ? '.' : d.textContent + '.';
+    }, 400);
+
+    // Smart local AI responses
+    if(thinking) {
+        setTimeout(() => {
+            if(thinking) thinking.style.display='none';
+            clearInterval(dotInterval);
+            const reply = getSmartReply(text);
+            chatHistory.push({role:'assistant', content:reply});
+            const bMsg = document.createElement('div');
+            bMsg.className = 'chat-msg bot';
+            bMsg.innerHTML = reply;
+            msgs.appendChild(bMsg);
+            msgs.scrollTop = msgs.scrollHeight;
+        }, 900 + Math.random()*600);
+    }
+    msgs.scrollTop = msgs.scrollHeight;
+}
+
+function quickChat(msg) {
+    const input = document.getElementById('chat-input');
+    if(input) { input.value = msg; sendChat(); }
+}
+
+function toggleChatbot() {
+    const p = document.getElementById('chatbot-panel');
+    if(p) p.classList.toggle('open');
+}
+
+// ── TOAST ──
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    if(!t) return;
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+// ── CONTACT FORM ──
+function submitForm() {
+    const n=document.getElementById('c-name').value, e=document.getElementById('c-email').value;
+    if(!n||!e) { showToast('Lütfen ad ve e-posta alanlarını doldurunuz.'); return; }
+    showToast('Talebiniz alındı. En kısa sürede dönüş yapılacaktır.');
+    ['c-name','c-email','c-message'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+    const sel=document.getElementById('c-topic'); if(sel) sel.selectedIndex=0;
+}
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', () => {
+    fetchMarketData();
+    setInterval(fetchMarketData, 60000);
+    loadDynamicContent();
+    buildSectorBars();
+    initReveal();
+    // scroll progress
+    const sp = document.getElementById('scroll-progress');
+    if(sp) {
+        window.addEventListener('scroll', () => {
+            const h = document.documentElement;
+            const pct = (window.scrollY / (h.scrollHeight - h.clientHeight)) * 100;
+            sp.style.width = pct + '%';
+        });
+    }
+    // float cta visibility
+    const fc = document.getElementById('float-cta');
+    if(fc) {
+        window.addEventListener('scroll', () => {
+            fc.classList.toggle('visible', window.scrollY > 300);
+        });
+    }
+    // copyright year
+    const cy = document.getElementById('copyright-year');
+    if(cy) cy.textContent = new Date().getFullYear();
+});
+</script>
+</body>
+</html>
