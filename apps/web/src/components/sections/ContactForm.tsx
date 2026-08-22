@@ -1,15 +1,10 @@
 'use client';
 
-import { TurnstileWidget } from '@/components/consent/TurnstileWidget';
-import {
-  type ContactInput,
-  TOPIC_LABELS,
-  contactSchema,
-  contactTopics,
-} from '@/lib/validation/contact';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { TurnstileWidget } from '@/components/consent/TurnstileWidget';
+import { TOPIC_LABELS, type ContactInput, contactSchema, contactTopics } from '@/lib/validation/contact';
 
 /**
  * Danışmanlık talep formu.
@@ -42,31 +37,48 @@ export function ContactForm({ turnstileSiteKey }: { turnstileSiteKey: string }) 
     }
 
     setStatus({ kind: 'sending' });
+
+    let response: Response;
     try {
-      const response = await fetch('/api/contact', {
+      response = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...values, turnstileToken }),
       });
-      const body = (await response.json()) as { ok: boolean; message: string };
-
-      if (!response.ok || !body.ok) {
-        setStatus({ kind: 'failed', message: body.message });
-        return;
-      }
-
-      reset();
-      setTurnstileToken('');
-      setStatus({
-        kind: 'sent',
-        message: 'Talebiniz alındı. En geç bir iş günü içinde dönüş yapacağız.',
-      });
     } catch {
+      // Yalnızca istek hiç ulaşamadığında ağ hatası bildirilir.
       setStatus({
         kind: 'failed',
         message: 'Bağlantı kurulamadı. İnternet bağlantınızı kontrol edip tekrar deneyin.',
       });
+      return;
     }
+
+    // Sunucu çökerse JSON yerine HTML döner. Bunu ağ hatası gibi göstermek
+    // yanıltıcıdır: kullanıcı kendi bağlantısını suçlar, oysa sorun bizde.
+    let body: { ok?: boolean; message?: string } | null = null;
+    try {
+      body = (await response.json()) as { ok?: boolean; message?: string };
+    } catch {
+      body = null;
+    }
+
+    if (!response.ok || !body?.ok) {
+      setStatus({
+        kind: 'failed',
+        message:
+          body?.message ??
+          'Talebiniz gönderilemedi. Lütfen biraz sonra tekrar deneyin ya da bize doğrudan ulaşın.',
+      });
+      return;
+    }
+
+    reset();
+    setTurnstileToken('');
+    setStatus({
+      kind: 'sent',
+      message: 'Talebiniz alındı. En geç bir iş günü içinde dönüş yapacağız.',
+    });
   }
 
   const fieldClass =

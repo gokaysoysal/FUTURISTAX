@@ -26,19 +26,20 @@ const ratelimit = new Ratelimit({
   analytics: true,
 });
 
-async function verifyTurnstile(token: string, ip: string): Promise<boolean> {
-  const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      secret: serverEnv().TURNSTILE_SECRET_KEY,
-      response: token,
-      remoteip: ip,
-    }),
-  });
-  if (!response.ok) return false;
-  const result = (await response.json()) as { success?: boolean };
-  return result.success === true;
+async function verifyTurnstile(secret: string, token: string, ip: string): Promise<boolean> {
+  try {
+    const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ secret, response: token, remoteip: ip }),
+    });
+    if (!response.ok) return false;
+    const result = (await response.json()) as { success?: boolean };
+    return result.success === true;
+  } catch (error) {
+    console.error('[contact] Turnstile doğrulaması yapılamadı', error);
+    return false;
+  }
 }
 
 function clientIp(request: NextRequest): string {
@@ -56,6 +57,21 @@ function fail(message: string, status: number, fieldErrors?: Record<string, stri
 
 export async function POST(request: NextRequest) {
   const ip = clientIp(request);
+
+  // Ortam değişkenleri en başta ve KORUMALI okunur. Eksik yapılandırma
+  // yüzünden route çökerse istemci JSON yerine HTML hata sayfası alır ve
+  // "bağlantı kurulamadı" gibi yanıltıcı bir mesaj görür.
+  let env: ReturnType<typeof serverEnv>;
+  try {
+    env = serverEnv();
+  } catch (error) {
+    console.error('[contact] yapılandırma eksik', error);
+    return fail(
+      'Form şu anda yapılandırma nedeniyle çalışmıyor. Lütfen doğrudan ' +
+        `${site.contact.email} adresine yazın ya da ${site.contact.phoneDisplay} numarasını arayın.`,
+      503,
+    );
+  }
 
   let payload: unknown;
   try {
@@ -90,12 +106,15 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const humanVerified = await verifyTurnstile(data.turnstileToken, ip);
+  const humanVerified = await verifyTurnstile(
+    env.TURNSTILE_SECRET_KEY,
+    data.turnstileToken,
+    ip,
+  );
   if (!humanVerified) {
     return fail('Güvenlik doğrulaması tamamlanamadı. Sayfayı yenileyip tekrar deneyin.', 403);
   }
 
-  const env = serverEnv();
   const resend = new Resend(env.RESEND_API_KEY);
   const topicLabel = TOPIC_LABELS[data.topic];
 

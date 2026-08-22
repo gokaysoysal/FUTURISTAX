@@ -33,12 +33,22 @@ const serverSchema = z.object({
   UPSTASH_REDIS_REST_URL: z.string().url(),
   UPSTASH_REDIS_REST_TOKEN: z.string().min(1),
 
-  // AI — YALNIZCA sunucuda. Asla NEXT_PUBLIC_ yapılmaz.
-  ANTHROPIC_API_KEY: z.string().min(1),
-
-  // CMS
-  SANITY_API_READ_TOKEN: z.string().min(1),
-  SANITY_REVALIDATE_SECRET: z.string().min(1),
+  /**
+   * HENÜZ KULLANILMAYAN DEĞİŞKENLER — bilinçli olarak OPSİYONEL.
+   *
+   * Bunlar zorunlu tutulduğunda, onlara hiç ihtiyaç duymayan kod yolları da
+   * çöküyordu: iletişim formu, henüz kurulmamış CMS ve AI anahtarları eksik
+   * diye 500 veriyordu. Doğrulama, bir değişkeni gerçekten kullanan özellik
+   * devreye girdiğinde anlamlıdır — öncesinde değil.
+   *
+   * İlgili aşamada `.min(1)` yapılıp zorunlu hâle getirilecek:
+   *   ANTHROPIC_API_KEY        → Aşama 11 (RAG asistanı)
+   *   SANITY_API_READ_TOKEN    → Aşama 6 (CMS)
+   *   SANITY_REVALIDATE_SECRET → Aşama 6 (CMS)
+   */
+  ANTHROPIC_API_KEY: z.string().optional(),
+  SANITY_API_READ_TOKEN: z.string().optional(),
+  SANITY_REVALIDATE_SECRET: z.string().optional(),
 });
 
 const clientSchema = z.object({
