@@ -4,7 +4,7 @@
 > neden böyle yapıldığını ve sıradaki işi burada bulursun. Her aşama sonunda
 > güncellenir.
 
-**Son güncelleme:** Aşama 2 sonu
+**Son güncelleme:** Aşama 3 başlangıcı (dağıtım kurulumu)
 **Depo:** futuristax — Next.js 15 monorepo (pnpm + Turborepo)
 **Hedef:** futuristax.com'un tek dosyalık `index.html` prototipinin yerini almak
 
@@ -38,7 +38,7 @@ Mevcut canlı site tek bir `index.html` içinde ~5.000 satır. Tespit edilen ve
 |---|---|---|
 | 1 | Temel — monorepo, vergi motoru, tasarım sistemi, form API, takvim | ✅ Tamam |
 | 2 | Yayına çıkılabilir çekirdek — yasal sayfalar, Turnstile, çerez onayı, lead DB | ✅ Tamam |
-| 3 | İlk deploy — Vercel, Sentry, alan adı, CI yeşil | ⏭️ **Sıradaki** |
+| 3 | İlk deploy — **Netlify**, Neon, Resend, Turnstile, Sentry | 🔄 Devam ediyor |
 | 4 | Hizmet sayfaları — 9 hizmet ayrı URL, şema, CTA | ⏳ |
 | 5 | Sektör + kurumsal — 7 sektör, Hakkımızda, Ekip, Referanslar, Kariyer, SSS | ⏳ |
 | 6 | CMS — Sanity Studio, içerik tipleri, canlı önizleme, webhook | ⏳ |
@@ -119,6 +119,8 @@ Kod içinde `TODO(aşama-N)` olarak işaretli:
   kullanıcıya bildiriliyor. Bkz. `docs/decisions/0003-holiday-shift.md`.
 - **Yasal metinler taslak.** `LEGAL_TEXTS_APPROVED = false` olduğu sürece
   sayfalar `noindex` ve üstlerinde uyarı bandı var.
+- **Lint borcu.** `pnpm lint` bir dizi biçim/erişilebilirlik uyarısı veriyor.
+  Aşama 10'da (tasarım sistemi) toplu temizlenecek.
 - **KVKK aktarım bölümü eksik** — kullanılan sağlayıcılar (Vercel, Resend, Neon,
   Cloudflare, Upstash) ve yurt dışı aktarım beyanı yazılmalı.
 
@@ -139,6 +141,17 @@ Bunlar teknik değil; uydurulmamıştır ve sorulmadan doldurulmamalıdır.
 5. **Hukukçu onayı** — KVKK ve çerez metinleri için.
 
 ---
+
+## 7b. Barındırma — ÖNEMLİ
+
+futuristax.com **Netlify** üzerinden, bu deponun `main` dalından yayınlanıyor.
+Vercel'e taşınmıyoruz; Netlify'da kalıyoruz.
+
+`main` dalında eski `index.html` hâlâ kökte duruyor ve canlı siteyi besliyor.
+`v2` → `main` birleştirmesi yapıldığı an üretim yeni siteye geçer. Bu yüzden
+birleştirme, Aşama 3'ün kabul kriterleri sağlanmadan YAPILMAZ.
+
+Kurulum adımları: `docs/ASAMA-03-DAGITIM.md`
 
 ## 8. Çalışma döngüsü
 
