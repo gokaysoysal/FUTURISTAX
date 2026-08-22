@@ -12,6 +12,18 @@
 
 [build.environment]
   NODE_VERSION = "22"
+
+  # Sır tarama istisnaları.
+  #
+  # NEXT_PUBLIC_ önekli değişkenler TASARIM GEREĞİ herkese açıktır: Next.js
+  # bunları derleme sırasında istemci paketine gömer, tarayıcıya gönderir.
+  # Sır tarayıcısı onları derleme çıktısında bulup alarm veriyor — doğru
+  # davranış değil, çünkü gizli kalmaları zaten mümkün değil.
+  #
+  # Bu listeye YALNIZCA herkese açık olduğu kesin olan anahtarlar eklenir.
+  # DATABASE_URL, RESEND_API_KEY, TURNSTILE_SECRET_KEY gibi gerçek sırlar
+  # ASLA buraya yazılmaz — onların taranması bizi korur.
+  SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_SITE_URL,NEXT_PUBLIC_TURNSTILE_SITE_KEY,NEXT_PUBLIC_SANITY_PROJECT_ID,NEXT_PUBLIC_SANITY_DATASET,NEXT_PUBLIC_GA_ID"
   # Kilit dosyasına birebir uyulur; sessiz sürüm kayması olmaz.
   PNPM_FLAGS = "--frozen-lockfile"
   # Next.js derleme sırasında telemetri göndermesin.

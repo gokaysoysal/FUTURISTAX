@@ -8,13 +8,20 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-# Derleme sırasında gereken herkese açık değişkenler. Bunlar sır DEĞİLDİR:
-# Turnstile anahtarı Cloudflare'in resmî "her zaman geçer" test anahtarıdır,
-# diğerleri yer tutucudur. Gerçek değerler Netlify ortam değişkenlerinde tutulur.
+# Derleme sırasında gereken yer tutucular.
+#
+# Buraya GERÇEK anahtar biçiminde değer YAZILMAZ — Cloudflare'in herkese açık
+# test anahtarları bile olsa. Sebebi: Netlify'ın sır tarayıcısı, ortam
+# değişkenlerinin değerlerini depo dosyalarında arar. Depoda birebir aynı metin
+# bulunursa derleme durur. Ayrıca bu alışkanlık, bir gün gerçek bir anahtarın
+# yanlışlıkla buraya yazılmasını kolaylaştırır.
+#
+# CI derlemesinin tek ihtiyacı, Zod şemasının `.min(1)` kontrolünü geçen boş
+# olmayan bir metindir. Anlamlı olması gerekmez.
 env:
-  NEXT_PUBLIC_SITE_URL: https://futuristax.com
-  NEXT_PUBLIC_TURNSTILE_SITE_KEY: 1x00000000000000000000AA
-  NEXT_PUBLIC_SANITY_PROJECT_ID: placeholder
+  NEXT_PUBLIC_SITE_URL: https://example.invalid
+  NEXT_PUBLIC_TURNSTILE_SITE_KEY: ci-yer-tutucu
+  NEXT_PUBLIC_SANITY_PROJECT_ID: ci-yer-tutucu
   NEXT_PUBLIC_SANITY_DATASET: production
 
 jobs:
@@ -56,9 +63,7 @@ jobs:
   lighthouse:
     needs: quality
     runs-on: ubuntu-latest
-    # Performans bütçesi Aşama 12'de BLOKLAYICI hale gelecek. Şimdilik yalnızca
-    # rapor üretir: ortam değişkenleri ve içerik tamamlanmadan gerçekçi bir
-    # ölçüm alınamaz, erken kırmızı uyarı körlüğü yaratır.
+    # Performans bütçesi Aşama 12'de BLOKLAYICI hale gelecek.
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
