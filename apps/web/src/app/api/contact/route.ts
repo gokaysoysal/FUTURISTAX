@@ -131,6 +131,7 @@ export async function POST(request: NextRequest) {
 
   try {
     await resend.emails.send({
+      from: env.MAIL_FROM,
       to: env.CONTACT_INBOX,
       replyTo: data.email,
       subject: `Yeni danışmanlık talebi — ${topicLabel} — ${data.name}`,
