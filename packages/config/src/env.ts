@@ -8,8 +8,7 @@ import { z } from 'zod';
  *
  * ÖNEMLİ: Her iki doğrulama da TEMBEL (lazy) çalışır. Modül yüklenir yüklenmez
  * doğrulama yapılırsa, ortam değişkenine hiç ihtiyaç duymayan sayfalar bile
- * (robots.txt, sitemap.xml gibi) derleme sırasında çöker. Doğrulama yalnızca
- * değere gerçekten erişildiğinde tetiklenir.
+ * (robots.txt, sitemap.xml gibi) derleme sırasında çöker.
  */
 const serverSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
@@ -51,16 +50,31 @@ function describe(issues: z.ZodIssue[]): string {
   return issues.map((issue) => issue.path.join('.')).join(', ');
 }
 
+/**
+ * Netlify'ın Neon eklentisi bağlantı dizesini `NETLIFY_DATABASE_URL` adıyla
+ * oluşturur; elle kurulumda `DATABASE_URL` kullanılır. İkisi de kabul edilir,
+ * böylece hangi yolla kurulduğu fark etmez.
+ */
+export function databaseUrl(): string | undefined {
+  return process.env.DATABASE_URL ?? process.env.NETLIFY_DATABASE_URL;
+}
+
 let cachedServerEnv: ServerEnv | null = null;
 
 export function serverEnv(): ServerEnv {
   if (cachedServerEnv) return cachedServerEnv;
-  const parsed = serverSchema.safeParse(process.env);
+
+  const parsed = serverSchema.safeParse({
+    ...process.env,
+    DATABASE_URL: databaseUrl(),
+  });
+
   if (!parsed.success) {
     throw new Error(
       `Sunucu ortam değişkenleri eksik veya geçersiz: ${describe(parsed.error.issues)}`,
     );
   }
+
   cachedServerEnv = parsed.data;
   return cachedServerEnv;
 }
@@ -74,6 +88,7 @@ let cachedClientEnv: ClientEnv | null = null;
  */
 export function clientEnv(): ClientEnv {
   if (cachedClientEnv) return cachedClientEnv;
+
   const parsed = clientSchema.safeParse({
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
     NEXT_PUBLIC_TURNSTILE_SITE_KEY: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
@@ -81,11 +96,13 @@ export function clientEnv(): ClientEnv {
     NEXT_PUBLIC_SANITY_DATASET: process.env.NEXT_PUBLIC_SANITY_DATASET,
     NEXT_PUBLIC_GA_ID: process.env.NEXT_PUBLIC_GA_ID,
   });
+
   if (!parsed.success) {
     throw new Error(
       `İstemci ortam değişkenleri eksik veya geçersiz: ${describe(parsed.error.issues)}`,
     );
   }
+
   cachedClientEnv = parsed.data;
   return cachedClientEnv;
 }
