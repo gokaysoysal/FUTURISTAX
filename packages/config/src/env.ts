@@ -16,6 +16,12 @@ const serverSchema = z.object({
   // E-posta
   RESEND_API_KEY: z.string().min(1),
   CONTACT_INBOX: z.string().email(),
+  /**
+   * Gönderen adresi. Resend'de DOĞRULANMIŞ alan adına ait olmalıdır.
+   * Alt alan adı kullanıldıysa örn: "FuturistaX <bildirim@send.futuristax.com>"
+   * Doğrulanmamış bir adresten gönderim Resend tarafından reddedilir.
+   */
+  MAIL_FROM: z.string().min(3),
 
   // Spam koruması
   TURNSTILE_SECRET_KEY: z.string().min(1),

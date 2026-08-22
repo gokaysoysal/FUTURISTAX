@@ -1,11 +1,11 @@
-import { db, schema } from '@/db/client';
-import { LEGAL_VERSIONS } from '@/lib/legal/versions';
-import { TOPIC_LABELS, contactRequestSchema } from '@/lib/validation/contact';
 import { serverEnv, site } from '@futuristax/config';
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 import { type NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
+import { db, schema } from '@/db/client';
+import { LEGAL_VERSIONS } from '@/lib/legal/versions';
+import { TOPIC_LABELS, contactRequestSchema } from '@/lib/validation/contact';
 
 /**
  * İletişim formu endpoint'i.
@@ -131,7 +131,6 @@ export async function POST(request: NextRequest) {
 
   try {
     await resend.emails.send({
-      from: `${site.brand.name} <bildirim@futuristax.com>`,
       to: env.CONTACT_INBOX,
       replyTo: data.email,
       subject: `Yeni danışmanlık talebi — ${topicLabel} — ${data.name}`,
@@ -152,7 +151,7 @@ export async function POST(request: NextRequest) {
     });
 
     await resend.emails.send({
-      from: `${site.brand.name} <bildirim@futuristax.com>`,
+      from: env.MAIL_FROM,
       to: data.email,
       subject: 'Talebiniz bize ulaştı',
       text: [
