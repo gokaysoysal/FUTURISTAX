@@ -1,0 +1,16 @@
+{
+  "name": "@futuristax/config",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./site": "./src/site.ts",
+    "./env": "./src/env.ts",
+    "./tsconfig/base": "./tsconfig/base.json",
+    "./tsconfig/next": "./tsconfig/next.json"
+  },
+  "dependencies": { "zod": "^3.24.1" },
+  "devDependencies": { "typescript": "^5.7.2" },
+  "scripts": { "typecheck": "tsc --noEmit" }
+}
