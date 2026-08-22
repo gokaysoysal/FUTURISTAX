@@ -30,7 +30,7 @@ function buildCsp(nonce: string, isDev: boolean): string {
     // TCMB kur beslemesi ve Turnstile doğrulaması sunucudan yapılır;
     // istemciden yalnızca kendi API'mize ve analitiğe bağlanılır.
     "connect-src 'self' https://www.google-analytics.com",
-    "frame-src https://challenges.cloudflare.com https://www.google.com",
+    'frame-src https://challenges.cloudflare.com https://www.google.com',
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
@@ -54,5 +54,7 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:png|jpg|svg|webp|avif|ico)$).*)'],
+  matcher: [
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:png|jpg|svg|webp|avif|ico)$).*)',
+  ],
 };

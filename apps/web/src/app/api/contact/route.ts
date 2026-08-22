@@ -1,11 +1,11 @@
+import { db, schema } from '@/db/client';
+import { LEGAL_VERSIONS } from '@/lib/legal/versions';
+import { TOPIC_LABELS, contactRequestSchema } from '@/lib/validation/contact';
 import { serverEnv, site } from '@futuristax/config';
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 import { type NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
-import { db, schema } from '@/db/client';
-import { LEGAL_VERSIONS } from '@/lib/legal/versions';
-import { TOPIC_LABELS, contactRequestSchema } from '@/lib/validation/contact';
 
 /**
  * İletişim formu endpoint'i.

@@ -1,5 +1,5 @@
-import type { Metadata } from 'next';
 import { VehicleExpenseCalculator } from '@/components/calculators/VehicleExpenseCalculator';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Hesaplama araçları',
@@ -17,8 +17,8 @@ export default function ToolsPage() {
       </div>
 
       <p className="mt-6 max-w-prose text-[length:var(--text-base)] text-[var(--color-text-secondary)]">
-        Her araç yalnızca sonucu değil, hesabın nasıl çıktığını da gösterir. Kalemlerin
-        dayandığı kanun maddeleri satır satır belirtilir.
+        Her araç yalnızca sonucu değil, hesabın nasıl çıktığını da gösterir. Kalemlerin dayandığı
+        kanun maddeleri satır satır belirtilir.
       </p>
 
       <section aria-labelledby="vehicle-heading" className="mt-12">
@@ -26,8 +26,8 @@ export default function ToolsPage() {
           Binek araç gider kısıtı
         </h2>
         <p className="mt-2 max-w-prose text-[length:var(--text-sm)] text-[var(--color-text-secondary)]">
-          GVK Md. 40/5 uyarınca binek otomobil giderlerinin yalnızca bir kısmı indirilebilir;
-          kalan tutar ve ona isabet eden KDV kanunen kabul edilmeyen giderdir.
+          GVK Md. 40/5 uyarınca binek otomobil giderlerinin yalnızca bir kısmı indirilebilir; kalan
+          tutar ve ona isabet eden KDV kanunen kabul edilmeyen giderdir.
         </p>
         <div className="mt-6">
           <VehicleExpenseCalculator />

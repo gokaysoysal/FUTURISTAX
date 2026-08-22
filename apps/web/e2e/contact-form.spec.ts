@@ -16,7 +16,9 @@ test.describe('danışmanlık talep formu', () => {
     await page.getByLabel('Ad soyad').fill('Test Kullanıcı');
     await page.getByLabel('E-posta').fill('test@example.com');
     await page.getByLabel('Konu').selectOption('vergi-danismanligi');
-    await page.getByLabel('Talebiniz').fill('Kurumlar vergisi planlaması hakkında bilgi almak istiyorum.');
+    await page
+      .getByLabel('Talebiniz')
+      .fill('Kurumlar vergisi planlaması hakkında bilgi almak istiyorum.');
     await page.getByRole('button', { name: 'Talebi gönder' }).click();
     await expect(page.getByText('aydınlatma metnini onaylayın')).toBeVisible();
   });
@@ -29,7 +31,9 @@ test.describe('danışmanlık talep formu', () => {
     await page.getByLabel('Ad soyad').fill('Test Kullanıcı');
     await page.getByLabel('E-posta').fill('test@example.com');
     await page.getByLabel('Konu').selectOption('vergi-danismanligi');
-    await page.getByLabel('Talebiniz').fill('Kurumlar vergisi planlaması hakkında bilgi almak istiyorum.');
+    await page
+      .getByLabel('Talebiniz')
+      .fill('Kurumlar vergisi planlaması hakkında bilgi almak istiyorum.');
     await page.getByLabel(/aydınlatma metni/).check();
 
     const request = page.waitForRequest('**/api/contact');

@@ -52,7 +52,12 @@ export function calculateSeverance(
     steps: [
       { label: 'Giydirilmiş brüt ücret', value: salary, kind: 'currency' },
       { label: 'Kıdem tazminatı tavanı', value: cap, kind: 'currency', basis: '1475 Md. 14' },
-      { label: 'Hesaba esas ücret', value: cappedSalary, kind: 'currency', emphasis: salary > cap ? 'warning' : 'neutral' },
+      {
+        label: 'Hesaba esas ücret',
+        value: cappedSalary,
+        kind: 'currency',
+        emphasis: salary > cap ? 'warning' : 'neutral',
+      },
       { label: 'Toplam hizmet süresi (gün)', value: totalServiceDays, kind: 'number' },
       { label: 'Brüt kıdem tazminatı', value: grossSeverance, kind: 'currency' },
       { label: 'Damga vergisi', value: stampDuty, kind: 'currency', emphasis: 'warning' },

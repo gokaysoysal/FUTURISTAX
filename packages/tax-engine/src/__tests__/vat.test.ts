@@ -20,16 +20,25 @@ describe('KDV hesaplama', () => {
 
   it('ekleme ve ayrıştırma birbirinin tersidir', () => {
     const added = calculateVat({ amount: 4567.89, direction: 'add', band: 'reduced' }, rates);
-    const back = calculateVat({ amount: added.detail.gross, direction: 'extract', band: 'reduced' }, rates);
+    const back = calculateVat(
+      { amount: added.detail.gross, direction: 'extract', band: 'reduced' },
+      rates,
+    );
     expect(back.detail.net).toBeCloseTo(4567.89, 6);
   });
 
   it('%1 ve %10 dilimlerini uygular', () => {
-    expect(calculateVat({ amount: 100, direction: 'add', band: 'basic' }, rates).detail.vat).toBeCloseTo(1, 6);
-    expect(calculateVat({ amount: 100, direction: 'add', band: 'reduced' }, rates).detail.vat).toBeCloseTo(10, 6);
+    expect(
+      calculateVat({ amount: 100, direction: 'add', band: 'basic' }, rates).detail.vat,
+    ).toBeCloseTo(1, 6);
+    expect(
+      calculateVat({ amount: 100, direction: 'add', band: 'reduced' }, rates).detail.vat,
+    ).toBeCloseTo(10, 6);
   });
 
   it('negatif tutarı sıfıra çeker', () => {
-    expect(calculateVat({ amount: -500, direction: 'add', band: 'standard' }, rates).detail.vat).toBe(0);
+    expect(
+      calculateVat({ amount: -500, direction: 'add', band: 'standard' }, rates).detail.vat,
+    ).toBe(0);
   });
 });

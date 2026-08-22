@@ -18,8 +18,8 @@ export function UnverifiedRatesNotice({ provenance }: { provenance: RateProvenan
       <strong className="text-[var(--color-stamp)]">
         {provenance.year} oranları henüz doğrulanmadı.
       </strong>{' '}
-      Bu yıla ait değerler resmî kaynaktan teyit edilmemiştir; sonuçları bağlayıcı kabul
-      etmeyin. Kesin hesap için bizimle görüşün.
+      Bu yıla ait değerler resmî kaynaktan teyit edilmemiştir; sonuçları bağlayıcı kabul etmeyin.
+      Kesin hesap için bizimle görüşün.
     </p>
   );
 }

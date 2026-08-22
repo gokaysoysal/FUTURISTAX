@@ -23,8 +23,8 @@ export default function ErrorBoundary({
       <p className="basis-ref uppercase">Hata</p>
       <h1 className="mt-3 text-[length:var(--text-3xl)]">Sayfa yüklenemedi</h1>
       <p className="mt-4 text-[length:var(--text-base)] text-[var(--color-text-secondary)]">
-        Bu sayfayı hazırlarken bir sorun oluştu. Yeniden denemek çoğu durumda yeterli
-        oluyor. Sorun sürerse bize ulaşın.
+        Bu sayfayı hazırlarken bir sorun oluştu. Yeniden denemek çoğu durumda yeterli oluyor. Sorun
+        sürerse bize ulaşın.
       </p>
 
       <div className="mt-8 flex flex-wrap gap-3">

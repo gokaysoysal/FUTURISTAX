@@ -46,7 +46,13 @@ export function calculateVehicleExpense(
     steps: [
       { label: 'Toplam gider (KDV hariç)', value: expense, kind: 'currency' },
       { label: 'Hesaplanan KDV', value: vat, kind: 'currency' },
-      { label: 'İndirilebilir gider', value: deductibleExpense, kind: 'currency', basis: 'GVK Md. 40/5', emphasis: 'positive' },
+      {
+        label: 'İndirilebilir gider',
+        value: deductibleExpense,
+        kind: 'currency',
+        basis: 'GVK Md. 40/5',
+        emphasis: 'positive',
+      },
       { label: 'İndirilebilir KDV', value: deductibleVat, kind: 'currency', emphasis: 'positive' },
       { label: 'KKEG — gider', value: nonDeductibleExpense, kind: 'currency', emphasis: 'warning' },
       { label: 'KKEG — KDV', value: nonDeductibleVat, kind: 'currency', emphasis: 'warning' },

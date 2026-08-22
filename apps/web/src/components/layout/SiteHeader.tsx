@@ -87,7 +87,11 @@ export function SiteHeader() {
       </div>
 
       {open && (
-        <nav id="mobile-nav" aria-label="Mobil menü" className="border-t border-[var(--color-rule)] md:hidden">
+        <nav
+          id="mobile-nav"
+          aria-label="Mobil menü"
+          className="border-t border-[var(--color-rule)] md:hidden"
+        >
           <ul className="mx-auto max-w-6xl px-5 py-2">
             {NAV.map((item) => (
               <li key={item.href} className="ledger-rule last:border-b-0">

@@ -1,5 +1,5 @@
 import type { CalculationResult, RateSet } from '../types';
-import { applyProgressiveBrackets, type BracketBreakdown } from './brackets';
+import { type BracketBreakdown, applyProgressiveBrackets } from './brackets';
 
 export type IncomeKind = 'employment' | 'other';
 
@@ -41,7 +41,12 @@ export function calculateIncomeTax(
       { label: 'Hesaplanan vergi', value: result.tax, kind: 'currency', basis: 'GVK Md. 103' },
       { label: 'Efektif vergi oranı', value: result.effectiveRate, kind: 'percent' },
       { label: 'Marjinal oran', value: result.marginalRate, kind: 'percent' },
-      { label: 'Net kalan', value: taxableBase - result.tax, kind: 'currency', emphasis: 'positive' },
+      {
+        label: 'Net kalan',
+        value: taxableBase - result.tax,
+        kind: 'currency',
+        emphasis: 'positive',
+      },
     ],
     detail: {
       taxableBase,

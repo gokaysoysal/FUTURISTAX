@@ -79,8 +79,8 @@ export function SiteFooter() {
 
       <div className="border-t border-[var(--color-rule)]">
         <p className="mx-auto max-w-6xl px-5 py-5 text-[length:var(--text-xs)] text-[var(--color-text-muted)]">
-          © {site.brand.foundedYear}–{new Date().getFullYear()} {site.brand.name}. Sitedeki
-          bilgiler genel bilgilendirme amaçlıdır ve mali müşavirlik hizmeti yerine geçmez.
+          © {site.brand.foundedYear}–{new Date().getFullYear()} {site.brand.name}. Sitedeki bilgiler
+          genel bilgilendirme amaçlıdır ve mali müşavirlik hizmeti yerine geçmez.
         </p>
       </div>
     </footer>

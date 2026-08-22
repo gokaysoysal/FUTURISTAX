@@ -20,12 +20,20 @@ describe('vergi takvimi', () => {
   });
 
   it('mükellef tipine göre filtreler', () => {
-    const d = getUpcomingDeadlines({ referenceDate: '2026-04-01', horizonDays: 40, taxpayerType: 'employer' });
+    const d = getUpcomingDeadlines({
+      referenceDate: '2026-04-01',
+      horizonDays: 40,
+      taxpayerType: 'employer',
+    });
     expect(d.every((x) => x.taxpayerTypes.includes('employer'))).toBe(true);
   });
 
   it('kurumlar vergisi beyanını nisan ayında bulur', () => {
-    const d = getUpcomingDeadlines({ referenceDate: '2026-04-01', horizonDays: 40, taxpayerType: 'corporate' });
+    const d = getUpcomingDeadlines({
+      referenceDate: '2026-04-01',
+      horizonDays: 40,
+      taxpayerType: 'corporate',
+    });
     const kv = d.find((x) => x.ruleId === 'kurumlar-vergisi');
     expect(kv?.date).toBe('2026-04-25');
   });
@@ -37,7 +45,11 @@ describe('vergi takvimi', () => {
   });
 
   it('aciliyet sınıflandırması yapar', () => {
-    const d = getUpcomingDeadlines({ referenceDate: '2026-04-24', horizonDays: 5, taxpayerType: 'corporate' });
+    const d = getUpcomingDeadlines({
+      referenceDate: '2026-04-24',
+      horizonDays: 5,
+      taxpayerType: 'corporate',
+    });
     const kv = d.find((x) => x.ruleId === 'kurumlar-vergisi');
     expect(kv?.urgency).toBe('imminent');
   });

@@ -1,7 +1,7 @@
+import { TaxCalendarPanel } from '@/components/tax-calendar/TaxCalendarPanel';
 import { site } from '@futuristax/config';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { TaxCalendarPanel } from '@/components/tax-calendar/TaxCalendarPanel';
 
 export const metadata: Metadata = {
   description:
@@ -20,12 +20,36 @@ export const metadata: Metadata = {
  */
 
 const SERVICES = [
-  { slug: 'vergi-danismanligi', title: 'Vergi danışmanlığı', summary: 'Kurumlar vergisi, gelir vergisi ve KDV planlaması.' },
-  { slug: 'vergi-denetimi', title: 'Vergi denetimi ve risk analizi', summary: 'İnceleme hazırlığı ve itiraz süreçlerinin yönetimi.' },
-  { slug: 'finansal-danismanlik', title: 'Finansal danışmanlık', summary: 'Nakit akışı, bütçe ve karar destek analitiği.' },
-  { slug: 'mevzuat-uyumu', title: 'Mali mevzuat uyumu', summary: 'Değişen regülasyonlara uyum ve cezai risk azaltımı.' },
-  { slug: 'kurumsal-raporlama', title: 'Kurumsal raporlama', summary: 'TFRS/IFRS uyumlu finansal raporlama.' },
-  { slug: 'uluslararasi-vergilendirme', title: 'Uluslararası vergilendirme', summary: 'ÇVÖA, transfer fiyatlandırması, KYK analizi.' },
+  {
+    slug: 'vergi-danismanligi',
+    title: 'Vergi danışmanlığı',
+    summary: 'Kurumlar vergisi, gelir vergisi ve KDV planlaması.',
+  },
+  {
+    slug: 'vergi-denetimi',
+    title: 'Vergi denetimi ve risk analizi',
+    summary: 'İnceleme hazırlığı ve itiraz süreçlerinin yönetimi.',
+  },
+  {
+    slug: 'finansal-danismanlik',
+    title: 'Finansal danışmanlık',
+    summary: 'Nakit akışı, bütçe ve karar destek analitiği.',
+  },
+  {
+    slug: 'mevzuat-uyumu',
+    title: 'Mali mevzuat uyumu',
+    summary: 'Değişen regülasyonlara uyum ve cezai risk azaltımı.',
+  },
+  {
+    slug: 'kurumsal-raporlama',
+    title: 'Kurumsal raporlama',
+    summary: 'TFRS/IFRS uyumlu finansal raporlama.',
+  },
+  {
+    slug: 'uluslararasi-vergilendirme',
+    title: 'Uluslararası vergilendirme',
+    summary: 'ÇVÖA, transfer fiyatlandırması, KYK analizi.',
+  },
 ];
 
 export default function HomePage() {
@@ -42,8 +66,8 @@ export default function HomePage() {
               Vergi, yönetilebilir bir kalem hâline gelir.
             </h1>
             <p className="mt-5 max-w-prose text-[length:var(--text-base)] text-[var(--color-text-secondary)]">
-              {site.brand.name}, şirketlere vergi, finans ve uyum süreçlerinde danışmanlık
-              verir. Yükümlülüklerinizi takip etmekle başlarız; yapıyı kurmakla sürdürürüz.
+              {site.brand.name}, şirketlere vergi, finans ve uyum süreçlerinde danışmanlık verir.
+              Yükümlülüklerinizi takip etmekle başlarız; yapıyı kurmakla sürdürürüz.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">

@@ -72,7 +72,12 @@ export function calculateInflationAdjustment(
       { label: `${input.fromYear} TÜFE endeksi`, value: fromIndex, kind: 'number' },
       { label: `${input.toYear} TÜFE endeksi`, value: toIndex, kind: 'number' },
       { label: 'Kümülatif enflasyon', value: cumulativeRate, kind: 'percent', emphasis: 'warning' },
-      { label: `${input.toYear} karşılığı`, value: adjustedAmount, kind: 'currency', emphasis: 'positive' },
+      {
+        label: `${input.toYear} karşılığı`,
+        value: adjustedAmount,
+        kind: 'currency',
+        emphasis: 'positive',
+      },
     ],
     detail: {
       adjustedAmount,

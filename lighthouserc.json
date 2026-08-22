@@ -2,7 +2,11 @@
   "ci": {
     "collect": {
       "startServerCommand": "pnpm --filter @futuristax/web start",
-      "url": ["http://localhost:3000/", "http://localhost:3000/araclar", "http://localhost:3000/iletisim"],
+      "url": [
+        "http://localhost:3000/",
+        "http://localhost:3000/araclar",
+        "http://localhost:3000/iletisim"
+      ],
       "numberOfRuns": 3
     },
     "assert": {

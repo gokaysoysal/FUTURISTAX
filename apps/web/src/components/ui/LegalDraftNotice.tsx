@@ -16,9 +16,8 @@ export function LegalDraftNotice({ version }: { version: string }) {
       className="mb-8 border-l-2 border-[var(--color-stamp)] bg-[var(--color-stamp-soft)] px-5 py-4"
     >
       <p className="text-[length:var(--text-sm)] text-[var(--color-text)]">
-        <strong className="text-[var(--color-stamp)]">Bu metin taslaktır.</strong> Hukuk
-        danışmanı onayından geçmemiştir ve bağlayıcı değildir. Yayına almadan önce
-        gözden geçirilmesi gerekir.
+        <strong className="text-[var(--color-stamp)]">Bu metin taslaktır.</strong> Hukuk danışmanı
+        onayından geçmemiştir ve bağlayıcı değildir. Yayına almadan önce gözden geçirilmesi gerekir.
       </p>
       <p className="basis-ref mt-2">Sürüm: {version}</p>
     </div>

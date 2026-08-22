@@ -41,10 +41,16 @@ describe('SGK işveren maliyeti', () => {
   });
 
   it('5 puanlık indirimi işveren payından düşer', () => {
-    const withDiscount = calculatePayrollCost({ grossSalary: 50_000, apply5510Discount: true }, rates);
+    const withDiscount = calculatePayrollCost(
+      { grossSalary: 50_000, apply5510Discount: true },
+      rates,
+    );
     const without = calculatePayrollCost({ grossSalary: 50_000 }, rates);
     expect(withDiscount.detail.employerSgk).toBeLessThan(without.detail.employerSgk);
-    expect(without.detail.employerSgk - withDiscount.detail.employerSgk).toBeCloseTo(50_000 * 0.05, 6);
+    expect(without.detail.employerSgk - withDiscount.detail.employerSgk).toBeCloseTo(
+      50_000 * 0.05,
+      6,
+    );
   });
 
   it('toplam maliyet brüt ücretten büyüktür', () => {

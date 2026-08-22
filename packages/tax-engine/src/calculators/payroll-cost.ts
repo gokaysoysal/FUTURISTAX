@@ -50,10 +50,20 @@ export function calculatePayrollCost(
       { label: 'Brüt ücret', value: gross, kind: 'currency' },
       { label: 'Prime esas kazanç', value: sgkBase, kind: 'currency', basis: '5510 Md. 82' },
       { label: 'İşçi SGK payı', value: employeeSgk, kind: 'currency', emphasis: 'warning' },
-      { label: 'İşçi işsizlik payı', value: employeeUnemployment, kind: 'currency', emphasis: 'warning' },
+      {
+        label: 'İşçi işsizlik payı',
+        value: employeeUnemployment,
+        kind: 'currency',
+        emphasis: 'warning',
+      },
       { label: 'İşveren SGK payı', value: employerSgk, kind: 'currency' },
       { label: 'İşveren işsizlik payı', value: employerUnemployment, kind: 'currency' },
-      { label: 'Toplam işveren maliyeti', value: employerTotalCost, kind: 'currency', emphasis: 'positive' },
+      {
+        label: 'Toplam işveren maliyeti',
+        value: employerTotalCost,
+        kind: 'currency',
+        emphasis: 'positive',
+      },
     ],
     detail: {
       sgkBase,

@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
 import { RateFetchError, fetchTcmbRates } from '@/lib/fetchers/tcmb';
+import { NextResponse } from 'next/server';
 
 /**
  * Resmî döviz kurları (TCMB).

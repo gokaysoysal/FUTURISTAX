@@ -1,5 +1,5 @@
-import { type Deadline, getUpcomingDeadlines, type TaxpayerType } from '@futuristax/tax-engine';
 import { formatDaysRemaining, formatIsoDate } from '@/lib/format';
+import { type Deadline, type TaxpayerType, getUpcomingDeadlines } from '@futuristax/tax-engine';
 
 /**
  * VERGİ TAKVİMİ — sitenin imza bileşeni.
@@ -94,10 +94,7 @@ export function TaxCalendarPanel({
                 key={`${deadline.ruleId}-${deadline.date}`}
                 className="grid grid-cols-[auto_1fr_auto] items-start gap-4 px-6 py-4"
               >
-                <span
-                  aria-hidden="true"
-                  className={`mt-2 size-2 rounded-full ${style.dot}`}
-                />
+                <span aria-hidden="true" className={`mt-2 size-2 rounded-full ${style.dot}`} />
 
                 <div className="min-w-0">
                   <h3 className="font-[family-name:var(--font-sans)] text-[length:var(--text-sm)] font-medium text-[var(--color-text)]">
@@ -129,8 +126,8 @@ export function TaxCalendarPanel({
 
       <footer className="border-t border-[var(--color-rule)] px-6 py-3">
         <p className="basis-ref">
-          Son gün resmî tatile denk gelirse süre takip eden ilk iş gününe uzar (VUK Md. 18).
-          Tatil kaydırması bu sürümde henüz uygulanmamaktadır.
+          Son gün resmî tatile denk gelirse süre takip eden ilk iş gününe uzar (VUK Md. 18). Tatil
+          kaydırması bu sürümde henüz uygulanmamaktadır.
         </p>
       </footer>
     </section>

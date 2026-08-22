@@ -16,12 +16,14 @@ const TCMB_TODAY = 'https://www.tcmb.gov.tr/kurlar/today.xml';
 /** Sitede gösterilecek para birimleri */
 const TRACKED = ['USD', 'EUR', 'GBP', 'CHF'] as const;
 
+/**
+ * Error'ın yerleşik `cause` desteğini kullanır. Kendi `cause` alanımızı
+ * tanımlamak temel sınıfın üyesini gölgeleyeceği için `override` gerektirirdi;
+ * bunun yerine standart davranışa bırakıyoruz.
+ */
 export class RateFetchError extends Error {
-  constructor(
-    message: string,
-    readonly cause?: unknown,
-  ) {
-    super(message);
+  constructor(message: string, options?: { cause?: unknown }) {
+    super(message, options);
     this.name = 'RateFetchError';
   }
 }
@@ -41,7 +43,9 @@ export function parseTcmbXml(xml: string): ExchangeRateTable {
   const tryPerUnit: Record<string, number> = {};
 
   for (const code of TRACKED) {
-    const block = xml.match(new RegExp(`<Currency[^>]*CurrencyCode="${code}"[\\s\\S]*?</Currency>`));
+    const block = xml.match(
+      new RegExp(`<Currency[^>]*CurrencyCode="${code}"[\\s\\S]*?</Currency>`),
+    );
     if (!block) continue;
 
     const unitMatch = block[0].match(/<Unit>(\d+)<\/Unit>/);
@@ -77,7 +81,7 @@ export async function fetchTcmbRates(): Promise<ExchangeRateTable> {
       headers: { Accept: 'application/xml' },
     });
   } catch (error) {
-    throw new RateFetchError('TCMB kur servisine ulaşılamadı.', error);
+    throw new RateFetchError('TCMB kur servisine ulaşılamadı.', { cause: error });
   }
 
   if (!response.ok) {

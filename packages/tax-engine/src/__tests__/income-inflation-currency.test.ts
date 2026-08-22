@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { convertCurrency, type ExchangeRateTable } from '../calculators/currency';
+import { type ExchangeRateTable, convertCurrency } from '../calculators/currency';
 import { calculateIncomeTax } from '../calculators/income-tax';
 import { calculateInflationAdjustment } from '../calculators/inflation-adjust';
 import { getRates } from '../rates';
@@ -14,7 +14,10 @@ describe('gelir vergisi', () => {
   });
 
   it('indirimleri matrahtan düşer', () => {
-    const r = calculateIncomeTax({ grossIncome: 500_000, deductions: 100_000, kind: 'other' }, rates);
+    const r = calculateIncomeTax(
+      { grossIncome: 500_000, deductions: 100_000, kind: 'other' },
+      rates,
+    );
     expect(r.detail.taxableBase).toBe(400_000);
   });
 
@@ -38,7 +41,9 @@ describe('enflasyon güncellemesi', () => {
   });
 
   it('veri olmayan yılda sessizce uydurmaz, hata verir', () => {
-    expect(() => calculateInflationAdjustment({ amount: 1, fromYear: 1999, toYear: 2024 })).toThrow();
+    expect(() =>
+      calculateInflationAdjustment({ amount: 1, fromYear: 1999, toYear: 2024 }),
+    ).toThrow();
   });
 });
 
@@ -50,11 +55,17 @@ describe('kur çevirimi', () => {
   };
 
   it('yabancı paradan TLye çevirir', () => {
-    expect(convertCurrency({ amount: 100, from: 'USD', to: 'TRY' }, table).amount).toBeCloseTo(4000, 6);
+    expect(convertCurrency({ amount: 100, from: 'USD', to: 'TRY' }, table).amount).toBeCloseTo(
+      4000,
+      6,
+    );
   });
 
   it('TLden yabancı paraya çevirir', () => {
-    expect(convertCurrency({ amount: 4000, from: 'TRY', to: 'USD' }, table).amount).toBeCloseTo(100, 6);
+    expect(convertCurrency({ amount: 4000, from: 'TRY', to: 'USD' }, table).amount).toBeCloseTo(
+      100,
+      6,
+    );
   });
 
   it('çapraz kur hesaplar', () => {

@@ -5,7 +5,11 @@ export type { BracketBreakdown, ProgressiveResult } from './calculators/brackets
 export { calculateVat } from './calculators/vat';
 export type { VatInput, VatDetail, VatBand, VatDirection } from './calculators/vat';
 export { calculateCorporateTax } from './calculators/corporate-tax';
-export type { CorporateTaxInput, CorporateTaxDetail, CorporateBand } from './calculators/corporate-tax';
+export type {
+  CorporateTaxInput,
+  CorporateTaxDetail,
+  CorporateBand,
+} from './calculators/corporate-tax';
 export { calculateIncomeTax } from './calculators/income-tax';
 export type { IncomeTaxInput, IncomeTaxDetail, IncomeKind } from './calculators/income-tax';
 export { calculateVehicleExpense } from './calculators/vehicle-expense';
@@ -16,9 +20,22 @@ export { calculatePayrollCost } from './calculators/payroll-cost';
 export type { PayrollInput, PayrollDetail } from './calculators/payroll-cost';
 export { calculateSeverance } from './calculators/severance';
 export type { SeveranceInput, SeveranceDetail } from './calculators/severance';
-export { calculateInflationAdjustment, availableCpiYears, CPI_INDEX } from './calculators/inflation-adjust';
+export {
+  calculateInflationAdjustment,
+  availableCpiYears,
+  CPI_INDEX,
+} from './calculators/inflation-adjust';
 export type { InflationInput, InflationDetail } from './calculators/inflation-adjust';
 export { convertCurrency } from './calculators/currency';
-export type { ExchangeRateTable, CurrencyConversionInput, CurrencyConversionResult } from './calculators/currency';
+export type {
+  ExchangeRateTable,
+  CurrencyConversionInput,
+  CurrencyConversionResult,
+} from './calculators/currency';
 export { getUpcomingDeadlines, buildIcsFeed, OBLIGATION_RULES } from './calendar/tax-calendar';
-export type { Deadline, DeadlineQuery, ObligationRule, TaxpayerType } from './calendar/tax-calendar';
+export type {
+  Deadline,
+  DeadlineQuery,
+  ObligationRule,
+  TaxpayerType,
+} from './calendar/tax-calendar';

@@ -1,7 +1,7 @@
+import { UnverifiedRatesNotice } from '@/components/ui/UnverifiedRatesNotice';
+import { formatByKind } from '@/lib/format';
 import { site } from '@futuristax/config';
 import type { CalculationResult } from '@futuristax/tax-engine';
-import { formatByKind } from '@/lib/format';
-import { UnverifiedRatesNotice } from '@/components/ui/UnverifiedRatesNotice';
 
 /**
  * Hesap sonucunu defter düzeninde gösterir.

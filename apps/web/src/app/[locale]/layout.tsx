@@ -1,13 +1,13 @@
-import { site } from '@futuristax/config';
-import type { Metadata, Viewport } from 'next';
-import { IBM_Plex_Mono, Inter, Newsreader } from 'next/font/google';
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
-import type { ReactNode } from 'react';
 import { CookieConsent } from '@/components/consent/CookieConsent';
-import { OrganizationJsonLd } from '@/components/seo/JsonLd';
 import { SiteFooter } from '@/components/layout/SiteFooter';
 import { SiteHeader } from '@/components/layout/SiteHeader';
+import { OrganizationJsonLd } from '@/components/seo/JsonLd';
+import { site } from '@futuristax/config';
+import type { Metadata, Viewport } from 'next';
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages } from 'next-intl/server';
+import { IBM_Plex_Mono, Inter, Newsreader } from 'next/font/google';
+import type { ReactNode } from 'react';
 import '@/styles/tokens.css';
 
 /*

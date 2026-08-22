@@ -61,9 +61,12 @@ export function CookieConsent() {
             id="consent-description"
             className="mt-1 text-[length:var(--text-xs)] text-[var(--color-text-secondary)]"
           >
-            Sitenin çalışması için gerekli çerezler her durumda kullanılır. Ziyaret
-            istatistiklerini ölçmek için ek çerezleri yalnızca onayınızla kullanırız.{' '}
-            <Link href="/cerez-politikasi" className="text-[var(--color-ink)] underline underline-offset-2">
+            Sitenin çalışması için gerekli çerezler her durumda kullanılır. Ziyaret istatistiklerini
+            ölçmek için ek çerezleri yalnızca onayınızla kullanırız.{' '}
+            <Link
+              href="/cerez-politikasi"
+              className="text-[var(--color-ink)] underline underline-offset-2"
+            >
               Çerez politikası
             </Link>
           </p>

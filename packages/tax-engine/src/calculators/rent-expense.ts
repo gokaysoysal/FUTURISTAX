@@ -42,9 +42,19 @@ export function calculateRentExpense(
     steps: [
       { label: 'Aylık kira bedeli', value: rent, kind: 'currency' },
       { label: 'Yasal aylık üst sınır', value: cap, kind: 'currency', basis: 'GVK Md. 40/1' },
-      { label: 'Aylık indirilebilir tutar', value: deductibleMonthly, kind: 'currency', emphasis: 'positive' },
+      {
+        label: 'Aylık indirilebilir tutar',
+        value: deductibleMonthly,
+        kind: 'currency',
+        emphasis: 'positive',
+      },
       { label: 'Aylık aşan tutar', value: excessMonthly, kind: 'currency', emphasis: 'warning' },
-      { label: 'Aşan tutara isabet eden KDV', value: excessVat, kind: 'currency', emphasis: 'warning' },
+      {
+        label: 'Aşan tutara isabet eden KDV',
+        value: excessVat,
+        kind: 'currency',
+        emphasis: 'warning',
+      },
       { label: `${months} aylık toplam indirilebilir`, value: deductibleTotal, kind: 'currency' },
     ],
     detail: { cap, deductibleMonthly, excessMonthly, deductibleTotal, disallowedTotal, months },

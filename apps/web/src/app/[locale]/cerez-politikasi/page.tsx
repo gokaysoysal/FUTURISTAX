@@ -1,6 +1,6 @@
-import type { Metadata } from 'next';
 import { LegalDraftNotice } from '@/components/ui/LegalDraftNotice';
 import { LEGAL_TEXTS_APPROVED, LEGAL_VERSIONS } from '@/lib/legal/versions';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Çerez politikası',
@@ -48,9 +48,8 @@ export default function CookiePolicyPage() {
       </div>
 
       <p className="text-[length:var(--text-base)] leading-relaxed text-[var(--color-text-secondary)]">
-        Zorunlu çerezler sitenin çalışması için gereklidir ve devre dışı bırakılamaz.
-        Analitik çerezler yalnızca onay verdiğinizde yüklenir; onay vermezseniz hiçbir
-        ölçüm kodu çalışmaz.
+        Zorunlu çerezler sitenin çalışması için gereklidir ve devre dışı bırakılamaz. Analitik
+        çerezler yalnızca onay verdiğinizde yüklenir; onay vermezseniz hiçbir ölçüm kodu çalışmaz.
       </p>
 
       <div className="mt-8 overflow-x-auto">

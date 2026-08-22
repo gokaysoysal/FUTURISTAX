@@ -1,8 +1,8 @@
+import { LegalDraftNotice } from '@/components/ui/LegalDraftNotice';
+import { LEGAL_TEXTS_APPROVED, LEGAL_VERSIONS } from '@/lib/legal/versions';
 import { site } from '@futuristax/config';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { LegalDraftNotice } from '@/components/ui/LegalDraftNotice';
-import { LEGAL_TEXTS_APPROVED, LEGAL_VERSIONS } from '@/lib/legal/versions';
 
 export const metadata: Metadata = {
   title: 'Gizlilik politikası',
@@ -69,7 +69,10 @@ export default function PrivacyPage() {
           KVKK aydınlatma metni
         </Link>
         'ne bakabilir ya da{' '}
-        <a href={`mailto:${site.contact.email}`} className="text-[var(--color-ink)] underline underline-offset-2">
+        <a
+          href={`mailto:${site.contact.email}`}
+          className="text-[var(--color-ink)] underline underline-offset-2"
+        >
           {site.contact.email}
         </a>{' '}
         adresine yazabilirsiniz.

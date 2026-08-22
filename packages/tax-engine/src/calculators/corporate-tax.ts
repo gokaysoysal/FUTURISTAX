@@ -1,4 +1,4 @@
-import type { CalculationResult, RateSet } from '../types';
+import type { CalculationResult, CalculationStep, RateSet } from '../types';
 
 export type CorporateBand = 'standard' | 'financialInstitutions' | 'exportIncome';
 
@@ -56,29 +56,31 @@ export function calculateCorporateTax(
   const payableTax = minimumTax !== null ? Math.max(computedTax, minimumTax) : computedTax;
   const minimumApplied = minimumTax !== null && minimumTax > computedTax;
 
-  const steps = [
-    { label: 'Ticari kâr', value: input.commercialProfit, kind: 'currency' as const },
+  // Dizi tipi açıkça belirtilir; aksi hâlde TypeScript ilk elemanlardan dar bir
+  // tip çıkarır ve sonradan push edilen farklı `emphasis` değerini reddeder.
+  const steps: CalculationStep[] = [
+    { label: 'Ticari kâr', value: input.commercialProfit, kind: 'currency' },
     {
       label: 'Kanunen kabul edilmeyen giderler',
       value: input.disallowedExpenses,
-      kind: 'currency' as const,
+      kind: 'currency',
       basis: 'KVK Md. 11',
-      emphasis: 'warning' as const,
+      emphasis: 'warning',
     },
-    { label: 'İstisna ve indirimler', value: -input.exemptions, kind: 'currency' as const },
-    { label: 'Geçmiş yıl zararları', value: -priorLosses, kind: 'currency' as const },
-    { label: 'Kurumlar vergisi matrahı', value: taxableBase, kind: 'currency' as const },
-    { label: 'Vergi oranı', value: rate, kind: 'percent' as const, basis: 'KVK Md. 32' },
-    { label: 'Hesaplanan kurumlar vergisi', value: computedTax, kind: 'currency' as const },
+    { label: 'İstisna ve indirimler', value: -input.exemptions, kind: 'currency' },
+    { label: 'Geçmiş yıl zararları', value: -priorLosses, kind: 'currency' },
+    { label: 'Kurumlar vergisi matrahı', value: taxableBase, kind: 'currency' },
+    { label: 'Vergi oranı', value: rate, kind: 'percent', basis: 'KVK Md. 32' },
+    { label: 'Hesaplanan kurumlar vergisi', value: computedTax, kind: 'currency' },
   ];
 
   if (minimumTax !== null) {
     steps.push({
       label: 'Yurt içi asgari kurumlar vergisi',
       value: minimumTax,
-      kind: 'currency' as const,
+      kind: 'currency',
       basis: 'KVK Md. 32/C',
-      emphasis: minimumApplied ? ('warning' as const) : ('neutral' as const),
+      emphasis: minimumApplied ? 'warning' : 'neutral',
     });
   }
 

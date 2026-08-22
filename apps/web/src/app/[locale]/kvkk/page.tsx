@@ -1,7 +1,7 @@
-import { site } from '@futuristax/config';
-import type { Metadata } from 'next';
 import { LegalDraftNotice } from '@/components/ui/LegalDraftNotice';
 import { LEGAL_TEXTS_APPROVED, LEGAL_VERSIONS } from '@/lib/legal/versions';
+import { site } from '@futuristax/config';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'KVKK aydınlatma metni',
@@ -45,10 +45,10 @@ export default function KvkkPage() {
             İşlenen veriler ve amaçları
           </h2>
           <p>
-            İletişim formu üzerinden ilettiğiniz ad soyad, e-posta adresi, telefon numarası,
-            şirket adı ve mesaj içeriği yalnızca talebinizi değerlendirmek ve size geri dönüş
-            yapmak amacıyla işlenir. Formu gönderdiğiniz an, IP adresiniz ve tarayıcı bilginiz
-            güvenlik ve kötüye kullanım önleme amacıyla kaydedilir.
+            İletişim formu üzerinden ilettiğiniz ad soyad, e-posta adresi, telefon numarası, şirket
+            adı ve mesaj içeriği yalnızca talebinizi değerlendirmek ve size geri dönüş yapmak
+            amacıyla işlenir. Formu gönderdiğiniz an, IP adresiniz ve tarayıcı bilginiz güvenlik ve
+            kötüye kullanım önleme amacıyla kaydedilir.
           </p>
           <p className="mt-3">
             Verileriniz pazarlama amacıyla kullanılmaz ve üçüncü taraflara satılmaz.
@@ -61,18 +61,16 @@ export default function KvkkPage() {
           </h2>
           <p>
             Veriler, siteye ilettiğiniz form aracılığıyla elektronik ortamda toplanır. İşleme
-            faaliyetinin hukuki sebebi, KVKK Md. 5/2-c uyarınca sözleşmenin kurulması veya
-            ifasıyla doğrudan ilgili olması ve Md. 5/1 uyarınca açık rızanızdır.
+            faaliyetinin hukuki sebebi, KVKK Md. 5/2-c uyarınca sözleşmenin kurulması veya ifasıyla
+            doğrudan ilgili olması ve Md. 5/1 uyarınca açık rızanızdır.
           </p>
         </section>
 
         <section>
-          <h2 className="mb-3 text-[length:var(--text-xl)] text-[var(--color-text)]">
-            Aktarım
-          </h2>
+          <h2 className="mb-3 text-[length:var(--text-xl)] text-[var(--color-text)]">Aktarım</h2>
           <p>
-            Verileriniz, hizmetin sunulabilmesi için kullanılan barındırma, e-posta ve
-            veritabanı hizmet sağlayıcılarına aktarılabilir.
+            Verileriniz, hizmetin sunulabilmesi için kullanılan barındırma, e-posta ve veritabanı
+            hizmet sağlayıcılarına aktarılabilir.
           </p>
           {/*
             TODO(hukuk): Kullanılan sağlayıcılar (Vercel, Resend, Neon, Cloudflare, Upstash)
@@ -85,9 +83,7 @@ export default function KvkkPage() {
         </section>
 
         <section>
-          <h2 className="mb-3 text-[length:var(--text-xl)] text-[var(--color-text)]">
-            Haklarınız
-          </h2>
+          <h2 className="mb-3 text-[length:var(--text-xl)] text-[var(--color-text)]">Haklarınız</h2>
           <p>KVKK Md. 11 uyarınca şu haklara sahipsiniz:</p>
           <ul className="mt-3 space-y-2 pl-5">
             {[
@@ -108,7 +104,10 @@ export default function KvkkPage() {
           </ul>
           <p className="mt-4">
             Taleplerinizi{' '}
-            <a href={`mailto:${site.contact.email}`} className="text-[var(--color-ink)] underline underline-offset-2">
+            <a
+              href={`mailto:${site.contact.email}`}
+              className="text-[var(--color-ink)] underline underline-offset-2"
+            >
               {site.contact.email}
             </a>{' '}
             adresine iletebilirsiniz. Başvurular en geç 30 gün içinde sonuçlandırılır.

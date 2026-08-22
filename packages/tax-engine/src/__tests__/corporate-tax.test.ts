@@ -7,7 +7,12 @@ const rates = getRates(2025);
 describe('kurumlar vergisi', () => {
   it('matrahı KKEG ekleyip istisnaları düşerek bulur', () => {
     const r = calculateCorporateTax(
-      { commercialProfit: 1_000_000, disallowedExpenses: 200_000, exemptions: 300_000, band: 'standard' },
+      {
+        commercialProfit: 1_000_000,
+        disallowedExpenses: 200_000,
+        exemptions: 300_000,
+        band: 'standard',
+      },
       rates,
     );
     expect(r.detail.taxableBase).toBe(900_000);
@@ -16,7 +21,13 @@ describe('kurumlar vergisi', () => {
 
   it('geçmiş yıl zararlarını düşer', () => {
     const r = calculateCorporateTax(
-      { commercialProfit: 500_000, disallowedExpenses: 0, exemptions: 0, priorLosses: 200_000, band: 'standard' },
+      {
+        commercialProfit: 500_000,
+        disallowedExpenses: 0,
+        exemptions: 0,
+        priorLosses: 200_000,
+        band: 'standard',
+      },
       rates,
     );
     expect(r.detail.taxableBase).toBe(300_000);
@@ -33,7 +44,12 @@ describe('kurumlar vergisi', () => {
 
   it('finans kurumlarına %30 uygular', () => {
     const r = calculateCorporateTax(
-      { commercialProfit: 1_000_000, disallowedExpenses: 0, exemptions: 0, band: 'financialInstitutions' },
+      {
+        commercialProfit: 1_000_000,
+        disallowedExpenses: 0,
+        exemptions: 0,
+        band: 'financialInstitutions',
+      },
       rates,
     );
     expect(r.detail.rate).toBe(0.3);
@@ -60,7 +76,13 @@ describe('kurumlar vergisi', () => {
 
   it('asgari vergi küçükse normal vergiyi korur', () => {
     const r = calculateCorporateTax(
-      { commercialProfit: 1_000_000, disallowedExpenses: 0, exemptions: 0, band: 'standard', applyDomesticMinimum: true },
+      {
+        commercialProfit: 1_000_000,
+        disallowedExpenses: 0,
+        exemptions: 0,
+        band: 'standard',
+        applyDomesticMinimum: true,
+      },
       rates,
     );
     expect(r.detail.minimumApplied).toBe(false);
