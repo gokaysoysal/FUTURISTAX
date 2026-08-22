@@ -11,6 +11,9 @@
     "./tsconfig/next": "./tsconfig/next.json"
   },
   "dependencies": { "zod": "^3.24.1" },
-  "devDependencies": { "typescript": "^5.7.2" },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2"
+  },
   "scripts": { "typecheck": "tsc --noEmit" }
 }
