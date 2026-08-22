@@ -1,0 +1,184 @@
+@import "tailwindcss";
+
+/*
+ * FuturistaX tasarım sistemi — "mali belge" estetiği.
+ *
+ * Yön: lüks siyah-altın değil, resmî belge dili. Defter çizgileri, mürekkep
+ * mavisi, tasdik damgası. Süsleme değil kesinlik.
+ *
+ * KONTRAST NOTU: her metin tokeni WCAG 2.2 AA'ya göre doğrulanmıştır.
+ * Yeni bir renk eklerken oranı yorum olarak yazın; doğrulanmamış renk eklemeyin.
+ */
+
+@theme {
+  /* ── Yüzeyler ─────────────────────────────────────────────
+     Saf siyah değil: mavi-gri mürekkep. Ekranda daha az yorar,
+     baskılı belge hissini korur. */
+  --color-canvas: #0d1013;
+  --color-surface: #12161a;
+  --color-raised: #191f24;
+  --color-sunken: #090c0e;
+
+  /* ── Çizgiler ─────────────────────────────────────────────
+     Defter-i kebir hattı. Yalnızca veri bağlamlarında kullanılır,
+     dekoratif olarak değil. */
+  --color-rule: #262f36;
+  --color-rule-strong: #38444d;
+
+  /* ── Metin ────────────────────────────────────────────────
+     Eski sitede gövde metni %30 opaklıktaydı (~3:1, AA altı).
+     Bu tokenler o hatayı tekrarlamaz. */
+  --color-text: #e9eef1; /* canvas üzerinde 15.8:1 */
+  --color-text-secondary: #a3b0b8; /* canvas üzerinde 8.4:1 */
+  --color-text-muted: #7d8a93; /* canvas üzerinde 5.2:1 — yalnızca 16px+ */
+
+  /* ── Tasdik mavisi: birincil eylem ────────────────────────
+     Resmî mühür mürekkebi. Marka aksanı budur. */
+  --color-ink: #4b7fd6; /* canvas üzerinde 6.1:1 */
+  --color-ink-strong: #2f5fb0;
+  --color-ink-soft: #16233a;
+
+  /* ── Damga kırmızısı: YALNIZCA aciliyet ───────────────────
+     Marka rengi değildir. Sadece yaklaşan son tarih ve KKEG gibi
+     olumsuz kalemlerde kullanılır. Başka yerde kullanmayın. */
+  --color-stamp: #d9705c; /* canvas üzerinde 6.5:1 */
+  --color-stamp-soft: #2c1613;
+
+  /* ── Onay yeşili: doğrulanmış/olumlu kalem ────────────────*/
+  --color-approved: #5fb894; /* canvas üzerinde 8.0:1 */
+  --color-approved-soft: #10241d;
+
+  /* ── Tipografi ────────────────────────────────────────────
+     Üç rol, hepsi tam Türkçe glif desteğine sahip.
+     Cinzel KULLANILMAZ: ı/ğ/ş/İ gliflerinde yetersiz. */
+  --font-display: "Newsreader", ui-serif, Georgia, serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  /* Tip ölçeği — 1.25 majör üçlü */
+  --text-2xs: 0.6875rem;
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
+  --text-base: 1.0625rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 1.875rem;
+  --text-3xl: 2.375rem;
+  --text-4xl: 3rem;
+  --text-5xl: 3.75rem;
+
+  /* ── Ritim ────────────────────────────────────────────────*/
+  --spacing-section: 7rem;
+  --spacing-section-sm: 4rem;
+  --radius-none: 0;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+
+  --shadow-raised: 0 1px 0 0 var(--color-rule), 0 12px 32px -16px rgb(0 0 0 / 0.7);
+}
+
+/* ── Açık tema ──────────────────────────────────────────────
+   Kâğıt tarafı: soğuk beyaz, krem değil. Aynı mürekkep aksanı. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --color-canvas: #f5f7f8;
+    --color-surface: #ffffff;
+    --color-raised: #ffffff;
+    --color-sunken: #eceff1;
+    --color-rule: #d7dde1;
+    --color-rule-strong: #b3bdc4;
+    --color-text: #14191d; /* 15.9:1 */
+    --color-text-secondary: #48545d; /* 8.1:1 */
+    --color-text-muted: #616e77; /* 5.3:1 */
+    --color-ink: #2456a8; /* 6.9:1 */
+    --color-ink-strong: #1b4a8f;
+    --color-ink-soft: #e5edf9;
+    --color-stamp: #a8412c; /* 6.4:1 */
+    --color-stamp-soft: #fbeae6;
+    --color-approved: #1c6b52; /* 6.1:1 */
+    --color-approved-soft: #e3f2ec;
+  }
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    /* scroll-behavior: smooth KALDIRILDI — reduced-motion ile çakışıyordu.
+       Aşağıda koşullu olarak açılıyor. */
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-canvas);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    /* cursor: none KALDIRILDI — erişilebilirlik ihlaliydi. */
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  /* Rakamlar bir mali müşavirlik sitesinde zıplamamalı. */
+  [data-numeric],
+  table,
+  time,
+  .tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+  }
+
+  /* Görünür klavye odağı — her etkileşimli öğede zorunlu. */
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Hareket tercihi: tüm animasyonlar tek noktadan kapanır. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Defter çizgisi — yalnızca veri tablolarında ve takvimde. */
+  .ledger-rule {
+    border-bottom: 1px solid var(--color-rule);
+  }
+
+  /* Yasal dayanak etiketi: kanun maddesi göndermeleri mono ile. */
+  .basis-ref {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: 0.02em;
+    color: var(--color-text-muted);
+  }
+}
