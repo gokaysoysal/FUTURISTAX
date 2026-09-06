@@ -1,4 +1,4 @@
-import { sectorSlugs, serviceSlugs } from '@/lib/data';
+import { articleSlugs, sectorSlugs, serviceSlugs } from '@/lib/data';
 import { toolSlugs } from '@/lib/tools';
 import { site } from '@futuristax/config';
 import type { MetadataRoute } from 'next';
@@ -40,6 +40,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...serviceSlugs().map((slug) => `/hizmetler/${slug}`),
     ...sectorSlugs().map((slug) => `/sektorler/${slug}`),
     ...toolSlugs().map((slug) => `/araclar/${slug}`),
+    ...articleSlugs().map((slug) => `/mevzuat/${slug}`),
   ];
 
   return [...STATIC_PATHS, ...detailPaths].flatMap((path) =>

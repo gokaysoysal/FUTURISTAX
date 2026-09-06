@@ -74,6 +74,39 @@ export interface SectorRecord extends ContentRecordBase {
   relatedSectorSlugs: readonly string[];
 }
 
+export type LegislationCategory = 'vergi' | 'sgk-bordro' | 'tesvik' | 'raporlama' | 'genel';
+
+export const LEGISLATION_CATEGORY_LABELS: Record<LegislationCategory, string> = {
+  vergi: 'Vergi',
+  'sgk-bordro': 'SGK ve bordro',
+  tesvik: 'Teşvik',
+  raporlama: 'Raporlama',
+  genel: 'Genel',
+};
+
+/**
+ * Mevzuat merkezi makalesi — FİRMANIN KENDİ AÇIKLAYICI içeriği.
+ *
+ * Bunlar resmî duyuru DEĞİLDİR; bir konunun genel çerçevesini anlatan editoryal
+ * yazılardır. Resmî duyurular ayrı bir beslemeden (bkz. fetchers/legislation)
+ * gelir ve kaynak erişilemezse hiç gösterilmez.
+ */
+export interface LegislationArticle {
+  slug: string;
+  title: string;
+  category: LegislationCategory;
+  summary: string;
+  sections: readonly ContentSection[];
+  seo: SeoMeta;
+  /** İçerik yayın tarihi (yer tutucu — CMS'e taşındığında oradan gelir). */
+  publishedAt: string;
+  updatedAt: string;
+  draft: boolean;
+  relatedArticleSlugs: readonly string[];
+  /** İlgili hizmet sayfaları */
+  relatedServiceSlugs: readonly string[];
+}
+
 export interface TeamMember {
   slug: string;
   name: string;

@@ -116,6 +116,41 @@ export function HowToJsonLd({
   );
 }
 
+export function ArticleJsonLd({
+  headline,
+  description,
+  path,
+  datePublished,
+  dateModified,
+}: {
+  headline: string;
+  description: string;
+  path: string;
+  datePublished?: string;
+  dateModified?: string;
+}) {
+  return (
+    <Script
+      data={{
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline,
+        description,
+        url: `${site.urls.production}${path}`,
+        ...(datePublished ? { datePublished } : {}),
+        ...(dateModified ? { dateModified } : {}),
+        publisher: {
+          '@type': 'Organization',
+          '@id': `${site.urls.production}/#organization`,
+          name: site.brand.name,
+        },
+        author: { '@type': 'Organization', name: site.brand.name },
+        inLanguage: 'tr',
+      }}
+    />
+  );
+}
+
 export function BreadcrumbJsonLd({ trail }: { trail: { name: string; path: string }[] }) {
   return (
     <Script

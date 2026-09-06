@@ -9,12 +9,15 @@
 export type {
   ContentSection,
   Faq,
+  LegislationArticle,
+  LegislationCategory,
   SectorRecord,
   SeoMeta,
   ServiceRecord,
   TeamMember,
   Testimonial,
 } from './types';
+export { LEGISLATION_CATEGORY_LABELS } from './types';
 
 export { SERVICES, getService, serviceSlugs } from './services';
 export { SECTORS, getSector, sectorSlugs } from './sectors';
@@ -22,3 +25,4 @@ export { FAQ_CATEGORIES, GENERAL_FAQS } from './faq';
 export type { FaqCategory } from './faq';
 export { TEAM, FOUNDER } from './team';
 export { TESTIMONIALS, publishableTestimonials } from './testimonials';
+export { LEGISLATION_ARTICLES, getArticle, articleSlugs } from './legislation';
