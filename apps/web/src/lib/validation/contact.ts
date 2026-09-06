@@ -54,9 +54,16 @@ export const contactSchema = z.object({
 
 export type ContactInput = z.infer<typeof contactSchema>;
 
-/** Sunucu tarafında ek olarak Turnstile jetonu beklenir. */
+/**
+ * Sunucu tarafı şeması.
+ *
+ * Turnstile jetonu ARTIK ZORUNLU DEĞİL. Cloudflare betiği yüklenemediğinde
+ * form kilitleniyordu ve bir danışmanlık sitesinde bu doğrudan lead kaybı
+ * demekti. Jeton yoksa istek reddedilmez; route jetonsuz isteği daha katı
+ * ele alır (sıkı hız sınırı) ve kaydı "doğrulanmamış" olarak işaretler.
+ */
 export const contactRequestSchema = contactSchema.extend({
-  turnstileToken: z.string().min(1, 'Doğrulama tamamlanmadı.'),
+  turnstileToken: z.string().optional().default(''),
 });
 
 export const TOPIC_LABELS: Record<ContactTopic, string> = {
