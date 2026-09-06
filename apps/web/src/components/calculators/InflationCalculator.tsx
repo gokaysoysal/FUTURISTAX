@@ -1,5 +1,6 @@
 'use client';
 
+import { StatusPanel } from '@/components/ui/StatusPanel';
 import { availableCpiYears, calculateInflationAdjustment } from '@futuristax/tax-engine';
 import { useMemo, useState } from 'react';
 import { ResultLedger } from './ResultLedger';
@@ -56,9 +57,11 @@ export function InflationCalculator() {
         {result ? (
           <ResultLedger result={result} />
         ) : (
-          <p className="border border-[var(--color-rule)] bg-[var(--color-surface)] p-5 text-[length:var(--text-sm)] text-[var(--color-text-secondary)]">
-            Seçilen yıllar için TÜFE endeks verisi bulunmuyor.
-          </p>
+          <StatusPanel
+            tone="empty"
+            label="TÜFE"
+            title="Seçilen yıllar için TÜFE endeks verisi bulunmuyor"
+          />
         )}
       </div>
     </div>

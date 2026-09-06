@@ -1,5 +1,6 @@
 'use client';
 
+import { StatusPanel } from '@/components/ui/StatusPanel';
 import { formatIsoDate } from '@/lib/format';
 import { site } from '@futuristax/config';
 import { type ExchangeRateTable, convertCurrency } from '@futuristax/tax-engine';
@@ -81,24 +82,18 @@ export function CurrencyConverter() {
 
       <div aria-live="polite">
         {state.status === 'loading' ? (
-          <p className="border border-[var(--color-rule)] bg-[var(--color-surface)] p-5 text-[length:var(--text-sm)] text-[var(--color-text-secondary)]">
-            Güncel kurlar yükleniyor…
-          </p>
+          <StatusPanel tone="info" label="Yükleniyor" title="Güncel kurlar yükleniyor…" />
         ) : null}
 
         {state.status === 'error' ? (
-          <p
-            role="note"
-            className="border-l-2 border-[var(--color-stamp)] bg-[var(--color-stamp-soft)] p-5 text-[length:var(--text-sm)] text-[var(--color-text-secondary)]"
-          >
-            <strong className="text-[var(--color-stamp)]">Kur verisi şu an güncellenemiyor.</strong>{' '}
+          <StatusPanel tone="error" label="Kur" title="Kur verisi şu an güncellenemiyor">
             TCMB kur servisine ulaşılamadı. Uydurma bir kur göstermek yerine sonucu gizliyoruz;
             lütfen daha sonra tekrar deneyin.
-          </p>
+          </StatusPanel>
         ) : null}
 
         {state.status === 'ready' && conversion ? (
-          <div className="border border-[var(--color-rule)] bg-[var(--color-surface)]">
+          <div className="ledger-margin border border-[var(--color-rule)] bg-[var(--color-surface)]">
             <div className="flex items-baseline justify-between gap-4 border-b border-[var(--color-rule)] px-5 py-4">
               <span className="text-[length:var(--text-xs)] uppercase tracking-wide text-[var(--color-text-secondary)]">
                 {to} karşılığı
@@ -143,9 +138,7 @@ export function CurrencyConverter() {
         ) : null}
 
         {state.status === 'ready' && !conversion ? (
-          <p className="border border-[var(--color-rule)] bg-[var(--color-surface)] p-5 text-[length:var(--text-sm)] text-[var(--color-text-secondary)]">
-            Seçilen para birimi için kur bulunamadı.
-          </p>
+          <StatusPanel tone="empty" label="Kur" title="Seçilen para birimi için kur bulunamadı" />
         ) : null}
       </div>
     </div>

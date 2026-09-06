@@ -59,7 +59,7 @@ export function TaxCalendarPanel({
   return (
     <section
       aria-labelledby="tax-calendar-heading"
-      className="border border-[var(--color-rule)] bg-[var(--color-surface)]"
+      className="ledger-margin border border-[var(--color-rule)] bg-[var(--color-surface)]"
     >
       <header className="flex flex-wrap items-baseline justify-between gap-3 border-b border-[var(--color-rule)] px-6 py-5">
         <div>
@@ -86,7 +86,7 @@ export function TaxCalendarPanel({
           Farklı bir mükellef tipi seçerek bakabilirsiniz.
         </p>
       ) : (
-        <ol className="divide-y divide-[var(--color-rule)]">
+        <ol className="ledger-paper divide-y divide-[var(--color-rule)]">
           {deadlines.map((deadline) => {
             const style = URGENCY_STYLES[deadline.urgency];
             return (

@@ -1,5 +1,6 @@
 import { Breadcrumbs } from '@/components/content/Breadcrumbs';
 import { RequestCta } from '@/components/content/RequestCta';
+import { StatusPanel } from '@/components/ui/StatusPanel';
 import { publishableTestimonials } from '@/lib/data';
 import type { Metadata } from 'next';
 
@@ -26,15 +27,17 @@ export default function ReferencesPage() {
       </header>
 
       {testimonials.length === 0 ? (
-        <div className="mt-8 border border-[var(--color-rule)] bg-[var(--color-surface)] p-8">
-          <p className="text-[length:var(--text-base)] leading-relaxed text-[var(--color-text-secondary)]">
-            Müşteri görüşlerini yalnızca ilgili müşteriden yazılı izin aldığımızda yayınlıyoruz.
-            İzin süreci tamamlanana kadar bu sayfada görüş göstermiyoruz — gerçek olmayan ya da
-            onaysız bir referans yayınlamaktansa hiç yayınlamamayı tercih ederiz.
-          </p>
-          <p className="mt-4 text-[length:var(--text-sm)] text-[var(--color-text-secondary)]">
-            Sektörünüze yakın bir çalışmadan örnek görmek isterseniz, görüşmede paylaşabiliriz.
-          </p>
+        <div className="mt-8">
+          <StatusPanel tone="empty" label="Yayın izni bekliyor" title="Henüz yayınlanmış görüş yok">
+            <p>
+              Müşteri görüşlerini yalnızca ilgili müşteriden yazılı izin aldığımızda yayınlıyoruz.
+              İzin süreci tamamlanana kadar bu sayfada görüş göstermiyoruz — gerçek olmayan ya da
+              onaysız bir referans yayınlamaktansa hiç yayınlamamayı tercih ederiz.
+            </p>
+            <p className="mt-3">
+              Sektörünüze yakın bir çalışmadan örnek görmek isterseniz, görüşmede paylaşabiliriz.
+            </p>
+          </StatusPanel>
         </div>
       ) : (
         <ul className="mt-8 space-y-6">

@@ -1,3 +1,4 @@
+import { Reveal } from '@/components/motion/Reveal';
 import { TaxCalendarPanel } from '@/components/tax-calendar/TaxCalendarPanel';
 import { site } from '@futuristax/config';
 import type { Metadata } from 'next';
@@ -60,7 +61,7 @@ export default function HomePage() {
     <>
       <section className="mx-auto max-w-6xl px-5 pt-16 pb-[var(--spacing-section-sm)]">
         <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-start">
-          <div className="lg:pt-8">
+          <Reveal className="lg:pt-8">
             <p className="basis-ref uppercase">Ankara · {site.brand.foundedYear}'ten beri</p>
             <h1 className="mt-4 text-[length:var(--text-4xl)] text-[var(--color-text)]">
               Vergi, yönetilebilir bir kalem hâline gelir.
@@ -84,10 +85,12 @@ export default function HomePage() {
                 Hesaplama araçları
               </Link>
             </div>
-          </div>
+          </Reveal>
 
           {/* İmza bileşeni */}
-          <TaxCalendarPanel referenceDate={referenceDate} horizonDays={60} limit={6} />
+          <Reveal delay={0.08}>
+            <TaxCalendarPanel referenceDate={referenceDate} horizonDays={60} limit={6} />
+          </Reveal>
         </div>
       </section>
 
@@ -95,34 +98,36 @@ export default function HomePage() {
         aria-labelledby="services-heading"
         className="mx-auto max-w-6xl px-5 py-[var(--spacing-section-sm)]"
       >
-        <div className="ledger-rule pb-4">
-          <p className="basis-ref uppercase">Hizmetler</p>
-          <h2 id="services-heading" className="mt-1 text-[length:var(--text-2xl)]">
-            Çalışma alanlarımız
-          </h2>
-        </div>
+        <Reveal>
+          <div className="ledger-rule pb-4">
+            <p className="basis-ref uppercase">Hizmetler</p>
+            <h2 id="services-heading" className="mt-1 text-[length:var(--text-2xl)]">
+              Çalışma alanlarımız
+            </h2>
+          </div>
 
-        <ul className="mt-8 grid gap-px bg-[var(--color-rule)] sm:grid-cols-2 lg:grid-cols-3">
-          {SERVICES.map((service) => (
-            <li key={service.slug} className="bg-[var(--color-canvas)]">
-              <Link
-                href={`/hizmetler/${service.slug}`}
-                className="block h-full p-6 transition-colors hover:bg-[var(--color-surface)]"
-              >
-                <h3 className="text-[length:var(--text-lg)] text-[var(--color-text)]">
-                  {service.title}
-                </h3>
-                <p className="mt-2 text-[length:var(--text-sm)] text-[var(--color-text-secondary)]">
-                  {service.summary}
-                </p>
-              </Link>
-            </li>
-          ))}
-        </ul>
+          <ul className="mt-8 grid gap-px bg-[var(--color-rule)] sm:grid-cols-2 lg:grid-cols-3">
+            {SERVICES.map((service) => (
+              <li key={service.slug} className="bg-[var(--color-canvas)]">
+                <Link
+                  href={`/hizmetler/${service.slug}`}
+                  className="block h-full p-6 transition-colors hover:bg-[var(--color-surface)]"
+                >
+                  <h3 className="text-[length:var(--text-lg)] text-[var(--color-text)]">
+                    {service.title}
+                  </h3>
+                  <p className="mt-2 text-[length:var(--text-sm)] text-[var(--color-text-secondary)]">
+                    {service.summary}
+                  </p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </Reveal>
       </section>
 
       <section className="mx-auto max-w-6xl px-5 py-[var(--spacing-section-sm)]">
-        <div className="border border-[var(--color-rule)] bg-[var(--color-surface)] p-8 sm:p-12">
+        <Reveal className="border border-[var(--color-rule)] bg-[var(--color-surface)] p-8 sm:p-12">
           <h2 className="text-[length:var(--text-2xl)]">İlk görüşme ücretsizdir</h2>
           <p className="mt-3 max-w-prose text-[length:var(--text-sm)] text-[var(--color-text-secondary)]">
             Mevcut vergi yapınızı, risk alanlarınızı ve optimizasyon fırsatlarınızı birlikte
@@ -134,7 +139,7 @@ export default function HomePage() {
           >
             Görüşme talep et
           </Link>
-        </div>
+        </Reveal>
       </section>
     </>
   );

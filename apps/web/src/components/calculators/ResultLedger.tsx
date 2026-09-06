@@ -20,7 +20,7 @@ const EMPHASIS_COLOR = {
 
 export function ResultLedger<T>({ result }: { result: CalculationResult<T> }) {
   return (
-    <div className="border border-[var(--color-rule)] bg-[var(--color-surface)]">
+    <div className="ledger-margin border border-[var(--color-rule)] bg-[var(--color-surface)]">
       <div className="flex items-baseline justify-between gap-4 border-b border-[var(--color-rule)] px-5 py-4">
         <span className="text-[length:var(--text-xs)] uppercase tracking-wide text-[var(--color-text-secondary)]">
           {result.headline.label}

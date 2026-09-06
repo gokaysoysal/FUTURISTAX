@@ -1,5 +1,6 @@
 import { Breadcrumbs } from '@/components/content/Breadcrumbs';
 import { RequestCta } from '@/components/content/RequestCta';
+import { StatusPanel } from '@/components/ui/StatusPanel';
 import {
   LEGISLATION_ARTICLES,
   LEGISLATION_CATEGORY_LABELS,
@@ -102,16 +103,12 @@ export default async function LegislationHubPage({
         </div>
 
         {feedUnavailable ? (
-          <p
-            role="note"
-            className="mt-5 border-l-2 border-[var(--color-stamp)] bg-[var(--color-stamp-soft)] px-4 py-3 text-[length:var(--text-sm)] text-[var(--color-text-secondary)]"
-          >
-            <strong className="text-[var(--color-stamp)]">
-              Resmî duyurular şu an güncellenemiyor.
-            </strong>{' '}
-            Doğrulanmış bir kaynaktan veri alınamadığı için burada duyuru göstermiyoruz — gerçek
-            olmayan bir içerik üretmektense boş bırakmayı tercih ediyoruz.
-          </p>
+          <div className="mt-5">
+            <StatusPanel tone="error" label="Besleme" title="Resmî duyurular şu an güncellenemiyor">
+              Doğrulanmış bir kaynaktan veri alınamadığı için burada duyuru göstermiyoruz — gerçek
+              olmayan bir içerik üretmektense boş bırakmayı tercih ediyoruz.
+            </StatusPanel>
+          </div>
         ) : (
           <ul className="mt-5 divide-y divide-[var(--color-rule)] border-y border-[var(--color-rule)]">
             {announcements.map((item) => (

@@ -1,4 +1,5 @@
 import { Breadcrumbs } from '@/components/content/Breadcrumbs';
+import { StatusPanel } from '@/components/ui/StatusPanel';
 import { site } from '@futuristax/config';
 import type { Metadata } from 'next';
 
@@ -37,18 +38,23 @@ export default function CareersPage() {
         </div>
 
         {OPEN_POSITIONS.length === 0 ? (
-          <div className="mt-5 border border-[var(--color-rule)] bg-[var(--color-surface)] p-8">
-            <p className="text-[length:var(--text-base)] leading-relaxed text-[var(--color-text-secondary)]">
-              Şu anda yayınlanmış bir açık pozisyon yok. Yine de kendinizi bu alanda görüyorsanız,
-              özgeçmişinizi ve birkaç satır motivasyon yazınızı bize iletin; uygun bir pozisyon
-              açıldığında değerlendirmeye alırız.
-            </p>
-            <a
-              href={`mailto:${site.contact.email}?subject=${subject}`}
-              className="mt-6 inline-block bg-[var(--color-ink)] px-6 py-3 text-[length:var(--text-sm)] font-medium text-white hover:bg-[var(--color-ink-strong)]"
+          <div className="mt-5">
+            <StatusPanel
+              tone="empty"
+              label="Açık pozisyon yok"
+              title="Şu anda yayınlanmış bir açık pozisyon yok"
+              action={
+                <a
+                  href={`mailto:${site.contact.email}?subject=${subject}`}
+                  className="inline-block bg-[var(--color-ink)] px-6 py-3 text-[length:var(--text-sm)] font-medium text-white hover:bg-[var(--color-ink-strong)]"
+                >
+                  Genel başvuru gönder
+                </a>
+              }
             >
-              Genel başvuru gönder
-            </a>
+              Yine de kendinizi bu alanda görüyorsanız, özgeçmişinizi ve birkaç satır motivasyon
+              yazınızı bize iletin; uygun bir pozisyon açıldığında değerlendirmeye alırız.
+            </StatusPanel>
           </div>
         ) : (
           <ul className="mt-5 divide-y divide-[var(--color-rule)] border-y border-[var(--color-rule)]">
