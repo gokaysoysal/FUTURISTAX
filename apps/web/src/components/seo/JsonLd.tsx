@@ -60,6 +60,36 @@ export function FaqJsonLd({ items }: { items: { question: string; answer: string
   );
 }
 
+export function ServiceJsonLd({
+  name,
+  description,
+  path,
+}: {
+  name: string;
+  description: string;
+  path: string;
+}) {
+  return (
+    <Script
+      data={{
+        '@context': 'https://schema.org',
+        '@type': 'Service',
+        name,
+        description,
+        serviceType: name,
+        url: `${site.urls.production}${path}`,
+        provider: {
+          '@type': 'ProfessionalService',
+          '@id': `${site.urls.production}/#organization`,
+          name: site.brand.name,
+        },
+        areaServed: { '@type': 'Country', name: 'Türkiye' },
+        availableLanguage: ['tr', 'en'],
+      }}
+    />
+  );
+}
+
 export function BreadcrumbJsonLd({ trail }: { trail: { name: string; path: string }[] }) {
   return (
     <Script
