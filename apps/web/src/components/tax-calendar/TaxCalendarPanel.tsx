@@ -117,6 +117,17 @@ export function TaxCalendarPanel({
                     {formatDaysRemaining(deadline.daysRemaining)}
                   </span>
                   <span className="sr-only">{style.label}</span>
+                  {deadline.shifted ? (
+                    <span className="basis-ref mt-0.5 block normal-case">
+                      Kanuni süre {formatIsoDate(deadline.statutoryDate)}; {deadline.shiftReason}{' '}
+                      nedeniyle ilk iş gününe uzadı.
+                    </span>
+                  ) : null}
+                  {deadline.fiscalBreakCaution ? (
+                    <span className="basis-ref mt-0.5 block normal-case text-[var(--color-stamp)]">
+                      Mali tatile denk geliyor; süre 5604 sayılı Kanun uyarınca ayrıca uzayabilir.
+                    </span>
+                  ) : null}
                 </div>
               </li>
             );
@@ -125,9 +136,10 @@ export function TaxCalendarPanel({
       )}
 
       <footer className="border-t border-[var(--color-rule)] px-6 py-3">
-        <p className="basis-ref">
-          Son gün resmî tatile denk gelirse süre takip eden ilk iş gününe uzar (VUK Md. 18). Tatil
-          kaydırması bu sürümde henüz uygulanmamaktadır.
+        <p className="basis-ref normal-case">
+          Gösterilen son günler, hafta sonu ve resmî tatile denk geldiğinde takip eden ilk iş gününe
+          uzatılmıştır (VUK Md. 18). Dinî bayram tatilleri ve mali tatil (1–20 Temmuz) kaydırması
+          henüz hesaba katılmamaktadır.
         </p>
       </footer>
     </section>

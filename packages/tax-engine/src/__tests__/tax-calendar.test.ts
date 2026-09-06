@@ -28,20 +28,26 @@ describe('vergi takvimi', () => {
     expect(d.every((x) => x.taxpayerTypes.includes('employer'))).toBe(true);
   });
 
-  it('kurumlar vergisi beyanını nisan ayında bulur', () => {
+  it('kurumlar vergisi beyanının kanuni günü nisandadır; hafta sonuna denk gelince kaydırılır', () => {
     const d = getUpcomingDeadlines({
       referenceDate: '2026-04-01',
       horizonDays: 40,
       taxpayerType: 'corporate',
     });
     const kv = d.find((x) => x.ruleId === 'kurumlar-vergisi');
-    expect(kv?.date).toBe('2026-04-25');
+    // 25 Nisan 2026 cumartesi → ilk iş günü 27 Nisan pazartesi (VUK Md. 18)
+    expect(kv?.statutoryDate).toBe('2026-04-25');
+    expect(kv?.date).toBe('2026-04-27');
+    expect(kv?.shifted).toBe(true);
+    expect(kv?.shiftReason).toBe('hafta sonu');
   });
 
-  it('kısa ayda ayın son gününü aşmaz', () => {
-    const d = getUpcomingDeadlines({ referenceDate: '2026-02-01', horizonDays: 30 });
+  it('kısa ayda ayın son gününü aşmaz (kanuni tarih 28 Şubat)', () => {
+    const d = getUpcomingDeadlines({ referenceDate: '2026-02-01', horizonDays: 40 });
     const berat = d.find((x) => x.ruleId === 'edefter-berat');
-    expect(berat?.date).toBe('2026-02-28');
+    // 31 → şubatta 28'e sabitlenir; 28 Şubat 2026 cumartesi → 2 Mart pazartesi
+    expect(berat?.statutoryDate).toBe('2026-02-28');
+    expect(berat?.date).toBe('2026-03-02');
   });
 
   it('aciliyet sınıflandırması yapar', () => {
