@@ -90,6 +90,32 @@ export function ServiceJsonLd({
   );
 }
 
+export function HowToJsonLd({
+  name,
+  description,
+  steps,
+}: {
+  name: string;
+  description?: string;
+  steps: readonly string[];
+}) {
+  return (
+    <Script
+      data={{
+        '@context': 'https://schema.org',
+        '@type': 'HowTo',
+        name,
+        ...(description ? { description } : {}),
+        step: steps.map((text, index) => ({
+          '@type': 'HowToStep',
+          position: index + 1,
+          text,
+        })),
+      }}
+    />
+  );
+}
+
 export function BreadcrumbJsonLd({ trail }: { trail: { name: string; path: string }[] }) {
   return (
     <Script
