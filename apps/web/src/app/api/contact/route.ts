@@ -81,8 +81,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('[contact] yapılandırma eksik', error);
     return fail(
-      'Form şu anda yapılandırma nedeniyle çalışmıyor. Lütfen doğrudan ' +
-        `${site.contact.email} adresine yazın ya da ${site.contact.phoneDisplay} numarasını arayın.`,
+      `Form şu anda yapılandırma nedeniyle çalışmıyor. Lütfen doğrudan ${site.contact.email} adresine yazın ya da ${site.contact.phoneDisplay} numarasını arayın.`,
       503,
     );
   }
@@ -167,8 +166,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('[contact] kayıt başarısız', { ip, error });
     return fail(
-      'Talebiniz kaydedilemedi. Lütfen birkaç dakika sonra tekrar deneyin ya da ' +
-        `${site.contact.email} adresine yazın.`,
+      `Talebiniz kaydedilemedi. Lütfen birkaç dakika sonra tekrar deneyin ya da ${site.contact.email} adresine yazın.`,
       500,
     );
   }

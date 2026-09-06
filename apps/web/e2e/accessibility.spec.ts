@@ -7,8 +7,27 @@ import { expect, test } from '@playwright/test';
  * Eski sitede zoom kapalıydı, imleç gizliydi, kontrast AA altındaydı ve
  * navigasyon klavyeyle kullanılamıyordu. Bu testler o hataların geri
  * dönmesini engeller. Sıfır ihlal zorunludur.
+ *
+ * Kapsam Bölüm 7'de genişletildi: yeni içerik, hub, detay, araç ve mevzuat
+ * sayfaları da taranıyor.
  */
-const PAGES = ['/', '/araclar', '/iletisim'];
+const PAGES = [
+  '/',
+  '/kurumsal',
+  '/hizmetler',
+  '/hizmetler/vergi-danismanligi',
+  '/sektorler',
+  '/sektorler/imalat',
+  '/araclar',
+  '/araclar/kdv',
+  '/araclar/kur-cevirici',
+  '/mevzuat',
+  '/mevzuat/mali-tatil-nedir',
+  '/sss',
+  '/referanslar',
+  '/kariyer',
+  '/iletisim',
+];
 
 for (const path of PAGES) {
   test(`${path} — axe ihlali yok`, async ({ page }) => {

@@ -50,9 +50,10 @@ const url = process.env.DATABASE_URL ?? process.env.NETLIFY_DATABASE_URL;
 
 if (!url) {
   throw new Error(
-    'Veritabanı bağlantı dizesi bulunamadı.\n' +
-      `Aranan konum: ${resolve(process.cwd(), '.env.local')}\n` +
-      'Dosyada şu satır olmalı: DATABASE_URL=postgresql://...',
+    `Veritabanı bağlantı dizesi bulunamadı.\nAranan konum: ${resolve(
+      process.cwd(),
+      '.env.local',
+    )}\nDosyada şu satır olmalı: DATABASE_URL=postgresql://...`,
   );
 }
 

@@ -1,16 +1,23 @@
 import { site } from '@futuristax/config';
+import { headers } from 'next/headers';
 
 /**
  * Yapılandırılmış veri. Eski sitede hiç yoktu.
  * Google'ın firmayı yerel bir profesyonel hizmet sağlayıcı olarak tanıması için gerekli.
  */
 
-function Script({ data }: { data: Record<string, unknown> }) {
+async function Script({ data }: { data: Record<string, unknown> }) {
+  // CSP nonce'u middleware'de üretilip istek başlığına yazılır.
+  const nonce = (await headers()).get('x-nonce') ?? undefined;
+  // `</script>` kaçışı — veri kendi sabitlerimizden gelse de savunmacı olarak.
+  const json = JSON.stringify(data).replace(/</g, '\\u003c');
+
   return (
     <script
       type="application/ld+json"
-      // Veri kendi sabitlerimizden gelir, kullanıcı girdisi içermez.
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      nonce={nonce}
+      // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD yalnızca kendi sabitlerimizden serileştirilir; kullanıcı girdisi yok ve `<` kaçırılıyor.
+      dangerouslySetInnerHTML={{ __html: json }}
     />
   );
 }
