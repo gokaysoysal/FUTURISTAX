@@ -66,7 +66,9 @@ export default function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:png|jpg|svg|webp|avif|ico)$).*)',
-  ],
+  // Nokta içeren her yol (robots.txt, sitemap.xml, favicon.ico, görseller,
+  // manifest…) middleware'i tamamen atlar — bunlar metadata/statik dosyalardır,
+  // dil yönlendirmesi ve CSP nonce'una ihtiyaç duymazlar. `api` ve Next iç
+  // yolları da hariç. Kalan her şey (nokta içermeyen sayfa yolları) işlenir.
+  matcher: ['/((?!api|_next/static|_next/image|_next/data|.*\\..*).*)'],
 };
