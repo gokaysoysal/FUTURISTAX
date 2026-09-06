@@ -1,165 +1,176 @@
 # PROJE DURUMU — devam noktası
 
-> **Yeni bir oturuma başlarken önce bu dosyayı oku.** Nerede kalındığını, neyin
-> neden böyle yapıldığını ve sıradaki işi burada bulursun. Her aşama sonunda
-> güncellenir.
+> **Her yeni oturumda önce bu dosyayı oku.** Kurallar ve mimari için `CLAUDE.md`.
 
-**Son güncelleme:** Aşama 3 başlangıcı (dağıtım kurulumu)
-**Depo:** futuristax — Next.js 15 monorepo (pnpm + Turborepo)
-**Hedef:** futuristax.com'un tek dosyalık `index.html` prototipinin yerini almak
-
----
-
-## 1. Bu proje neyi çözüyor
-
-Mevcut canlı site tek bir `index.html` içinde ~5.000 satır. Tespit edilen ve
-çözülmesi gereken sorunlar:
-
-| # | Sorun | Durum |
-|---|---|---|
-| 1 | `submitForm()` hiçbir yere veri göndermiyor — tüm lead'ler kayboluyor | ✅ Çözüldü |
-| 2 | `loadGibNews()` dil modeline **uydurma GİB duyurusu** ürettirip gerçek gibi yayınlıyor | ✅ Kaldırıldı |
-| 3 | Anthropic API tarayıcıdan çağrılıyor, anahtar riski | ✅ Sunucuya taşınacak (Aşama 11) |
-| 4 | `switchTab()` sahte SPA — tüm içerik tek URL'de, SEO yok | ✅ Gerçek routing |
-| 5 | `user-scalable=no` — zoom engelli (WCAG 1.4.4) | ✅ Kaldırıldı |
-| 6 | `cursor: none` — standart imleç yok | ✅ Kaldırıldı |
-| 7 | Gövde metni %30 opaklık, kontrast ~3:1 (AA altı) | ✅ Tokenler AA doğrulandı |
-| 8 | Altın fiyatı CoinGecko `tether-gold` kripto tokeninden | ✅ TCMB resmî XML |
-| 9 | Vergi limitleri koda gömülü, yıl bazlı değil | ✅ `packages/tax-engine` |
-| 10 | KVKK metni, çerez onayı yok | ⚠️ Taslak hazır, hukukçu onayı bekliyor |
-| 11 | JSON-LD, sitemap, robots, OG yok | ✅ Eklendi |
-| 12 | Cinzel Türkçe gliflerde yetersiz ("AKTIF MUSTERI") | ✅ Font değişti |
+**Son güncelleme:** Aşama 4–8 tamamlandı (tek ajan koşusu, `tam-insa` dalı)
+**Depo:** github.com/gokaysoysal/FUTURISTAX — çalışma dalı `v2`, ajan dalı `tam-insa`
+**Önizleme:** deploy-preview-1--futuristax.netlify.app
+**Canlı site:** futuristax.com — hâlâ ESKİ sürüm (`main` dalı, `legacy/index.html`)
 
 ---
 
-## 2. 12 aşamalık plan
+## 1. Nerede duruyoruz
 
 | # | Aşama | Durum |
 |---|---|---|
-| 1 | Temel — monorepo, vergi motoru, tasarım sistemi, form API, takvim | ✅ Tamam |
-| 2 | Yayına çıkılabilir çekirdek — yasal sayfalar, Turnstile, çerez onayı, lead DB | ✅ Tamam |
-| 3 | İlk deploy — **Netlify**, Neon, Resend, Turnstile, Sentry | 🔄 Devam ediyor |
-| 4 | Hizmet sayfaları — 9 hizmet ayrı URL, şema, CTA | ⏳ |
-| 5 | Sektör + kurumsal — 7 sektör, Hakkımızda, Ekip, Referanslar, Kariyer, SSS | ⏳ |
-| 6 | CMS — Sanity Studio, içerik tipleri, canlı önizleme, webhook | ⏳ |
-| 7 | Mevzuat merkezi — blog, gerçek GİB/Resmî Gazete beslemesi, RSS | ⏳ |
-| 8 | Hesaplayıcılar — kalan 8 araç, `/araclar/[slug]`, PDF, HowTo şeması | ⏳ |
-| 9 | Takvim derinleşmesi — resmî tatil kaydırması, mali tatil, oran doğrulama | ⏳ |
-| 10 | Tasarım sistemi — `packages/ui`, Storybook, hareket, görsel regresyon | ⏳ |
-| 11 | Zekâ + çok dil — RAG chatbot, İngilizce, Cal.com | ⏳ |
-| 12 | Ölçüm + QA — analitik taksonomisi, Lighthouse/axe tam geçiş | ⏳ |
+| 1 | Temel — monorepo, vergi motoru, tasarım sistemi | ✅ |
+| 2 | Yasal sayfalar, Turnstile, çerez onayı, lead veritabanı | ✅ |
+| 3 | Dağıtım — Netlify, Neon, Resend, Upstash | ✅ |
+| 4 | İçerik altyapısı + sayfalar (9 hizmet, 7 sektör, kurumsal, SSS, ref., kariyer) | ✅ |
+| 5 | Vergi takviminde VUK Md. 18 resmî tatil kaydırması | ✅ |
+| 6 | Araçlar — 9 hesaplayıcı, `/araclar/[slug]` | ✅ |
+| 7 | Form dayanıklılığı — Turnstile yüklenemezse kilitleme yok | ✅ |
+| 8 | Mevzuat merkezi — editoryal yazılar + resmî besleme altyapısı | ✅ (besleme inert, aşağı bak) |
+| 9 | Teknik borç — next-intl, CSP (Report-Only), lint, e2e kapsamı | ✅ (CSP enforce ve e2e koşusu bekliyor) |
+| 10 | Tasarım derinleştirme — defter motifi, Motion, durum dili | ✅ (aksan rengi önerisi onay bekliyor) |
+| 11 | Geçiş — QA, Lighthouse, `tam-insa`/`v2` → `main` birleştirme | ⏳ |
+
+**Doğrulama (hepsi yeşil):** `pnpm typecheck` · `pnpm lint` · `pnpm test`
+(65 test) · `pnpm build`.
+
+Bu koşuda üretilen commit'ler: `Bölüm 1` … `Bölüm 8`, her biri ayrı ve geri
+dönülebilir bir noktada.
 
 ---
 
-## 3. Tartışmasız kurallar
+## 2. Çalışan altyapı
 
-Bunlar her aşamada geçerlidir; ihlal edilirse iş geri alınır.
+- **Barındırma:** Netlify. `netlify.toml` monorepo derlemesini yapılandırıyor.
+- **Veritabanı:** Neon Postgres, Drizzle ORM. `leads`, `lead_access_log`.
+- **E-posta:** Resend, `futuristax.com` doğrulandı.
+- **Hız sınırı:** Upstash Redis — doğrulanmış istekte 10 dk'da 3; doğrulanmamış
+  istekte 1 saatte 2 (ayrı prefix).
+- **Bot koruması:** Cloudflare Turnstile (test anahtarlarıyla). Betik
+  yüklenemezse form yine gönderilir, kayıt "doğrulanmamış" işaretlenir.
+- **Kur:** TCMB günlük XML, sunucuda çekilir; erişilemezse sonuç gizlenir.
+- **CSP:** middleware'de nonce üretilir, **Report-Only** olarak yayında
+  (bkz. ADR 0004). Zorlayıcı moda geçiş ayrı adım.
 
-1. **Uydurma resmî içerik üretilmez.** Mevzuat, tebliğ, duyuru, oran, tarih ya
-   gerçek kaynaktan gelir ya hiç gösterilmez. Kaynak erişilemezse "şu an
-   güncellenemiyor" durumu gösterilir, yedek uydurma değer üretilmez.
-2. **API anahtarları asla istemciye gitmez.**
-3. **WCAG 2.2 AA taban seviyedir.** Her PR'da axe, sıfır ihlal.
-4. **Türkçe karakterler hiçbir metinde düşürülmez.**
-5. **Vergi mantığı UI'dan ayrıdır ve testlidir.**
-6. **Tek dosyalık çıktı üretilmez**; hiçbir dosya 300 satırı geçmez.
-7. Her hesaplayıcı ve AI çıktısı sorumluluk reddi içerir.
-
----
-
-## 4. Tasarım yönü (kararlaştırıldı, değiştirilmez)
-
-Siyah + altın + Cinzel lüks estetiği **reddedildi**. Yerine **mali belge
-estetiği**: resmî belge dili, defter çizgileri, tasdik mührü.
-
-- **Palet:** mürekkep-grafit zemin (`#0d1013`), tasdik mavisi aksan (`#4b7fd6`),
-  damga kırmızısı (`#d9705c`) **yalnızca** son tarih/KKEG uyarılarında,
-  onay yeşili (`#5fb894`) olumlu kalemlerde. Açık tema de tanımlı.
-- **Tipografi:** Newsreader (display) + Inter (gövde) + IBM Plex Mono (veri ve
-  kanun maddesi göndermeleri). Üçü de tam Türkçe glif desteğine sahip.
-- **Rakamlar:** her yerde `tabular-nums`.
-- **İmza öğesi:** ana sayfadaki **Vergi Takvimi** — hero'da soyut slogan yerine
-  ziyaretçinin aradığı bilgi: bir sonraki beyanname ne zaman. `.ics` indirilebilir.
-- **Defter çizgileri yalnızca veri bağlamlarında** kullanılır, dekoratif değil.
+Vergi motoru: **65 test**, satır/fonksiyon kapsamı ~%100.
 
 ---
 
-## 5. Mimari özet
+## 3. Bu koşuda eklenenler (özet)
 
-```
-futuristax/
-├── apps/web/              Next.js 15 App Router
-├── packages/config/       Firma bilgileri + env şeması — TEK doğruluk kaynağı
-├── packages/tax-engine/   Saf TS hesaplama motoru — 48 test, %100 satır kapsamı
-└── docs/decisions/        ADR'ler
-```
-
-**`packages/tax-engine` sözleşmesi:** her hesaplayıcı `(input, rates) => Result`
-imzasında saf fonksiyondur. Ağ erişimi yok, `Date.now()` yok, rastgelelik yok.
-Referans tarih ve kur tablosu dışarıdan geçirilir. Her `RateSet` bir `provenance`
-alanı taşır (`verified`, `source`, `checkedAt`); doğrulanmamış yıllarda UI
-`UnverifiedRatesNotice` gösterir.
-
-**Hazır hesaplayıcılar (motor tarafı):** KDV, kurumlar vergisi (asgari KV dahil),
-gelir vergisi (ücret/ücret dışı ayrı tarife), binek araç gider kısıtı, binek araç
-kira sınırı, SGK işveren maliyeti, kıdem tazminatı, TÜFE güncelleme, kur çevirimi.
-**UI tarafı:** yalnızca binek araç gider kısıtı yapıldı; kalan 8'i Aşama 8'de.
+- `src/lib/data/*` — tipli, CMS'e taşınabilir içerik (hizmet/sektör/SSS/ekip/
+  referans/mevzuat). Her kayıt slug + SEO + ilişki taşır. **Metinler TASLAK**
+  (`draft: true`), somut oran/tutar/madde atfı yazılmadı.
+- Rotalar: `/hizmetler(+/[slug])`, `/sektorler(+/[slug])`, `/kurumsal`, `/sss`,
+  `/referanslar`, `/kariyer`, `/araclar/[slug]`, `/mevzuat(+/[slug])`. Her
+  sayfada metadata + canonical + uygun JSON-LD. `sitemap.ts` dinamik.
+- `packages/tax-engine/src/calendar/holidays.ts` — sabit resmî tatiller,
+  `shiftToNextBusinessDay`, mali tatil işareti. `getUpcomingDeadlines` artık
+  `statutoryDate` + `date` (kaydırılmış) döndürüyor.
+- 8 yeni hesaplayıcı bileşeni + `ToolCalculator` + `fields.tsx` (ortak alanlar).
+  Hesaplama mantığı yalnızca motorda.
+- `src/lib/fetchers/legislation.ts` — RSS/Atom/JSON ayrıştırma, ISR, **yedeksiz**.
+- `middleware.ts` + `src/lib/security/csp.ts` — nonce zinciri.
+- `src/components/motion/Reveal.tsx` — scroll reveal, reduced-motion'da kapalı.
+- `src/components/ui/StatusPanel.tsx` — boş/hata durumları için tek dil.
+- `tokens.css` — `.ledger-margin` / `.ledger-paper` / `.ledger-grid` motifi.
 
 ---
 
-## 6. Açık işler ve borçlar
+## 4. Cevap bekleyen kararlar — UYDURULMAZ, SORULUR
 
-Kod içinde `TODO(aşama-N)` olarak işaretli:
+Bunların hepsi bilerek eksik bırakıldı.
 
-- **Vergi oranları doğrulanmamış.** 2024 ve 2025 tabloları yer tutucu;
-  her kalem Resmî Gazete / GİB tebliğinden teyit edilmeli. 2026 hiç girilmedi
-  (kasıtlı — `rates/2026.ts` içindeki açıklamaya bak).
-- **Resmî tatil kaydırması yok.** VUK Md. 18 gereği son gün tatile denk gelirse
-  süre uzar; takvim şu an ham kural tarihini döndürüyor. Bileşen altbilgisinde
-  kullanıcıya bildiriliyor. Bkz. `docs/decisions/0003-holiday-shift.md`.
-- **Yasal metinler taslak.** `LEGAL_TEXTS_APPROVED = false` olduğu sürece
-  sayfalar `noindex` ve üstlerinde uyarı bandı var.
-- **Lint borcu.** `pnpm lint` bir dizi biçim/erişilebilirlik uyarısı veriyor.
-  Aşama 10'da (tasarım sistemi) toplu temizlenecek.
-- **KVKK aktarım bölümü eksik** — kullanılan sağlayıcılar (Vercel, Resend, Neon,
-  Cloudflare, Upstash) ve yurt dışı aktarım beyanı yazılmalı.
+1. **Dinî bayram tatilleri (Aşama 5).**
+   `packages/tax-engine/src/calendar/holidays.ts` →
+   `RELIGIOUS_HOLIDAYS_BY_YEAR` 2024–2026 için `null`. Ramazan ve Kurban
+   Bayramı tarihleri Resmî Gazete / Diyanet duyurusundan **doğrulanarak**
+   girilmeli. Girilene kadar kaydırmaya katılmaz; takvim altbilgisi bunu
+   kullanıcıya söylüyor. Beklenen biçim dosyanın yorumunda.
+
+2. **Mali tatil (5604) kesin kuralı.** 1–20 Temmuz'a denk gelen süreler
+   kaydırılmıyor, yalnızca `fiscalBreakCaution` ile işaretleniyor. Kesin
+   "+7 gün" hesabı modellenmedi (yanlış kesin tarih üretmemek için).
+
+3. **`LEGISLATION_FEED_URL` (Aşama 8).** Resmî duyuru beslemesi bir env
+   değişkeniyle yapılandırılır (RSS/Atom veya JSON). **Yapılandırılana kadar
+   `/mevzuat` sayfasındaki "Resmî duyurular" bölümü "şu an güncellenemiyor"
+   gösterir — bu bilinçli.** GİB/Resmî Gazete HTML'ini kazıyan kırılgan bir
+   scraper yazılmadı; stabil bir kaynak (kurumun kendi derleyicisi, bir RSS
+   köprüsü) firma tarafından belirlenmeli.
+
+4. **Aksan rengi (Aşama 10).** Mevcut `--color-ink: #4b7fd6` "jenerik SaaS
+   mavisi" eleştirisini karşılamıyor. **Öneri (uygulanmadı, onay ister):**
+   daha az doygun, mürekkebe yakın bir mavi — aday `#3f6ea8` veya Prusya
+   mavisi yönünde `#2f5c8f`. Değiştirilirse `tokens.css`'teki TÜM kontrast
+   oranları (metin, damga, onay) yeniden doğrulanmalı. Açık tema karşılığı da
+   ayrıca seçilmeli.
+
+5. **İçerik revizyonu.** 9 hizmet + 7 sektör + 5 mevzuat yazısı + kurumsal
+   yaklaşım metni taslaktır. Firma gözden geçirecek; somut sayı/oran/tarih
+   ekleyecekse mevzuat kaynağıyla.
+
+6. **Referanslar.** `src/lib/data/testimonials.ts` bilinçli boş. Müşteri
+   görüşü yalnızca yazılı yayın izniyle eklenir. `/referanslar` şu an
+   `noindex`.
+
+7. **Ekip.** `src/lib/data/team.ts` yalnızca kurucuyu içeriyor (bilgi
+   `@futuristax/config`'ten). Diğer üyeler + biyografiler firmadan gelecek.
+
+8. **İstatistik iddiaları.** "%98 başarı", "150+ müşteri" vb. hâlâ
+   `unverifiedClaims.publish = false`; hiçbir sayfada render edilmiyor.
+   TÜRMOB tanıtım kısıtları + ölçüm yöntemi teyidi bekliyor.
+
+9. **Vergi oranları.** 2024/2025 yer tutucu, 2026 boş. **Ajan dokunmadı.**
+   Firma revize edecek; `provenance.verified` yalnızca gerçek doğrulamadan
+   sonra `true` yapılmalı.
+
+10. **Yasal metinler.** `LEGAL_TEXTS_APPROVED = false`. KVKK/gizlilik/çerez
+    metinleri hukukçu onayı bekliyor; ilgili sayfalar `noindex`.
 
 ---
 
-## 7. Kullanıcıdan cevap bekleyen iş kararları
+## 5. Açık teknik borçlar (bu koşudan sonra)
 
-Bunlar teknik değil; uydurulmamıştır ve sorulmadan doldurulmamalıdır.
+1. **CSP zorlayıcı moda geçiş.** Report-Only raporları toplanmalı (bir
+   `report-to`/`report-uri` uç noktası gerekebilir); ihlal kalmadığına emin
+   olununca `content-security-policy-report-only` → `content-security-policy`.
+   `style-src 'unsafe-inline'` sonra sıkılaştırılabilir. Bkz. ADR 0004.
 
-1. **Doğrulanmamış istatistikler.** "%98 başarı oranı", "150+ aktif müşteri",
-   "%30 vergi optimizasyonu" — ölçüm metodolojisi nedir? TÜRMOB reklam/tanıtım
-   kısıtları açısından meslek odasıyla teyit edilmeli.
-   Şu an `unverifiedClaims.publish = false`, yayınlanmıyor.
-2. **CMS tercihi:** içeriği firma sahibi mi yönetecek (→ Sanity) yoksa
-   geliştirici üzerinden mi (→ dosya tabanlı MDX yeterli)?
-3. **Referanslar** için müşterilerden yazılı izin var mı?
-4. **Mevcut site ne zaman kapanacak?** Alan adı geçiş planı.
-5. **Hukukçu onayı** — KVKK ve çerez metinleri için.
+2. **e2e koşusu.** `e2e/hydration.spec.ts` (yeni) ve genişletilmiş
+   `e2e/accessibility.spec.ts` (3 → 15 sayfa) bu ortamda ÇALIŞTIRILAMADI
+   (tarayıcı + `pnpm start` gerekiyor). CI'da veya yerelde
+   `pnpm test:e2e` ile doğrulanmalı. CSP Report-Only olduğu için hydration'ı
+   engellemesi beklenmiyor.
+
+3. **Lead `verification` sütunu.** Şu an `leads.attribution` jsonb içinde
+   (`{ verification: 'verified' | 'unverified', verificationReason? }`).
+   Birinci sınıf bir sütuna (drizzle migration) taşınabilir — bu ortamda
+   `DATABASE_URL` olmadığı için migration üretilemedi.
+
+4. **Statik render.** Tüm `[locale]` sayfaları dinamik (next-intl Server
+   Component API'leri statik üretime izin vermiyor). `setRequestLocale` ile
+   statik hâle getirilebilir — ayrı, kapsamlı bir iş.
+
+5. **Ana sayfadaki `SERVICES` sabiti.** `src/app/[locale]/page.tsx` hâlâ 6
+   hizmeti elle listeliyor; `src/lib/data`'daki `SERVICES` ile birleştirilebilir
+   (bu koşuda imza sayfasını riske atmamak için dokunulmadı).
 
 ---
 
-## 7b. Barındırma — ÖNEMLİ
+## 6. Geçiş öncesi kontrol listesi (Aşama 11)
 
-futuristax.com **Netlify** üzerinden, bu deponun `main` dalından yayınlanıyor.
-Vercel'e taşınmıyoruz; Netlify'da kalıyoruz.
+- [ ] `pnpm dev` ile yerelde tüm rotaları gez.
+- [ ] `pnpm test:e2e` — hydration + axe.
+- [ ] Lighthouse (CI zaten yapılandırılmış).
+- [ ] Cevap bekleyen kararların (bölüm 4) en az kritik olanları kapatılsın:
+      dinî bayram tarihleri, aksan rengi kararı, içerik onayı.
+- [ ] CSP zorlayıcı moda alınsın ve bir kez daha e2e.
+- [ ] `tam-insa` → `v2`, sonra QA sonrası `v2` → `main`.
+- [ ] **`main`'e alınmadan önce:** doğrulanmamış vergi oranlarının önizlemede
+      görünmesi sorun değil; futuristax.com'da görünmesi başka bir şey.
 
-`main` dalında eski `index.html` hâlâ kökte duruyor ve canlı siteyi besliyor.
-`v2` → `main` birleştirmesi yapıldığı an üretim yeni siteye geçer. Bu yüzden
-birleştirme, Aşama 3'ün kabul kriterleri sağlanmadan YAPILMAZ.
+---
 
-Kurulum adımları: `docs/ASAMA-03-DAGITIM.md`
+## 7. Geçmişte kaybedilen zaman — tekrarlanmasın
 
-## 8. Çalışma döngüsü
-
-Konteyner oturumlar arasında sıfırlanır; dosyalar kalmaz. Bu yüzden:
-
-1. Claude aşamayı bitirir, zip üretir.
-2. Kullanıcı zip'i açıp repoya kopyalar ve **GitHub'a push eder.**
-3. Repo Projeye bağlı olduğu için Claude bir sonraki oturumda kodu okuyabilir.
-4. Yeni oturum bu dosyayla başlar.
-
-**Push edilmezse o aşama kaybolur.**
+- DNS Netlify'da yönetiliyor (Squarespace'te değil).
+- `serverEnv()` tüm değişkenleri birden doğruluyordu → tembel doğrulama.
+- `ci.yml`'a gerçek anahtar biçimli test değerleri → Netlify sır tarayıcısı.
+- `drizzle-kit` `.env.local` okumaz → elle yükleyici.
+- CSP nonce'u Next.js'e ulaşmayınca hydration hiç olmadı. "Görünmek" ≠
+  "çalışmak". Bu koşuda zincir düzeltildi ama önce Report-Only.
