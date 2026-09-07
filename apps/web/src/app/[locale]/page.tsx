@@ -1,4 +1,5 @@
 import { TaxBurdenPanel } from '@/components/dashboards/TaxBurdenPanel';
+import { HeroCanvas } from '@/components/hero/HeroCanvas';
 import { MagneticButton } from '@/components/motion/MagneticButton';
 import { Reveal } from '@/components/motion/Reveal';
 import { TaxCalendarPanel } from '@/components/tax-calendar/TaxCalendarPanel';
@@ -61,8 +62,9 @@ export default function HomePage() {
 
   return (
     <>
-      <section className="section-beam mx-auto max-w-6xl px-5 pt-16 pb-[var(--spacing-section)]">
-        <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-start">
+      <section className="section-beam relative isolate overflow-hidden px-5 pt-16 pb-[var(--spacing-section)]">
+        <HeroCanvas />
+        <div className="relative z-10 mx-auto grid max-w-6xl gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-start">
           <Reveal className="lg:pt-8">
             <p className="basis-ref uppercase">Ankara · {site.brand.foundedYear}'ten beri</p>
             <h1 className="mt-4 text-[length:var(--text-4xl)] text-[var(--color-text)] sm:text-[length:var(--text-6xl)]">
