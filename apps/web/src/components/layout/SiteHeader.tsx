@@ -1,6 +1,7 @@
 'use client';
 
 import { MagneticButton } from '@/components/motion/MagneticButton';
+import { CMDK_OPEN_EVENT } from '@/components/search/CommandPalette';
 import { site } from '@futuristax/config';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -60,6 +61,20 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new Event(CMDK_OPEN_EVENT))}
+            className="flex items-center gap-2 border border-[var(--color-rule)] px-2.5 py-1.5 text-[length:var(--text-xs)] text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-text)]"
+            aria-label="Site içinde ara"
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.8" />
+              <path d="m20 20-3.5-3.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            </svg>
+            <span className="hidden lg:inline">Ara</span>
+            <kbd className="hidden font-[family-name:var(--font-mono)] lg:inline">⌘K</kbd>
+          </button>
+
           <MagneticButton className="hidden sm:inline-flex">
             <Link
               href="/iletisim"

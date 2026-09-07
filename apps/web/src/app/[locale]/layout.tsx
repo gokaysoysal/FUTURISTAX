@@ -1,6 +1,7 @@
 import { CookieConsent } from '@/components/consent/CookieConsent';
 import { SiteFooter } from '@/components/layout/SiteFooter';
 import { SiteHeader } from '@/components/layout/SiteHeader';
+import { CommandPalette } from '@/components/search/CommandPalette';
 import { OrganizationJsonLd } from '@/components/seo/JsonLd';
 import { site } from '@futuristax/config';
 import type { Metadata, Viewport } from 'next';
@@ -101,6 +102,7 @@ export default async function LocaleLayout({
           <main id="main">{children}</main>
           <SiteFooter />
           <CookieConsent />
+          <CommandPalette />
         </NextIntlClientProvider>
         <OrganizationJsonLd />
       </body>
