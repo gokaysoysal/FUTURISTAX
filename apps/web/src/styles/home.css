@@ -1,0 +1,106 @@
+/**
+ * Ana sayfa (V4-AKIS) bölüm stilleri — yalnızca ana sayfaya özgü düzen.
+ * Hareket: `transform` (imleç parallax) + `translate` (sürüklenme) ayrı
+ * özelliklerde tutulur ki çakışmasın. reduced-motion altında ikisi de durur.
+ */
+@layer components {
+  /* ── HERO yüzen kartlar ─────────────────────────────────────── */
+  .hero-cards {
+    position: relative;
+  }
+
+  .hero-card {
+    transform: translate3d(var(--px, 0), var(--py, 0), 0);
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+
+  @media (min-width: 1024px) {
+    .hero-cards {
+      position: absolute;
+      inset: 0;
+    }
+    .hero-card {
+      animation: hero-drift 9s ease-in-out infinite alternate;
+    }
+    .hero-card-1 {
+      top: 2%;
+      left: -3%;
+      animation-delay: 0s;
+    }
+    .hero-card-2 {
+      top: 14%;
+      right: -5%;
+      animation-delay: -2.25s;
+    }
+    .hero-card-3 {
+      bottom: 12%;
+      left: 1%;
+      animation-delay: -4.5s;
+    }
+    .hero-card-4 {
+      bottom: 0%;
+      right: 3%;
+      animation-delay: -6.75s;
+    }
+  }
+
+  @keyframes hero-drift {
+    from {
+      translate: 0 -9px;
+    }
+    to {
+      translate: 0 9px;
+    }
+  }
+
+  /* ── Buton oku — hover'da sağa kayar (mikro etkileşim) ──────── */
+  .btn-arrow {
+    display: inline-block;
+    margin-left: 0.5em;
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+  .group:hover .btn-arrow,
+  .group:focus-visible .btn-arrow {
+    transform: translateX(3px);
+  }
+
+  /* ── Logo şeridi — sonsuz kayan marka işaretleri ────────────── */
+  .marquee {
+    display: flex;
+    width: max-content;
+    animation: marquee-slide 34s linear infinite;
+  }
+  .marquee:hover {
+    animation-play-state: paused;
+  }
+
+  @keyframes marquee-slide {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      /* iki özdeş şerit yan yana; %50 kayma kusursuz döngü */
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  /* ── Pinlenmiş bölüm ilerleme çubuğu ────────────────────────── */
+  .pin-progress > span {
+    transform-origin: left;
+    transform: scaleX(var(--pin-progress, 0));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-card {
+      animation: none !important;
+      transform: none !important;
+      translate: none !important;
+    }
+    .marquee {
+      animation: none !important;
+    }
+    .btn-arrow {
+      transition: none;
+    }
+  }
+}

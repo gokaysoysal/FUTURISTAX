@@ -26,7 +26,7 @@ export function SceneSection({
   children: ReactNode;
   className?: string;
 }) {
-  const headingId = id ? `${id}-title` : undefined;
+  const headingId = id && title ? `${id}-title` : undefined;
   return (
     <section
       id={id}
@@ -41,6 +41,7 @@ export function SceneSection({
             {title ? (
               <SplitHeading
                 as="h2"
+                id={headingId}
                 className="mt-2 text-[length:var(--text-3xl)] text-[var(--color-text)] sm:text-[length:var(--text-4xl)]"
               >
                 {title}

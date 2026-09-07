@@ -20,10 +20,19 @@ export function prefersReducedMotion(): boolean {
   );
 }
 
-/** Ortak ScrollTrigger easing/scrub değerleri. */
+/**
+ * Ortak ScrollTrigger değerleri. GSAP tarafında da TEK easing ailesi:
+ * `expo.out` (config.ts `ease.out` ile aynı his). Süreler config.ts ile hizalı.
+ */
 export const scrollConfig = {
   scrub: 0.6,
-  ease: 'power2.out',
+  ease: 'expo.out',
   start: 'top 80%',
   pinEnd: '+=120%',
+  /** saniye — config.ts `duration` ile aynı ölçek */
+  durFast: 0.2,
+  durBase: 0.6,
+  durScene: 1.2,
+  /** kademeli — config.ts `stagger.step` */
+  stagger: 0.07,
 } as const;

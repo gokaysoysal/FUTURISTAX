@@ -106,8 +106,9 @@
     gap: 0.4ch;
     font-weight: 500;
     border-radius: var(--radius-md);
-    transition: background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease,
-      transform 0.18s ease;
+    transition: background-color var(--dur-fast) var(--ease-out), border-color var(--dur-fast)
+      var(--ease-out), box-shadow var(--dur-fast) var(--ease-out), transform var(--dur-fast)
+      var(--ease-out);
   }
   .btn-primary {
     background-color: var(--color-accent-strong);
@@ -139,15 +140,43 @@
     background-color: var(--color-surface-lift);
     border: 1px solid var(--color-rule);
     border-radius: var(--radius-lg);
-    transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+    transition: box-shadow var(--dur-fast) var(--ease-out), transform var(--dur-fast)
+      var(--ease-out), border-color var(--dur-fast) var(--ease-out);
   }
-  .card-interactive:hover {
+  .card-interactive:hover,
+  .card-interactive:focus-within {
     border-color: color-mix(in oklab, var(--color-accent) 40%, var(--color-rule));
     box-shadow: var(--shadow-glow);
   }
   @media (prefers-reduced-motion: no-preference) {
-    .card-interactive:hover {
-      transform: translateY(-2px);
+    .card-interactive:hover,
+    .card-interactive:focus-within {
+      transform: translateY(-3px);
+    }
+  }
+
+  /*
+   * Bağlantı alt çizgisi — soldan sağa açılır (mikro etkileşim, V4-AKIS Bölüm 4).
+   * `background-size` animasyonu; layout tetiklemez. reduced-motion: anında dolu.
+   */
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0% 1px;
+    transition: background-size var(--dur-fast) var(--ease-out);
+  }
+  .link-underline:hover,
+  .link-underline:focus-visible {
+    background-size: 100% 1px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .link-underline {
+      transition: none;
+    }
+    .link-underline:hover,
+    .link-underline:focus-visible {
+      background-size: 100% 1px;
     }
   }
 

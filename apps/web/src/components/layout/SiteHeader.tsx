@@ -46,7 +46,7 @@ export function SiteHeader() {
                   <Link
                     href={item.href}
                     aria-current={active ? 'page' : undefined}
-                    className={`text-[length:var(--text-sm)] transition-colors ${
+                    className={`link-underline text-[length:var(--text-sm)] ${
                       active
                         ? 'text-[var(--color-text)]'
                         : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text)]'

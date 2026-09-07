@@ -90,3 +90,16 @@ export const unverifiedClaims = {
     { key: 'avgTaxOptimization', value: '%30', needs: 'Vaka örneklemi ve hesap yöntemi' },
   ],
 } as const;
+
+/**
+ * YER TUTUCU İÇERİK BAYRAĞI — V4-AKIS koşusu.
+ *
+ * `true` iken ana sayfa ve bazı bölümler `src/lib/data/placeholder/` altındaki
+ * TASLAK metin/örnek referansla render edilir; düzen ve kalite oturması içindir.
+ * Firma gerçek içeriği girince bu bayrak `false` yapılır ve yer tutucu modüller
+ * gerçek verilerle değiştirilir. Tam liste: `docs/YER-TUTUCU-ICERIK.md`.
+ *
+ * Bu bayrak yer tutucu METNİ kapsar — asla: sahte resmî duyuru, gerçek şirket
+ * logosu, uydurma kişi/şirket adı (bkz. V4-AKIS "üç istisna").
+ */
+export const CONTENT_IS_PLACEHOLDER = true;

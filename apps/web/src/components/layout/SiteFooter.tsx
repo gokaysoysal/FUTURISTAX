@@ -43,11 +43,17 @@ export function SiteFooter() {
             <br />
             {address.district} / {address.city}
             <br />
-            <a href={`tel:${site.contact.phoneE164}`} className="hover:text-[var(--color-text)]">
+            <a
+              href={`tel:${site.contact.phoneE164}`}
+              className="link-underline hover:text-[var(--color-text)]"
+            >
               {site.contact.phoneDisplay}
             </a>
             <br />
-            <a href={`mailto:${site.contact.email}`} className="hover:text-[var(--color-text)]">
+            <a
+              href={`mailto:${site.contact.email}`}
+              className="link-underline hover:text-[var(--color-text)]"
+            >
               {site.contact.email}
             </a>
           </address>
@@ -66,7 +72,7 @@ export function SiteFooter() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-[length:var(--text-sm)] text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
+                    className="link-underline text-[length:var(--text-sm)] text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
                   >
                     {link.label}
                   </Link>

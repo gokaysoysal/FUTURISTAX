@@ -2,11 +2,63 @@
 
 > **Her yeni oturumda önce bu dosyayı oku.** Kurallar ve mimari için `CLAUDE.md`.
 
-**Son güncelleme:** 2026-09-07 — V3 SUNUM KATMANI koşusu (`v2-fx` dalı), **8/8 bölüm bitti**.
-Önceki: TASARIM YÖNÜ DEĞİŞİMİ (`v2-tasarim`, `v2`'ye merge edildi) · Aşama 4–8 (`tam-insa`).
-**Depo:** github.com/gokaysoysal/FUTURISTAX — çalışma dalı `v2`, aktif koşu dalı `v2-fx`
+**Son güncelleme:** 2026-09-07 — V4-AKIS koşusu (`v4-akis` dalı, `v2`'den), **6/6 bölüm bitti**.
+Önceki: V3 SUNUM KATMANI (`v2-fx`, `v2`'ye merge edildi) · TASARIM YÖNÜ DEĞİŞİMİ (`v2-tasarim`).
+**Depo:** github.com/gokaysoysal/FUTURISTAX — çalışma dalı `v2`, aktif koşu dalı `v4-akis`
 **Önizleme:** deploy-preview-1--futuristax.netlify.app
 **Canlı site:** futuristax.com — hâlâ ESKİ sürüm (`main` dalı, `legacy/index.html`)
+
+---
+
+## 0-Z. V4-AKIS KOŞUSU — 2026-09-07 (`v4-akis`, `v2`'den)
+
+Ana sayfa **referans siteye** (futureoffinance.peachweb.io) sadık yeniden
+inşa (bkz. `docs/V4-AKIS-PROMPT.md`). Altyapı (tax-engine / API / DB / form /
+dağıtım) DEĞİŞMEDİ. 6 bölüm, her biri ayrı commit, her bölüm sonunda
+`pnpm typecheck · lint · test · build` YEŞİL.
+
+`babee19` (1) · `21c8077` (2) · `4fcf842` (3) · `2d44cb2` (4) · `3b0da41` (5) ·
+`993a1d7` (6). **Koşu tamamlandı.**
+
+### İçerik politikası (bu koşuya özel)
+
+`CONTENT_IS_PLACEHOLDER = true` (`packages/config/src/site.ts`). Yer tutucu
+metin `src/lib/data/placeholder/` altında ("YER TUTUCU — firma tarafından
+değiştirilecek" başlıklı). **Tam liste + firma görevleri:
+`docs/YER-TUTUCU-ICERIK.md`.** Üç istisna (yer tutucu bile olamaz): sahte
+resmî içerik, gerçek şirket logosu, uydurma kişi/şirket adı — hiçbiri yok.
+Vergi oranlarına dokunulmadı, `UnverifiedRatesNotice` kaldırılmadı.
+
+### Bölümler
+
+| # | Bölüm | Not |
+|---|---|---|
+| 1 | Hareket ritmi altyapısı | `lib/motion/config.ts` + `tokens.css`: TEK easing `ease.out` = expo.out `cubic-bezier(0.16,1,0.3,1)`; süre ölçeği üç değer (fast 200 / base 600 / scene 1200ms + count 1600); `distance.revealShift = 24` (tek yön); stagger 70ms. `scaleIn` kaldırıldı. `scrollConfig.ease` → `expo.out`. Lenis `lerp: 0.1`. |
+| 2 | Ana sayfa referans sırasıyla | `components/home/` 10 bölüm: Hero (split-type KELİME + dört yüzen kart, GERÇEK veri: yükümlülük / TCMB USD-TRY / vergi yükü / yoğunluk) · SolutionsSection (canlı TaxBurdenPanel) · LogoMarquee (soyut BrandMarks) · FeatureTriad · **PinnedCapabilities** (GSAP pin, 01/02/03, crossfade; fallback = alt alta; `inert` ile klavye tuzağı yok) · ServicesQuad (9→4) · StatsRow (2013/9/7/9 gerçek) · TestimonialTriad (yer tutucu) · EngagementModels (fiyat yok) · ClosingCta. Footer + `ScrollPercent` layout'ta. `SplitHeading` `by="words"` + `id`. |
+| 3 | Mevzuat ayrı sekmede | Ana sayfada mevzuat/haber bölümü YOK. `/mevzuat` hub'ında `CONTENT_IS_PLACEHOLDER` açıkken "editoryal taslak" bilgi bandı. 5 yazı `draft`, genel başlık; besleme kapalı (yedek uydurma yok). |
+| 4 | Mikro etkileşimler | `--ease-out`/`--dur-fast`/`--dur-base` CSS değişkenleri; `.btn` / `.card` geçişleri bunlara bağlandı. `.btn-arrow` (hover'da kayar) hero+solutions+engagement+closing+RequestCta. `.link-underline` (soldan sağa) header/footer/breadcrumbs/mevzuat/iletişim. `.card-interactive` `:focus-within` de tetikler, -3px. RequestCta CTA'sı MagneticButton içinde. |
+| 5 | Sayfa geçişleri | `RouteTransition` yeniden: perde yukarı çekilir (yeni sayfa alttan), üstünde başlık kısa görünür. ≤400ms (perde 320ms, `ease.inOut`). İlk sert yükte yok; reduced-motion'da hiç render yok. VT API yorumu bırakıldı. |
+| 6 | İç sayfalar aynı ritme | hizmetler/sektörler hub listeleri `card card-interactive surface-glow` kartlara geçti; RelatedContent aynı dil; `.link-underline` metin bağlantılarına. Hesaplayıcı çalışma alanı yapısına dokunulmadı. |
+
+### Bundle + doğrulama
+
+- **Ana sayfa ilk yük JS 177 kB** (< 220 hedefi). three/recharts/gsap hâlâ
+  ilk yükte değil (V3 Bölüm 7 tembel yükleme korunuyor).
+- `pnpm typecheck · lint · test` (tax-engine 65) `· build` — hepsi yeşil.
+- **e2e bu ortamda KOŞULMADI** (tarayıcı + `pnpm start` yok). `playwright
+  --list`: yeni `e2e/v4-home.spec.ts` (12 test) + mevcut suite parse temiz.
+  CI'da doğrulanacak: hero (başlık/CTA/yüzen kartlar), pinlenmiş bölüm
+  reduced-motion fallback + klavye tuzağı yok, logo şeridi + ScrollPercent
+  a11y ağacı dışında, axe sıfır ihlal (motion açık + reduced-motion).
+  `accessibility.spec.ts` `/` taraması yeni ana sayfayı kapsıyor.
+- Lighthouse bu ortamda koşulmadı; CI'da.
+
+### Sonraki adım (V4 koşusu dışında)
+
+- `v4-akis` → `v2` merge (QA sonrası).
+- Firma: `docs/YER-TUTUCU-ICERIK.md` görevleri → `CONTENT_IS_PLACEHOLDER = false`.
+- `motion` bundle küçültme (`LazyMotion`) hâlâ açık (V3 Bölüm 7 notu).
+- `main`'e ERKEN GEÇME.
 
 ---
 

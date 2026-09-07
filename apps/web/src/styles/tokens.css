@@ -90,6 +90,11 @@
   /* ── Ritim ────────────────────────────────────────────────*/
   --spacing-section: 7rem;
   --spacing-section-sm: 4rem;
+
+  /* Hareket — CSS tarafı (lib/motion/config.ts ile aynı: expo.out, 3 süre). */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 200ms;
+  --dur-base: 600ms;
   --radius-none: 0;
   --radius-sm: 2px;
   --radius-md: 4px;

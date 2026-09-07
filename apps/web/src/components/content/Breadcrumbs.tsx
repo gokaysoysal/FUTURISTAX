@@ -31,7 +31,7 @@ export function Breadcrumbs({ trail }: { trail: readonly Crumb[] }) {
                     {crumb.name}
                   </span>
                 ) : (
-                  <Link href={crumb.path} className="hover:text-[var(--color-text)]">
+                  <Link href={crumb.path} className="link-underline hover:text-[var(--color-text)]">
                     {crumb.name}
                   </Link>
                 )}

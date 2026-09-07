@@ -32,9 +32,9 @@ export function SmoothScroll() {
       ]);
       if (cancelled) return;
 
+      // V4-AKIS Bölüm 1: lerp ~0.1 (referans hissi). `duration`/`easing` yerine.
       const lenis = new Lenis({
-        duration: 1.05,
-        easing: (t) => Math.min(1, 1.001 - 2 ** (-10 * t)),
+        lerp: 0.1,
         smoothWheel: true,
         touchMultiplier: 1.4,
       });
