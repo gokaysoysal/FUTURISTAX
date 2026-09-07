@@ -2,11 +2,58 @@
 
 > **Her yeni oturumda önce bu dosyayı oku.** Kurallar ve mimari için `CLAUDE.md`.
 
-**Son güncelleme:** 2026-09-07 — TASARIM YÖNÜ DEĞİŞİMİ koşusu (`v2-tasarim` dalı).
-Önceki: Aşama 4–8 (tek ajan koşusu, `tam-insa` dalı).
-**Depo:** github.com/gokaysoysal/FUTURISTAX — çalışma dalı `v2`, tasarım koşusu `v2-tasarim`
+**Son güncelleme:** 2026-09-07 — V3 SUNUM KATMANI koşusu (`v2-fx` dalı), Bölüm 4 bitti.
+Önceki: TASARIM YÖNÜ DEĞİŞİMİ (`v2-tasarim`, `v2`'ye merge edildi) · Aşama 4–8 (`tam-insa`).
+**Depo:** github.com/gokaysoysal/FUTURISTAX — çalışma dalı `v2`, aktif koşu dalı `v2-fx`
 **Önizleme:** deploy-preview-1--futuristax.netlify.app
 **Canlı site:** futuristax.com — hâlâ ESKİ sürüm (`main` dalı, `legacy/index.html`)
+
+---
+
+## 0-A. V3 SUNUM KATMANI KOŞUSU — 2026-09-07 (`v2-fx`)
+
+Yalnızca görünen katman yeniden inşa ediliyor (bkz. `docs/V3-SUNUM-PROMPT.md`);
+`tax-engine`, API route'ları, DB, form, dağıtım DEĞİŞMİYOR. 8 bölüm, her biri
+ayrı commit, her bölüm sonunda `pnpm typecheck · lint · test · build` yeşil.
+
+`a7e644b` (1) · `359d56d` (2) · `9a1268b` (3) · `878a685` (4).
+
+### Biten
+
+| # | Bölüm | Not |
+|---|---|---|
+| 1 | Sanat yönetimi + görsel altyapı | **Prosedürel** — bu ortam Unsplash/Pexels indiremiyor. `SceneBackdrop` (SVG: concrete / geometric-shadow / document-grid / light-field, palet tokenlı), `TreatedImage` (duotone + grain, gerçek foto gelince kullanılır), `LazyLottie` (dosya gelince). `public/images/CREDITS.md` + `public/lottie/README.md` sanat yönü kurallarını taşıyor. **Gerçek foto/Lottie firma/sonraki adım.** |
+| 2 | WebGL hero | R3F **shader alanı** seçildi (sıvı gradyan + noise, palet tokenlı). `HeroCanvas` karar katmanı: yalnızca ≥768px + WebGL + reduced-motion yok → `HeroScene` (`dynamic ssr:false`); aksi `HeroFallback` (statik CSS gradyan + grain). visibilitychange'de render durur. |
+| 3 | Scroll + geçiş | `SmoothScroll` (Lenis; reduced-motion'da HİÇ başlamaz), `ScrollProgress` (üst çubuk), `RouteTransition` (perde; ilk sert yükte YOK — LCP), `SplitHeading` (split-type + Türkçe glif kontrolü: düşen karakter varsa revert). `lib/motion/scroll.ts` merkezî. |
+| 4 | Ana sayfa sinematik akış | 8 sahne: hero → güven bandı → vergi takvimi → hizmetler → süreç → araçlar → sektörler → kapanış. `components/home/`: `SceneSection` (eyebrow + SplitHeading + lead + seçici `SceneBackdrop`), `ProcessScene`+`TrustBand` (pin YOK), `ServicesRail` (native overflow-x + ince ScrollTrigger drift), `SectorsGrid`, `ToolsShowcase` (araç listesi + canlı `TaxBurdenPanel`). Hero tek CTA'ya indi; `TaxCalendarPanel` hero'dan çıkıp kendi sahnesine geçti. |
+
+### Kalan — V3-SUNUM-PROMPT bölümleri
+
+- **5 (ÖNEMLİ)** `/araclar` tek "çalışma alanı": segment/sekme araç seçici (rotayı
+  yansıtır, derin link + paylaşım), araç değişiminde akışkan geçiş, HER ARAÇ kendi
+  girdisi/sonuç dökümü/**kendi gerçek sonucunu gösteren grafiği**, yıl seçici +
+  `UnverifiedRatesNotice` korunur, sonuç değişince sayı sayma animasyonu.
+  Mevcut hâl: 9 hesaplayıcı `ToolCalculator` slug eşlemesiyle ayrı sayfalarda,
+  grafik yok. Sonuç sözleşmesi tek tip: `CalculationResult<T>` (`headline` + `steps`
+  + `provenance`).
+- **6** Ana sayfadaki dili tüm iç sayfalara taşı (hizmet/sektör detay, kurumsal,
+  mevzuat, SSS, iletişim). İletişim sayfası özellikle güçlü.
+- **7** Performans: WebGL/Lottie/grafik hepsi `dynamic` + IntersectionObserver;
+  görseller AVIF/WebP + blur; GSAP/Three yalnızca kullanan sayfada; bundle analizi
+  + en ağır 3 modül raporu. `lighthouserc.json`: perf 0.75 / LCP 3000 / CLS 0.05 /
+  a11y 1.0. **Ana sayfa ilk yük JS şu an 237 kB** (Bölüm 4'te 173→237: her
+  SceneSection başlığı SplitHeading = GSAP ilk bundle'da; `ServicesRail` useGSAP;
+  `ToolsShowcase`→`TaxBurdenPanel`). 220 kB hedefinin üstünde — Bölüm 7'nin işi.
+- **8** Erişilebilirlik (ESNEMEZ): tüm sayfalarda axe sıfır ihlal, reduced-motion
+  tam, klavyeyle tüm akışlar (araç seçici, yatay rail, grafikler), pin klavye
+  tuzağı yok, grafik sr-only tablo, Türkçe karakter split-type sonrası kontrol.
+
+### Bölüm 4 doğrulaması
+
+`pnpm typecheck · lint · test` (tax-engine 65) `· build` — hepsi yeşil.
+**e2e bu ortamda koşulmadı** (tarayıcı + `pnpm start` gerekiyor); yeni ana sayfa
+sahneleri için `e2e/` axe/klavye senaryoları CI'da/yerelde doğrulanmalı.
+`RouteTransition` / `SmoothScroll` reduced-motion no-op yolu birim testli değil.
 
 ---
 
