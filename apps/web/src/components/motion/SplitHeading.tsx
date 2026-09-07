@@ -2,11 +2,14 @@
 
 import { loadGsap, loadSplitType } from '@/lib/motion/gsap-lazy';
 import { prefersReducedMotion } from '@/lib/motion/scroll';
+import { scrollConfig } from '@/lib/motion/scroll';
 import type { ReactNode } from 'react';
 import { useEffect, useRef } from 'react';
 
 /**
- * Başlık animasyonu — split-type ile harf bazında kademeli scroll girişi.
+ * Başlık animasyonu — split-type ile kademeli scroll girişi.
+ *
+ * `by="words"` (V4-AKIS hero): kelime kelime. `by="chars"` (varsayılan): harf.
  *
  * TÜRKÇE GLİF KONTROLÜ: bölme sonrası düz metin orijinaliyle karşılaştırılır
  * (boşluklar hariç). Bir karakter düşerse (ör. ı/İ/ğ) split geri alınır ve
@@ -20,10 +23,14 @@ import { useEffect, useRef } from 'react';
  */
 export function SplitHeading({
   as: Tag = 'h2',
+  by = 'chars',
+  id,
   children,
   className,
 }: {
   as?: 'h1' | 'h2' | 'h3';
+  by?: 'words' | 'chars';
+  id?: string;
   children: ReactNode;
   className?: string;
 }) {
@@ -42,19 +49,28 @@ export function SplitHeading({
       const [{ gsap }, SplitType] = await Promise.all([loadGsap(), loadSplitType()]);
       if (cancelled) return;
 
-      const split = new SplitType(el, { types: 'words,chars', tagName: 'span' });
+      const split = new SplitType(el, {
+        types: by === 'words' ? 'lines,words' : 'words,chars',
+        tagName: 'span',
+      });
       if ((el.textContent ?? '').replace(/\s+/g, '') !== original) {
         split.revert();
         return;
       }
 
+      const targets = by === 'words' ? split.words : split.chars;
+      if (!targets || targets.length === 0) {
+        split.revert();
+        return;
+      }
+
       gsap.set(el, { autoAlpha: 1 });
-      const tween = gsap.from(split.chars, {
+      const tween = gsap.from(targets, {
         autoAlpha: 0,
-        yPercent: 55,
-        duration: 0.55,
-        ease: 'power3.out',
-        stagger: 0.012,
+        yPercent: by === 'words' ? 110 : 55,
+        duration: scrollConfig.durBase,
+        ease: scrollConfig.ease,
+        stagger: by === 'words' ? scrollConfig.stagger : 0.012,
         scrollTrigger: { trigger: el, start: 'top 85%', once: true },
       });
 
@@ -80,10 +96,10 @@ export function SplitHeading({
       io.disconnect();
       cleanup?.();
     };
-  }, []);
+  }, [by]);
 
   return (
-    <Tag ref={ref} className={className}>
+    <Tag ref={ref} id={id} className={className}>
       {children}
     </Tag>
   );

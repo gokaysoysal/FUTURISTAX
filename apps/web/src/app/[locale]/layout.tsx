@@ -2,6 +2,7 @@ import { CookieConsent } from '@/components/consent/CookieConsent';
 import { SiteFooter } from '@/components/layout/SiteFooter';
 import { SiteHeader } from '@/components/layout/SiteHeader';
 import { RouteTransition } from '@/components/motion/RouteTransition';
+import { ScrollPercent } from '@/components/motion/ScrollPercent';
 import { ScrollProgress } from '@/components/motion/ScrollProgress';
 import { SmoothScroll } from '@/components/motion/SmoothScroll';
 import { CommandPalette } from '@/components/search/CommandPalette';
@@ -16,6 +17,7 @@ import 'lenis/dist/lenis.css';
 import '@/styles/tokens.css';
 import '@/styles/depth.css';
 import '@/styles/art.css';
+import '@/styles/home.css';
 
 /*
  * Fontlar self-host edilir (next/font/google → .woff2 derlemede indirilir ve
@@ -105,6 +107,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider messages={messages}>
           <SmoothScroll />
           <ScrollProgress />
+          <ScrollPercent />
           <RouteTransition />
           <SiteHeader />
           <main id="main">{children}</main>
