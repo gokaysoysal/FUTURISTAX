@@ -76,7 +76,7 @@ export default function ContactPage() {
               <dd className="mt-1">
                 <a
                   href={`tel:${site.contact.phoneE164}`}
-                  className="text-[length:var(--text-sm)] text-[var(--color-accent)]"
+                  className="link-underline text-[length:var(--text-sm)] text-[var(--color-accent)]"
                 >
                   {site.contact.phoneDisplay}
                 </a>
@@ -89,7 +89,7 @@ export default function ContactPage() {
               <dd className="mt-1">
                 <a
                   href={`mailto:${site.contact.email}`}
-                  className="text-[length:var(--text-sm)] text-[var(--color-accent)]"
+                  className="link-underline text-[length:var(--text-sm)] text-[var(--color-accent)]"
                 >
                   {site.contact.email}
                 </a>

@@ -28,12 +28,12 @@ export default function ServicesHubPage() {
       />
 
       <Reveal className="mt-12">
-        <ul className="grid gap-px bg-[var(--color-rule)] sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {SERVICES.map((service) => (
-            <li key={service.slug} className="bg-[var(--color-canvas)]">
+            <li key={service.slug}>
               <Link
                 href={`/hizmetler/${service.slug}`}
-                className="block h-full p-6 transition-colors hover:bg-[var(--color-surface)]"
+                className="card card-interactive surface-glow group flex h-full flex-col p-6"
               >
                 <h2 className="text-[length:var(--text-lg)] text-[var(--color-text)]">
                   {service.title}
@@ -41,7 +41,12 @@ export default function ServicesHubPage() {
                 <p className="mt-2 line-clamp-3 text-[length:var(--text-sm)] text-[var(--color-text-secondary)]">
                   {service.summary}
                 </p>
-                <span className="basis-ref mt-3 inline-block">Ayrıntı →</span>
+                <span className="basis-ref mt-auto pt-4">
+                  Ayrıntı
+                  <span aria-hidden="true" className="btn-arrow">
+                    →
+                  </span>
+                </span>
               </Link>
             </li>
           ))}

@@ -101,7 +101,7 @@ export default async function LegislationArticlePage({
               <li key={item.slug}>
                 <Link
                   href={`/mevzuat/${item.slug}`}
-                  className="text-[length:var(--text-sm)] text-[var(--color-ink)] hover:text-[var(--color-ink-strong)]"
+                  className="link-underline text-[length:var(--text-sm)] text-[var(--color-ink)] hover:text-[var(--color-ink-strong)]"
                 >
                   {item.title}
                 </Link>

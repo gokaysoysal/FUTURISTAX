@@ -87,7 +87,7 @@ export default async function LegislationHubPage({
             <h2 className="mt-1 text-[length:var(--text-lg)]">
               <Link
                 href={`/mevzuat/${article.slug}`}
-                className="text-[var(--color-text)] hover:text-[var(--color-ink)]"
+                className="link-underline text-[var(--color-text)] hover:text-[var(--color-ink)]"
               >
                 {article.title}
               </Link>

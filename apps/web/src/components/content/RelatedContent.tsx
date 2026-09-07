@@ -28,12 +28,12 @@ export function RelatedContent({
         <p className="basis-ref uppercase">{title}</p>
       </div>
       <Reveal>
-        <ul className="mt-5 grid gap-px bg-[var(--color-rule)] sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item) => (
-            <li key={item.slug} className="bg-[var(--color-canvas)]">
+            <li key={item.slug}>
               <Link
                 href={`${basePath}/${item.slug}`}
-                className="block h-full p-5 transition-colors hover:bg-[var(--color-surface)]"
+                className="card card-interactive surface-glow block h-full p-5"
               >
                 <h3 className="text-[length:var(--text-base)] text-[var(--color-text)]">
                   {item.title}
