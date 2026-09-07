@@ -9,6 +9,7 @@ import {
 } from '@/lib/data';
 import { type OfficialAnnouncement, fetchOfficialAnnouncements } from '@/lib/fetchers/legislation';
 import { formatIsoDate } from '@/lib/format';
+import { CONTENT_IS_PLACEHOLDER } from '@futuristax/config';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
@@ -59,6 +60,13 @@ export default async function LegislationHubPage({
         breadcrumbs={<Breadcrumbs trail={[{ name: 'Mevzuat', path: '/mevzuat' }]} />}
         lead="Aşağıdaki yazılar bir konunun genel çerçevesini anlatır; resmî duyuru değildir. Somut oran, tutar ve son tarihler için resmî kaynaklara ve danışmanınıza başvurun."
       />
+
+      {CONTENT_IS_PLACEHOLDER ? (
+        <p className="mt-8 border-l-2 border-[var(--color-rule-strong)] bg-[var(--color-surface)] px-4 py-3 text-[length:var(--text-xs)] text-[var(--color-text-muted)]">
+          Bu yazılar bir konunun genel çerçevesini anlatan editoryal taslaklardır — resmî duyuru,
+          tebliğ ya da sirküler değildir. Firma gözden geçirmektedir.
+        </p>
+      ) : null}
 
       <nav aria-label="Kategori filtresi" className="mt-10 flex flex-wrap gap-2">
         <FilterChip href="/mevzuat" label="Tümü" active={active === null} />
