@@ -1,7 +1,11 @@
+import withBundleAnalyzer from '@next/bundle-analyzer';
 import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 
 const withNextIntl = createNextIntlPlugin('./src/i18n.ts');
+
+// `ANALYZE=true pnpm --filter @futuristax/web build` → .next/analyze/*.html
+const withAnalyzer = withBundleAnalyzer({ enabled: process.env.ANALYZE === 'true' });
 
 const config: NextConfig = {
   reactStrictMode: true,
@@ -31,4 +35,4 @@ const config: NextConfig = {
   },
 };
 
-export default withNextIntl(config);
+export default withAnalyzer(withNextIntl(config));

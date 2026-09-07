@@ -1,8 +1,6 @@
 'use client';
 
-import { registerScroll } from '@/lib/motion/scroll';
-import { gsap } from 'gsap';
-import Lenis from 'lenis';
+import { loadGsap } from '@/lib/motion/gsap-lazy';
 import { useReducedMotion } from 'motion/react';
 import { useEffect } from 'react';
 
@@ -14,7 +12,9 @@ import { useEffect } from 'react';
  * scroll'a bırakılır. Aksi hâlde Lenis'in rAF'ı GSAP ticker'ına, scroll olayı
  * ScrollTrigger.update'e bağlanır (tek zamanlayıcı, senkron).
  *
- * `data-lenis="on"` kancası ile CSS gerektiğinde hedeflenebilir.
+ * PERFORMANS: `lenis` ve `gsap` STATİK import EDİLMEZ — layout bileşeni olduğu
+ * için her sayfanın ilk yük JS'ine girerdi. `import()` ile ayrı chunk; mount
+ * sonrası bir tik geç başlar (fark edilmez). reduced-motion'da hiç yüklenmez.
  */
 export function SmoothScroll() {
   const reduce = useReducedMotion();
@@ -22,26 +22,40 @@ export function SmoothScroll() {
   useEffect(() => {
     if (reduce) return;
 
-    const ScrollTrigger = registerScroll();
-    const lenis = new Lenis({
-      duration: 1.05,
-      easing: (t) => Math.min(1, 1.001 - 2 ** (-10 * t)),
-      smoothWheel: true,
-      touchMultiplier: 1.4,
-    });
+    let cancelled = false;
+    let teardown: (() => void) | undefined;
 
-    lenis.on('scroll', ScrollTrigger.update);
+    void (async () => {
+      const [{ gsap, ScrollTrigger }, { default: Lenis }] = await Promise.all([
+        loadGsap(),
+        import('lenis'),
+      ]);
+      if (cancelled) return;
 
-    const onTick = (time: number) => lenis.raf(time * 1000);
-    gsap.ticker.add(onTick);
-    gsap.ticker.lagSmoothing(0);
+      const lenis = new Lenis({
+        duration: 1.05,
+        easing: (t) => Math.min(1, 1.001 - 2 ** (-10 * t)),
+        smoothWheel: true,
+        touchMultiplier: 1.4,
+      });
 
-    document.documentElement.setAttribute('data-lenis', 'on');
+      lenis.on('scroll', ScrollTrigger.update);
+
+      const onTick = (time: number) => lenis.raf(time * 1000);
+      gsap.ticker.add(onTick);
+      gsap.ticker.lagSmoothing(0);
+      document.documentElement.setAttribute('data-lenis', 'on');
+
+      teardown = () => {
+        gsap.ticker.remove(onTick);
+        lenis.destroy();
+        document.documentElement.removeAttribute('data-lenis');
+      };
+    })();
 
     return () => {
-      gsap.ticker.remove(onTick);
-      lenis.destroy();
-      document.documentElement.removeAttribute('data-lenis');
+      cancelled = true;
+      teardown?.();
     };
   }, [reduce]);
 

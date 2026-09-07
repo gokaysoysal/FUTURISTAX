@@ -1,11 +1,10 @@
 'use client';
 
 import { SERVICES } from '@/lib/data';
-import { prefersReducedMotion, registerScroll } from '@/lib/motion/scroll';
-import { useGSAP } from '@gsap/react';
-import { gsap } from 'gsap';
+import { loadGsap } from '@/lib/motion/gsap-lazy';
+import { prefersReducedMotion } from '@/lib/motion/scroll';
 import Link from 'next/link';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 /**
  * Hizmetler — yatay akan kart dizisi.
@@ -14,38 +13,59 @@ import { useRef } from 'react';
  * gezilir, ok tuşlarıyla konteyner kaydırılır — klavye erişimi tam, pin YOK
  * (klavye tuzağı yok).
  *
- * ÜST KATMAN (yalnızca reduced-motion yoksa + ince işaretçi): sayfa dikey
- * scroll'una bağlı hafif yatay drift (GSAP ScrollTrigger). Native scroll'u
- * ezmez; reduced-motion'da hiç kurulmaz.
+ * ÜST KATMAN (yalnızca reduced-motion yoksa + ince işaretçi + görünüre
+ * yaklaşınca): sayfa dikey scroll'una bağlı hafif yatay drift (GSAP
+ * ScrollTrigger, `import()` ile tembel). Native scroll'u ezmez.
  */
 export function ServicesRail() {
   const scope = useRef<HTMLDivElement>(null);
   const track = useRef<HTMLUListElement>(null);
 
-  useGSAP(
-    () => {
-      const el = track.current;
-      if (!el || prefersReducedMotion()) return;
-      if (window.matchMedia('(pointer: coarse)').matches) return;
-      registerScroll();
+  useEffect(() => {
+    const scopeEl = scope.current;
+    const el = track.current;
+    if (!scopeEl || !el || prefersReducedMotion()) return;
+    if (window.matchMedia('(pointer: coarse)').matches) return;
+    if (typeof IntersectionObserver !== 'function') return;
+
+    let cancelled = false;
+    let cleanup: (() => void) | undefined;
+
+    const run = async () => {
+      const { gsap } = await loadGsap();
+      if (cancelled) return;
       const drift = Math.min(160, Math.max(0, el.scrollWidth - el.clientWidth) * 0.12);
-      gsap.fromTo(
+      const tween = gsap.fromTo(
         el,
         { x: drift },
         {
           x: -drift,
           ease: 'none',
-          scrollTrigger: {
-            trigger: scope.current,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 0.6,
-          },
+          scrollTrigger: { trigger: scopeEl, start: 'top bottom', end: 'bottom top', scrub: 0.6 },
         },
       );
-    },
-    { scope },
-  );
+      cleanup = () => {
+        tween.scrollTrigger?.kill();
+        tween.kill();
+      };
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        io.disconnect();
+        void run();
+      },
+      { rootMargin: '256px' },
+    );
+    io.observe(scopeEl);
+
+    return () => {
+      cancelled = true;
+      io.disconnect();
+      cleanup?.();
+    };
+  }, []);
 
   return (
     <div ref={scope}>

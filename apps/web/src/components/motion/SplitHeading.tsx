@@ -1,11 +1,9 @@
 'use client';
 
-import { prefersReducedMotion, registerScroll } from '@/lib/motion/scroll';
-import { useGSAP } from '@gsap/react';
-import { gsap } from 'gsap';
+import { loadGsap, loadSplitType } from '@/lib/motion/gsap-lazy';
+import { prefersReducedMotion } from '@/lib/motion/scroll';
 import type { ReactNode } from 'react';
-import { useRef } from 'react';
-import SplitType from 'split-type';
+import { useEffect, useRef } from 'react';
 
 /**
  * Başlık animasyonu — split-type ile harf bazında kademeli scroll girişi.
@@ -14,7 +12,11 @@ import SplitType from 'split-type';
  * (boşluklar hariç). Bir karakter düşerse (ör. ı/İ/ğ) split geri alınır ve
  * animasyon yapılmaz — metin bozulmadan durur.
  *
- * reduced-motion: hiç bölünmez, düz başlık render edilir.
+ * PERFORMANS: GSAP + split-type STATİK import EDİLMEZ. `IntersectionObserver`
+ * başlık görünüre yaklaşınca kütüphaneleri `import()` ile getirir. Başlık metni
+ * SSR'de tam ve görünür; animasyon yalnızca üstüne biner.
+ *
+ * reduced-motion: hiç bölünmez, hiçbir şey yüklenmez — düz başlık.
  */
 export function SplitHeading({
   as: Tag = 'h2',
@@ -27,22 +29,27 @@ export function SplitHeading({
 }) {
   const ref = useRef<HTMLHeadingElement>(null);
 
-  useGSAP(
-    () => {
-      const el = ref.current;
-      if (!el || prefersReducedMotion()) return;
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || prefersReducedMotion()) return;
+    if (typeof IntersectionObserver !== 'function') return;
 
-      const originalText = (el.textContent ?? '').replace(/\s+/g, '');
+    let cancelled = false;
+    let cleanup: (() => void) | undefined;
+
+    const run = async () => {
+      const original = (el.textContent ?? '').replace(/\s+/g, '');
+      const [{ gsap }, SplitType] = await Promise.all([loadGsap(), loadSplitType()]);
+      if (cancelled) return;
+
       const split = new SplitType(el, { types: 'words,chars', tagName: 'span' });
-
-      if ((el.textContent ?? '').replace(/\s+/g, '') !== originalText) {
+      if ((el.textContent ?? '').replace(/\s+/g, '') !== original) {
         split.revert();
         return;
       }
 
-      registerScroll();
       gsap.set(el, { autoAlpha: 1 });
-      gsap.from(split.chars, {
+      const tween = gsap.from(split.chars, {
         autoAlpha: 0,
         yPercent: 55,
         duration: 0.55,
@@ -51,10 +58,29 @@ export function SplitHeading({
         scrollTrigger: { trigger: el, start: 'top 85%', once: true },
       });
 
-      return () => split.revert();
-    },
-    { scope: ref },
-  );
+      cleanup = () => {
+        tween.scrollTrigger?.kill();
+        tween.kill();
+        split.revert();
+      };
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        io.disconnect();
+        void run();
+      },
+      { rootMargin: '128px' },
+    );
+    io.observe(el);
+
+    return () => {
+      cancelled = true;
+      io.disconnect();
+      cleanup?.();
+    };
+  }, []);
 
   return (
     <Tag ref={ref} className={className}>
