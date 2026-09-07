@@ -4,7 +4,7 @@ import type { Faq } from '@/lib/data';
  * Hesaplama araçları kaydı — SEO metni, HowTo adımları ve SSS'ler.
  *
  * Hesaplama MANTIĞI burada YOKTUR; `packages/tax-engine` içinde, saf ve testli.
- * Bu katman yalnızca sunum ve şema verisidir. Bileşen eşlemesi `ToolCalculator`
+ * Bu katman yalnızca sunum ve şema verisidir. Bileşen eşlemesi `ToolWorkspace`
  * içinde slug'a göre yapılır. Her araç kendi dosyasında — CMS'e taşınabilir.
  *
  * Metinler TASLAKTIR; somut oran/tutar yazılmadı — oranlar motordan gelir ve

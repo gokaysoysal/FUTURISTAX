@@ -9,6 +9,7 @@ import {
   getRates,
 } from '@futuristax/tax-engine';
 import { useMemo, useState } from 'react';
+import { LedgerChart } from './LedgerChart';
 import { ResultLedger } from './ResultLedger';
 import { SelectField, TextField, YearSelect, parseNumeric } from './fields';
 
@@ -66,7 +67,18 @@ export function VatCalculator() {
       </div>
 
       <div aria-live="polite">
-        <ResultLedger result={result} />
+        <ResultLedger
+          result={result}
+          chart={
+            <LedgerChart
+              caption="KDV dahil tutarın bileşimi"
+              segments={[
+                { label: 'Matrah (KDV hariç)', value: result.detail.net, tone: 'accent' },
+                { label: 'Hesaplanan KDV', value: result.detail.vat, tone: 'warning' },
+              ]}
+            />
+          }
+        />
       </div>
     </div>
   );

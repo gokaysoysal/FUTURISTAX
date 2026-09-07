@@ -8,6 +8,7 @@ import {
   getRates,
 } from '@futuristax/tax-engine';
 import { useMemo, useState } from 'react';
+import { LedgerChart } from './LedgerChart';
 import { ResultLedger } from './ResultLedger';
 import { SelectField, TextField, YearSelect, parseNumeric } from './fields';
 
@@ -61,7 +62,18 @@ export function IncomeTaxCalculator() {
       </div>
 
       <div aria-live="polite">
-        <ResultLedger result={result} />
+        <ResultLedger
+          result={result}
+          chart={
+            <LedgerChart
+              caption="Vergi matrahının dağılımı"
+              segments={[
+                { label: 'Hesaplanan vergi', value: result.detail.tax, tone: 'warning' },
+                { label: 'Net kalan', value: result.detail.netIncome, tone: 'positive' },
+              ]}
+            />
+          }
+        />
       </div>
     </div>
   );

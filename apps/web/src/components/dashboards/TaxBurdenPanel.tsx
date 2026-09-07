@@ -6,10 +6,11 @@ import { SkeletonText } from '@/components/ui/Skeleton';
 import { UnverifiedRatesNotice } from '@/components/ui/UnverifiedRatesNotice';
 import { BURDEN_DEFAULTS, type BurdenInput, computeBurden } from '@/lib/charts/burden';
 import { formatCurrency, formatPercent } from '@/lib/format';
+import { useNearViewport } from '@/lib/motion/useNearViewport';
 import { site } from '@futuristax/config';
 import { DEFAULT_YEAR } from '@futuristax/tax-engine';
 import dynamic from 'next/dynamic';
-import { useId, useMemo, useState } from 'react';
+import { useId, useMemo, useRef, useState } from 'react';
 
 /**
  * Vergi Yükü Panosu — ana sayfa etkileşimli bileşeni.
@@ -33,6 +34,8 @@ const Charts = dynamic(() => import('./TaxBurdenCharts').then((m) => m.TaxBurden
 export function TaxBurdenPanel() {
   const [values, setValues] = useState<Omit<BurdenInput, 'year'>>(BURDEN_DEFAULTS);
   const groupId = useId();
+  const chartRef = useRef<HTMLDivElement>(null);
+  const chartNear = useNearViewport(chartRef);
 
   const result = useMemo(() => computeBurden({ ...values, year: DEFAULT_YEAR }), [values]);
 
@@ -75,8 +78,14 @@ export function TaxBurdenPanel() {
         </p>
       </div>
 
-      <div className="mt-6">
-        <Charts components={result.components} timeline={result.timeline} />
+      {/* Grafik yalnızca pano görünüre yaklaşınca yüklenir (Recharts ~110 KB gz).
+          Veri karşılığı sr-only tablo aşağıda, her zaman DOM'da. */}
+      <div ref={chartRef} className="mt-6">
+        {chartNear ? (
+          <Charts components={result.components} timeline={result.timeline} />
+        ) : (
+          <SkeletonText lines={4} className="sm:col-span-2" />
+        )}
       </div>
 
       {/* Ekran okuyucu karşılığı — grafiklerin erişilebilir tablo eşleniği */}

@@ -5,6 +5,13 @@
  * yayınlanır (bkz. docs/decisions/0004-csp-nonce.md): rapor toplanır, ihlal
  * kalmadığına emin olunduktan sonra zorlayıcı moda geçilir. Report-Only hiçbir
  * şeyi engellemediği için hydration'ı bozamaz — geçmişte bu kırılmıştı.
+ *
+ * ⚠️ ENFORCE'A GEÇMEDEN ÖNCE — fx yığını (three / @react-three/fiber) kontrolü:
+ *   fiber bazı yollarda WebGL shader derlemesi / `new Function` nedeniyle
+ *   `script-src 'unsafe-eval'` isteyebilir. CSP şu an devrede DEĞİL (ADR-0004),
+ *   bu yüzden şimdilik sorun değil. Zorlayıcı moda geçerken: fiber'lı bir
+ *   sayfada Report-Only ihlallerini tara; gerekiyorsa 'unsafe-eval' yerine
+ *   'wasm-unsafe-eval' yeterli mi bak, yalnızca ilgili route'a daralt.
  */
 
 export function buildCsp(nonce: string, isDev: boolean): string {

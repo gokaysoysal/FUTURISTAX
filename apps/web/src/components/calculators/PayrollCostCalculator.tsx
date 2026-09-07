@@ -2,6 +2,7 @@
 
 import { DEFAULT_YEAR, type TaxYear, calculatePayrollCost, getRates } from '@futuristax/tax-engine';
 import { useMemo, useState } from 'react';
+import { LedgerChart } from './LedgerChart';
 import { ResultLedger } from './ResultLedger';
 import { TextField, YearSelect, parseNumeric } from './fields';
 
@@ -23,6 +24,9 @@ export function PayrollCostCalculator() {
       ),
     [grossSalary, apply5510Discount, year],
   );
+
+  const d = result.detail;
+  const grossPay = d.employerTotalCost - d.employerSgk - d.employerUnemployment;
 
   return (
     <div className="grid gap-6 md:grid-cols-2 md:items-start">
@@ -46,7 +50,28 @@ export function PayrollCostCalculator() {
       </div>
 
       <div aria-live="polite">
-        <ResultLedger result={result} />
+        <ResultLedger
+          result={result}
+          chart={
+            <LedgerChart
+              caption="İşveren toplam maliyetinin kırılımı"
+              segments={[
+                {
+                  label: 'İşçiye net ödeme',
+                  value: grossPay - d.employeeDeductions,
+                  tone: 'positive',
+                },
+                {
+                  label: 'İşçi kesintileri (SGK + işsizlik)',
+                  value: d.employeeDeductions,
+                  tone: 'muted',
+                },
+                { label: 'İşveren SGK payı', value: d.employerSgk, tone: 'accent' },
+                { label: 'İşveren işsizlik payı', value: d.employerUnemployment, tone: 'accent' },
+              ]}
+            />
+          }
+        />
       </div>
     </div>
   );

@@ -8,6 +8,7 @@ import {
   getRates,
 } from '@futuristax/tax-engine';
 import { useMemo, useState } from 'react';
+import { LedgerChart } from './LedgerChart';
 import { ResultLedger } from './ResultLedger';
 import { SelectField, TextField, YearSelect, parseNumeric } from './fields';
 
@@ -96,7 +97,22 @@ export function CorporateTaxCalculator() {
       </div>
 
       <div aria-live="polite">
-        <ResultLedger result={result} />
+        <ResultLedger
+          result={result}
+          chart={
+            <LedgerChart
+              caption="Ticari kârın vergi sonrası dağılımı"
+              segments={[
+                {
+                  label: 'Ödenecek kurumlar vergisi',
+                  value: result.detail.payableTax,
+                  tone: 'warning',
+                },
+                { label: 'Vergi sonrası kâr', value: result.detail.netProfit, tone: 'positive' },
+              ]}
+            />
+          }
+        />
       </div>
     </div>
   );

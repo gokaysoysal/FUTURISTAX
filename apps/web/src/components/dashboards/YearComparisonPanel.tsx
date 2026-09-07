@@ -10,10 +10,11 @@ import {
   computeBurden,
 } from '@/lib/charts/burden';
 import { formatCurrency, formatPercent } from '@/lib/format';
+import { useNearViewport } from '@/lib/motion/useNearViewport';
 import { site } from '@futuristax/config';
 import { SUPPORTED_YEARS } from '@futuristax/tax-engine';
 import dynamic from 'next/dynamic';
-import { useId, useMemo, useState } from 'react';
+import { useId, useMemo, useRef, useState } from 'react';
 
 /**
  * Yıl Karşılaştırma — aynı girdi 2024/2025/2026 oranlarıyla yan yana.
@@ -55,6 +56,8 @@ function describeDiff(diff: number): { direction: string; arrow: string } {
 export function YearComparisonPanel() {
   const [values, setValues] = useState<Values>(BURDEN_DEFAULTS);
   const groupId = useId();
+  const chartRef = useRef<HTMLDivElement>(null);
+  const chartNear = useNearViewport(chartRef);
 
   const years = useMemo(
     () => SUPPORTED_YEARS.map((year) => ({ year, result: computeBurden({ ...values, year }) })),
@@ -202,8 +205,10 @@ export function YearComparisonPanel() {
         </table>
       </section>
 
-      <div className="mt-6">
-        <Chart data={chartData} />
+      {/* Grafik yalnızca panel görünüre yaklaşınca yüklenir; veri karşılığı
+          yukarıdaki tam tablodur (her zaman DOM'da). */}
+      <div ref={chartRef} className="mt-6">
+        {chartNear ? <Chart data={chartData} /> : <SkeletonText lines={3} />}
       </div>
 
       <div className="mt-6 space-y-3 border-t border-[var(--color-rule)] pt-4">

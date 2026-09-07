@@ -2,11 +2,74 @@
 
 > **Her yeni oturumda önce bu dosyayı oku.** Kurallar ve mimari için `CLAUDE.md`.
 
-**Son güncelleme:** 2026-09-07 — TASARIM YÖNÜ DEĞİŞİMİ koşusu (`v2-tasarim` dalı).
-Önceki: Aşama 4–8 (tek ajan koşusu, `tam-insa` dalı).
-**Depo:** github.com/gokaysoysal/FUTURISTAX — çalışma dalı `v2`, tasarım koşusu `v2-tasarim`
+**Son güncelleme:** 2026-09-07 — V3 SUNUM KATMANI koşusu (`v2-fx` dalı), **8/8 bölüm bitti**.
+Önceki: TASARIM YÖNÜ DEĞİŞİMİ (`v2-tasarim`, `v2`'ye merge edildi) · Aşama 4–8 (`tam-insa`).
+**Depo:** github.com/gokaysoysal/FUTURISTAX — çalışma dalı `v2`, aktif koşu dalı `v2-fx`
 **Önizleme:** deploy-preview-1--futuristax.netlify.app
 **Canlı site:** futuristax.com — hâlâ ESKİ sürüm (`main` dalı, `legacy/index.html`)
+
+---
+
+## 0-A. V3 SUNUM KATMANI KOŞUSU — 2026-09-07 (`v2-fx`)
+
+Yalnızca görünen katman yeniden inşa ediliyor (bkz. `docs/V3-SUNUM-PROMPT.md`);
+`tax-engine`, API route'ları, DB, form, dağıtım DEĞİŞMİYOR. 8 bölüm, her biri
+ayrı commit, her bölüm sonunda `pnpm typecheck · lint · test · build` yeşil.
+
+`a7e644b` (1) · `359d56d` (2) · `9a1268b` (3) · `878a685` (4) · `ca28e7b` (5) ·
+`ad20fde` (6) · `1be2ec7` (7) · `f03e77e` (8). **Koşu tamamlandı.**
+
+**Sıradaki:** `v2-fx` → `v2` merge (QA sonrası), `docs/PROJECT-STATUS.md` §6
+kontrol listesi. `main`'e ERKEN GEÇİLMEZ (§0 YAPMA listesi + bölüm 4 kararları).
+
+### Biten
+
+| # | Bölüm | Not |
+|---|---|---|
+| 1 | Sanat yönetimi + görsel altyapı | **Prosedürel** — bu ortam Unsplash/Pexels indiremiyor. `SceneBackdrop` (SVG: concrete / geometric-shadow / document-grid / light-field, palet tokenlı), `TreatedImage` (duotone + grain, gerçek foto gelince kullanılır), `LazyLottie` (dosya gelince). `public/images/CREDITS.md` + `public/lottie/README.md` sanat yönü kurallarını taşıyor. **Gerçek foto/Lottie firma/sonraki adım.** |
+| 2 | WebGL hero | R3F **shader alanı** seçildi (sıvı gradyan + noise, palet tokenlı). `HeroCanvas` karar katmanı: yalnızca ≥768px + WebGL + reduced-motion yok → `HeroScene` (`dynamic ssr:false`); aksi `HeroFallback` (statik CSS gradyan + grain). visibilitychange'de render durur. |
+| 3 | Scroll + geçiş | `SmoothScroll` (Lenis; reduced-motion'da HİÇ başlamaz), `ScrollProgress` (üst çubuk), `RouteTransition` (perde; ilk sert yükte YOK — LCP), `SplitHeading` (split-type + Türkçe glif kontrolü: düşen karakter varsa revert). `lib/motion/scroll.ts` merkezî. |
+| 4 | Ana sayfa sinematik akış | 8 sahne: hero → güven bandı → vergi takvimi → hizmetler → süreç → araçlar → sektörler → kapanış. `components/home/`: `SceneSection` (eyebrow + SplitHeading + lead + seçici `SceneBackdrop`), `ProcessScene`+`TrustBand` (pin YOK), `ServicesRail` (native overflow-x + ince ScrollTrigger drift), `SectorsGrid`, `ToolsShowcase` (araç listesi + canlı `TaxBurdenPanel`). Hero tek CTA'ya indi; `TaxCalendarPanel` hero'dan çıkıp kendi sahnesine geçti. |
+| 5 | Araçlar çalışma alanı | `ToolWorkspace` + `ToolSelector` — 9 hesaplayıcı tek yüzey. Seçici APG tabs (roving tabindex, ok/Home/End), dar ekranda yatay kaydırılır, tuzak yok. Her aracın kendi URL'i: `history.pushState` → `/araclar/[slug]`, `popstate` senkron; sunucu `[slug]` sayfası metadata + HowTo/FAQ JSON-LD taşımayı sürdürür. Araç değişince `AnimatePresence` geçiş (reduced-motion: anında). `LedgerChart` — **araca özel** görsel kırılım (her hesaplayıcı `segments`'ini kendi `result.detail`'inden kurar; saf SVG/div, recharts yok; tümüyle `aria-hidden`, veri = `ResultLedger` sr-only steps tablosu); kur-cevirici hariç 8 araç. `RollingNumber` — sonuç değişince yeniden sayan sayaç (ResultLedger başlığı). `ToolCalculator` kaldırıldı. |
+| 6 | İç sayfalara ana sayfa dili | `components/content/PageHero` — paylaşılan sayfa giriş sahnesi (seçici `SceneBackdrop` + `basis-ref` eyebrow + `SplitHeading` + lead + `scene-divider`). hizmetler/sektorler (hub+[slug]), kurumsal, mevzuat (hub+[slug]), sss, kariyer, referanslar, iletisim, **araclar hub** — hepsi `PageHero`'ya geçti; eski `ledger-rule` başlık bloğu kaldırıldı, içerik `Reveal`'a alındı. İletişim sayfası yeniden kuruldu (güvence listesi + iletişim bilgileri | kenar parıltılı kart içinde form). metadata/JSON-LD korundu. |
+| 7 | Performans | `lib/motion/gsap-lazy.ts` (loadGsap / loadSplitType — `import()` chunk) + `lib/motion/useNearViewport.ts` (IO hook). `SplitHeading`/`ServicesRail`/`SmoothScroll` statik `gsap`/`@gsap/react`/`lenis` importlarını bıraktı; hepsi IO (veya mount) + `import()` ile tembel. `lib/motion/scroll.ts` yalnızca yapılandırma (registerScroll + revealOnScroll kaldırıldı). Recharts mount'u `TaxBurdenPanel` + `YearComparisonPanel`'de `useNearViewport` arkasında. `@next/bundle-analyzer` + `pnpm --filter @futuristax/web analyze`. **Ana sayfa ilk yük JS 237 → 188 kB (< 220 hedefi).** |
+| 8 | Erişilebilirlik | `e2e/tools-workspace.spec.ts` (16 test): araç seçici APG tabs klavye (ok dairesel/Home/End/roving tabindex/aria-selected/odak), araç URL derin link + geri/ileri (popstate), `LedgerChart` sr karşılığı (figure aria-hidden → a11y ağacında yok; veri = ResultLedger sr-only adım tablosu), komut paleti çalışma alanından klavye akışı. `accessibility.spec.ts` `settleReveals` → `networkidle` bekliyor (SplitHeading GSAP tembel). `design-a11y.spec.ts` grafik testleri `scrollIntoViewIfNeeded()` (Recharts IO-ertelemeli). |
+
+### Bundle — en ağır üç modül (analyzer, parsed)
+
+1. **three** ~725 KB (+ `@react-three/fiber` 147) — yalnızca `HeroScene` chunk'ında
+   (`dynamic ssr:false`); ilk yükte DEĞİL. Mobil / WebGL yok / reduced-motion → hiç yüklenmez.
+2. **recharts** ~322 KB (+ `victory-vendor` 46, `decimal.js-light` 13) — grafik
+   chunk'larında; Bölüm 7'de `IntersectionObserver` ile ertelendi (panel görünüre yaklaşınca).
+3. **gsap** ~112 KB (+ `split-type` 11) — kendi `import()` chunk'ında; ilk yükte DEĞİL.
+
+Not: **`motion` (~144 KB) ilk yükte kalıyor** — `Reveal`/`Counter`/`RollingNumber`/
+`AnimatePresence`/`MagneticButton` yaygın. En büyük eager modül; ayrı bir küçültme
+adımı (ör. `LazyMotion` + `domAnimation`) açık.
+
+### Sayfa ilk yük JS (Bölüm 8 sonrası build)
+
+ana sayfa **188** · `/araclar` 183 · `/araclar/[slug]` 178 · iç sayfalar (`PageHero`)
+~148 · `iletisim` 173 · `kariyer`/`mevzuat`/`referanslar` 107 · shared 103 kB.
+
+### Doğrulama (Bölüm 8 sonrası)
+
+`pnpm typecheck · lint · test` (tax-engine 65) `· build` — hepsi yeşil.
+**e2e bu ortamda KOŞULMADI** (tarayıcı + `pnpm start` yok). CI'da koşacak:
+`playwright --list` = **80 test / 6 dosya**, parse temiz. CI'da doğrulanacak:
+- `tools-workspace.spec.ts` yeni 16 test (yukarıda).
+- `accessibility.spec.ts` axe sweep 15 rota — yeni sahneler + `PageHero` dâhil.
+- Lighthouse CI (`lighthouserc.json`): bu koşuda çalıştırılamadı; `ANALYZE`
+  raporu elde ama Lighthouse skoru CI'da.
+- `RouteTransition` / `SmoothScroll` / `RollingNumber` / `SplitHeading`
+  reduced-motion no-op yolu birim testli değil (e2e reduced-motion projesi eklenebilir).
+
+### Sonraki adım (V3 koşusu dışında)
+
+- `v2-fx` → `v2` merge; `docs/PROJECT-STATUS.md` §6 geçiş kontrol listesi.
+- Gerçek fotoğraf + Lottie dosyaları (Bölüm 1 prosedürel bıraktı) — firma/sonraki adım.
+- `motion` bundle küçültme (`LazyMotion`).
+- `main`'e ERKEN GEÇME — §0 YAPMA + bölüm 4 cevap bekleyen kararlar.
 
 ---
 

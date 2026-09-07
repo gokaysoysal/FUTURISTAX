@@ -1,4 +1,5 @@
 import { Breadcrumbs } from '@/components/content/Breadcrumbs';
+import { PageHero } from '@/components/content/PageHero';
 import { RequestCta } from '@/components/content/RequestCta';
 import { Reveal } from '@/components/motion/Reveal';
 import { SERVICES } from '@/lib/data';
@@ -18,19 +19,15 @@ export const metadata: Metadata = {
 export default function ServicesHubPage() {
   return (
     <div className="mx-auto max-w-6xl px-5 py-16">
-      <Breadcrumbs trail={[{ name: 'Hizmetler', path: '/hizmetler' }]} />
+      <PageHero
+        eyebrow="Hizmetler"
+        title="Çalışma alanlarımız"
+        backdrop="geometric-shadow"
+        breadcrumbs={<Breadcrumbs trail={[{ name: 'Hizmetler', path: '/hizmetler' }]} />}
+        lead="Danışmanlığı dönemsel bir hizmet değil, sürekli bir çalışma ilişkisi olarak kuruyoruz. Aşağıdaki alanlar birlikte yürür; çoğu şirket bunlardan birkaçına aynı anda ihtiyaç duyar."
+      />
 
-      <header className="ledger-rule mt-6 pb-4">
-        <p className="basis-ref uppercase">Hizmetler</p>
-        <h1 className="mt-1 text-[length:var(--text-3xl)]">Çalışma alanlarımız</h1>
-      </header>
-
-      <p className="mt-6 max-w-prose text-[length:var(--text-base)] text-[var(--color-text-secondary)]">
-        Danışmanlığı dönemsel bir hizmet değil, sürekli bir çalışma ilişkisi olarak kuruyoruz.
-        Aşağıdaki alanlar birlikte yürür; çoğu şirket bunlardan birkaçına aynı anda ihtiyaç duyar.
-      </p>
-
-      <Reveal className="mt-10">
+      <Reveal className="mt-12">
         <ul className="grid gap-px bg-[var(--color-rule)] sm:grid-cols-2 lg:grid-cols-3">
           {SERVICES.map((service) => (
             <li key={service.slug} className="bg-[var(--color-canvas)]">

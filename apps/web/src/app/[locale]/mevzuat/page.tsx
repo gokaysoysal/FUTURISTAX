@@ -1,4 +1,5 @@
 import { Breadcrumbs } from '@/components/content/Breadcrumbs';
+import { PageHero } from '@/components/content/PageHero';
 import { RequestCta } from '@/components/content/RequestCta';
 import { StatusPanel } from '@/components/ui/StatusPanel';
 import {
@@ -51,19 +52,15 @@ export default async function LegislationHubPage({
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-16">
-      <Breadcrumbs trail={[{ name: 'Mevzuat', path: '/mevzuat' }]} />
+      <PageHero
+        eyebrow="Mevzuat"
+        title="Mevzuat merkezi"
+        backdrop="document-grid"
+        breadcrumbs={<Breadcrumbs trail={[{ name: 'Mevzuat', path: '/mevzuat' }]} />}
+        lead="Aşağıdaki yazılar bir konunun genel çerçevesini anlatır; resmî duyuru değildir. Somut oran, tutar ve son tarihler için resmî kaynaklara ve danışmanınıza başvurun."
+      />
 
-      <header className="ledger-rule mt-6 pb-4">
-        <p className="basis-ref uppercase">Mevzuat</p>
-        <h1 className="mt-1 text-[length:var(--text-3xl)]">Mevzuat merkezi</h1>
-      </header>
-
-      <p className="mt-6 max-w-prose text-[length:var(--text-base)] text-[var(--color-text-secondary)]">
-        Aşağıdaki yazılar bir konunun genel çerçevesini anlatır; resmî duyuru değildir. Somut oran,
-        tutar ve son tarihler için resmî kaynaklara ve danışmanınıza başvurun.
-      </p>
-
-      <nav aria-label="Kategori filtresi" className="mt-8 flex flex-wrap gap-2">
+      <nav aria-label="Kategori filtresi" className="mt-10 flex flex-wrap gap-2">
         <FilterChip href="/mevzuat" label="Tümü" active={active === null} />
         {CATEGORIES.map((category) => (
           <FilterChip

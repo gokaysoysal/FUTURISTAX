@@ -1,7 +1,9 @@
 import { Breadcrumbs } from '@/components/content/Breadcrumbs';
 import { ContentSections } from '@/components/content/ContentSections';
+import { PageHero } from '@/components/content/PageHero';
 import { RelatedContent, type RelatedItem } from '@/components/content/RelatedContent';
 import { RequestCta } from '@/components/content/RequestCta';
+import { Reveal } from '@/components/motion/Reveal';
 import { ArticleJsonLd } from '@/components/seo/JsonLd';
 import { LEGISLATION_CATEGORY_LABELS, getArticle, getService } from '@/lib/data';
 import type { Metadata } from 'next';
@@ -64,27 +66,24 @@ export default async function LegislationArticlePage({
         datePublished={article.publishedAt}
         dateModified={article.updatedAt}
       />
-      <Breadcrumbs
-        trail={[
-          { name: 'Mevzuat', path: '/mevzuat' },
-          { name: article.title, path: canonical },
-        ]}
+      <PageHero
+        eyebrow={`Mevzuat · ${LEGISLATION_CATEGORY_LABELS[article.category]}`}
+        title={article.title}
+        backdrop="document-grid"
+        breadcrumbs={
+          <Breadcrumbs
+            trail={[
+              { name: 'Mevzuat', path: '/mevzuat' },
+              { name: article.title, path: canonical },
+            ]}
+          />
+        }
+        lead={article.summary}
       />
 
-      <header className="ledger-rule mt-6 pb-4">
-        <p className="basis-ref uppercase">
-          Mevzuat · {LEGISLATION_CATEGORY_LABELS[article.category]}
-        </p>
-        <h1 className="mt-1 text-[length:var(--text-3xl)]">{article.title}</h1>
-      </header>
-
-      <p className="mt-6 max-w-prose text-[length:var(--text-base)] text-[var(--color-text-secondary)]">
-        {article.summary}
-      </p>
-
-      <div className="mt-12">
+      <Reveal className="mt-12">
         <ContentSections sections={article.sections} />
-      </div>
+      </Reveal>
 
       <p className="mt-10 border-l-2 border-[var(--color-rule-strong)] bg-[var(--color-surface)] px-4 py-3 text-[length:var(--text-xs)] text-[var(--color-text-muted)]">
         Bu yazı genel bilgilendirme amaçlıdır, resmî duyuru veya mali müşavirlik hizmeti yerine
