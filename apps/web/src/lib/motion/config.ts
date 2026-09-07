@@ -6,6 +6,26 @@
  * İlke (CLAUDE.md → Hareket): yalnızca transform/opacity; prefers-reduced-motion
  * altında her şey kapanır (guard bileşenlerde); animasyon içeriğe erişimi
  * geciktirmez.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * STACK AYRIMI — Framer Motion ve GSAP birlikte kullanılır, iş bölümü NET:
+ *
+ *  • Framer Motion (`motion` / `motion/react`, bu klasör):
+ *      bileşen içi mikro etkileşim, hover, giriş/çıkış, layout animasyonları,
+ *      sayfa/rota geçişleri. Deklaratif, bileşen ömrüne bağlı.
+ *
+ *  • GSAP + ScrollTrigger (`gsap`, `@gsap/react`):
+ *      YALNIZCA scroll'a bağlı sahne koreografisi — pin, yatay scroll,
+ *      timeline sekansları. Imperatif, scroll konumuna bağlı.
+ *
+ *  KURAL: Aynı öğeyi ikisiyle birden animasyon ETME. Bir öğe ya Framer
+ *  Motion'ın ya da GSAP'in kontrolünde; ikisi transform'a aynı anda yazarsa
+ *  çakışır.
+ *
+ *  Lenis (smooth scroll): `prefers-reduced-motion: reduce` altında HİÇ
+ *  başlatma — native scroll'a bırak. ScrollTrigger kullanılacaksa Lenis'in
+ *  scroll olayı ScrollTrigger.update'e bağlanır (yine reduced-motion'da kapalı).
+ * ─────────────────────────────────────────────────────────────────────────────
  */
 
 /** cubic-bezier easing eğrileri (motion `ease` alanı number[] kabul eder). */
