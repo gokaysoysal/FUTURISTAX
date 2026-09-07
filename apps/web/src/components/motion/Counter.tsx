@@ -7,15 +7,25 @@ import { useEffect, useRef, useState } from 'react';
 type Props = {
   /** Hedef sayısal değer. */
   value: number;
-  /** Görüntüleme biçimi (varsayılan: tr-TR gruplandırma, tam sayı). */
+  /**
+   * Görüntüleme biçimi. Bir FONKSİYON — bu yüzden yalnızca istemci
+   * bileşenlerinden geçirilebilir. Sunucu bileşenleri `groupless` bayrağını
+   * kullanmalı (fonksiyon prop'u RSC sınırından geçemez).
+   */
   format?: (n: number) => string;
+  /** Binlik ayırıcı olmadan (ör. yıl: "2013", "2.013" değil). Serileştirilebilir. */
+  groupless?: boolean;
   /** Saniye. */
   duration?: number;
   className?: string;
 };
 
-const defaultFormat = (n: number) =>
+const grouped = (n: number) =>
   new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 0 }).format(Math.round(n));
+const plain = (n: number) =>
+  new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 0, useGrouping: false }).format(
+    Math.round(n),
+  );
 
 /**
  * İstatistik / hesaplama sonucu sayaç animasyonu.
@@ -27,7 +37,14 @@ const defaultFormat = (n: number) =>
  * - prefers-reduced-motion: anında nihai değer, animasyon yok.
  * - Görünür alana girene kadar başlamaz; bir kez çalışır.
  */
-export function Counter({ value, format = defaultFormat, duration = D.count, className }: Props) {
+export function Counter({
+  value,
+  format,
+  groupless = false,
+  duration = D.count,
+  className,
+}: Props) {
+  const fmt = format ?? (groupless ? plain : grouped);
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: '0px 0px -10% 0px' });
   const reduce = useReducedMotion();
@@ -47,7 +64,7 @@ export function Counter({ value, format = defaultFormat, duration = D.count, cla
     return () => controls.stop();
   }, [inView, value, duration, reduce]);
 
-  const final = format(value);
+  const final = fmt(value);
 
   return (
     <span
@@ -61,7 +78,7 @@ export function Counter({ value, format = defaultFormat, duration = D.count, cla
         {final}
       </span>
       <span aria-hidden="true" style={{ position: 'absolute', inset: 0 }}>
-        {format(display)}
+        {fmt(display)}
       </span>
     </span>
   );

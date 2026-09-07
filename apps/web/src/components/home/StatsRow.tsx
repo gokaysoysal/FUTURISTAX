@@ -10,12 +10,13 @@ import { site } from '@futuristax/config';
  *
  * Dört sayaç, görünüre girince sayar. GERÇEK veriler — uydurma yüzde YOK:
  * kuruluş yılı, hizmet / sektör / hesaplama aracı sayısı.
+ *
+ * NOT: Sunucu bileşeni → `Counter`'a FONKSİYON geçilemez (RSC sınırı).
+ * Yıl için binlik ayırıcıyı `groupless` bayrağıyla kapatıyoruz.
  */
-const plain = (n: number) => new Intl.NumberFormat('tr-TR', { useGrouping: false }).format(n);
-
 export function StatsRow() {
-  const stats = [
-    { value: site.brand.foundedYear, label: 'Kuruluş yılı', fmt: plain },
+  const stats: { value: number; label: string; groupless?: boolean }[] = [
+    { value: site.brand.foundedYear, label: 'Kuruluş yılı', groupless: true },
     { value: SERVICES.length, label: 'Hizmet başlığı' },
     { value: SECTORS.length, label: 'Sektör' },
     { value: TOOLS.length, label: 'Hesaplama aracı' },
@@ -28,7 +29,7 @@ export function StatsRow() {
           {stats.map((s) => (
             <div key={s.label} className="bg-[var(--color-canvas)] px-5 py-8">
               <dd className="font-[family-name:var(--font-display)] text-[length:var(--text-5xl)] text-[var(--color-text)]">
-                <Counter value={s.value} format={s.fmt} />
+                <Counter value={s.value} groupless={s.groupless} />
               </dd>
               <dt className="mt-2 text-[length:var(--text-sm)] text-[var(--color-text-secondary)]">
                 {s.label}
