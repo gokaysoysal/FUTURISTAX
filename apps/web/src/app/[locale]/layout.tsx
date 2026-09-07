@@ -11,6 +11,7 @@ import { Familjen_Grotesk, IBM_Plex_Mono, Space_Grotesk } from 'next/font/google
 import type { ReactNode } from 'react';
 import '@/styles/tokens.css';
 import '@/styles/depth.css';
+import '@/styles/art.css';
 
 /*
  * Fontlar self-host edilir (next/font/google → .woff2 derlemede indirilir ve
