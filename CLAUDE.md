@@ -136,23 +136,43 @@ Parlak azur bir buton **zemini** olarak kullanılırsa üstüne koyu metin gelir
   sürümle (weight verilmez → tek dosya). `--font-*-loaded` → tokens.css'te
   `--font-display/sans/mono` zinciriyle bağlı.
 
-### Hareket
+### Hareket — DİSİPLİN (V4-AKIS)
 
-- Merkezî yapılandırma: `apps/web/src/lib/motion/` — easing eğrileri, süreler,
-  varyantlar tek yerde.
-- Scroll-driven reveal (stagger), parallax, scroll-zoom, sayaç animasyonu
-  (`tabular-nums` korunur, layout kaymaz), manyetik hover, kart hover parıltısı,
-  iskelet (skeleton) yükleme.
-- `prefers-reduced-motion: reduce` altında **tüm** animasyon kapanır, içerik
-  anında son hâliyle görünür — seçenek değil. Hiçbir animasyon içeriğe erişimi
-  geciktirmez. Yalnızca `transform`/`opacity`; `will-change` seçici; ağır
-  bölümler `dynamic import`.
+- Merkezî yapılandırma: `apps/web/src/lib/motion/` (JS) + `tokens.css`
+  `--ease-out` / `--dur-*` (CSS). İkisi aynı değerleri taşır.
+- **TEK easing ailesi: `ease.out` = expo.out `cubic-bezier(0.16, 1, 0.3, 1)`.**
+  Reveal, hover, sayaç, parallax, buton oku — hepsi bu. `inOut` YALNIZCA rota
+  perde geçişi. Farklı bölümde farklı easing/yön KULLANMA.
+- **Süre ölçeği yalnızca üç değer:** fast 200ms / base 600ms / scene 1200ms
+  (+ count 1600ms sayaç). Stagger 60–80ms.
+- **Tüm reveal'lar tek desen:** 24px alttan + opaklık (`fadeUp`/`staggerItem`).
+- **Stack ayrımı:** Framer Motion (`motion/react`) = bileşen içi mikro
+  etkileşim, giriş/çıkış, rota geçişi. GSAP + ScrollTrigger = YALNIZCA scroll'a
+  bağlı sahne koreografisi (pin, marquee dışı). Aynı öğeyi ikisiyle animasyon
+  etme. GSAP/three/recharts STATİK import edilmez — `import()` + IO ile tembel
+  (`lib/motion/gsap-lazy.ts`, `useNearViewport`).
+- Lenis smooth scroll `lerp: 0.1`.
+- `prefers-reduced-motion: reduce` altında **tüm** animasyon kapanır (Lenis
+  başlamaz, ScrollTrigger pin'leri kurulmaz, perde render edilmez, marquee
+  durur, split-type/GSAP hiç yüklenmez), içerik anında son hâliyle görünür.
+  Hiçbir animasyon içeriğe erişimi geciktirmez; yalnızca `transform`/`opacity`.
+- **Pinlenmiş bölüm** (`PinnedCapabilities`) klavye kullanıcısını hapsetmez:
+  aktif olmayan adımlar `inert`, Tab bölümden çıkar. Fallback = adımlar alt alta.
 
 ### İmza öğeleri ve veri görselleştirme
 
-- Ana sayfada **Vergi Yükü Panosu** (etkileşimli) + **Vergi Takvimi**.
-- Grafikler (Recharts) **tema tokenlarını** kullanır, kendi rengini getirmez.
-- Her grafiğin/panonun `sr-only` tablo karşılığı ve klavye erişimi var.
+- Ana sayfa akışı **referansa (futureoffinance.peachweb.io) sadıktır** — bölüm
+  sırası `docs/V4-AKIS-PROMPT.md` Bölüm 2. İmza hareket = pinlenmiş "Temel
+  yetenekler" bölümü.
+- Hero yüzen kartları, "Çözümler" panosu ve "Rakamlar" bölümü **gerçek veri**
+  gösterir (tax-engine + saf hesap + `site` sabitleri); dış kaynak (TCMB kur)
+  erişilemezse "—", uydurma değer yok.
+- Grafikler (Recharts) **tema tokenlarını** kullanır; her grafiğin/panonun
+  `sr-only` tablo karşılığı ve klavye erişimi var.
+- **Yer tutucu içerik** `CONTENT_IS_PLACEHOLDER` bayrağı arkasında,
+  `src/lib/data/placeholder/` altında. Tam liste + firma görevleri:
+  `docs/YER-TUTUCU-ICERIK.md`. Üç istisna (sahte resmî içerik, gerçek logo,
+  uydurma isim) yer tutucu bile olamaz.
 
 ### Kalite eşiği
 
