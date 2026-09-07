@@ -1,5 +1,7 @@
 import { Breadcrumbs } from '@/components/content/Breadcrumbs';
+import { PageHero } from '@/components/content/PageHero';
 import { RequestCta } from '@/components/content/RequestCta';
+import { Reveal } from '@/components/motion/Reveal';
 import { TEAM } from '@/lib/data';
 import { site, unverifiedClaims } from '@futuristax/config';
 import type { Metadata } from 'next';
@@ -38,18 +40,13 @@ const APPROACH = [
 export default function CorporatePage() {
   return (
     <div className="mx-auto max-w-3xl px-5 py-16">
-      <Breadcrumbs trail={[{ name: 'Kurumsal', path: '/kurumsal' }]} />
-
-      <header className="ledger-rule mt-6 pb-4">
-        <p className="basis-ref uppercase">Kurumsal</p>
-        <h1 className="mt-1 text-[length:var(--text-3xl)]">{site.brand.name}</h1>
-      </header>
-
-      <p className="mt-6 text-[length:var(--text-base)] leading-relaxed text-[var(--color-text-secondary)]">
-        {site.brand.name}, {site.contact.address.city} merkezli bir vergi ve mali danışmanlık
-        firmasıdır. Şirketlere vergi, finans ve uyum süreçlerinde; yükümlülüklerin takibinden kalıcı
-        bir mali yapının kurulmasına kadar danışmanlık verir.
-      </p>
+      <PageHero
+        eyebrow="Kurumsal"
+        title={site.brand.name}
+        backdrop="light-field"
+        breadcrumbs={<Breadcrumbs trail={[{ name: 'Kurumsal', path: '/kurumsal' }]} />}
+        lead={`${site.brand.name}, ${site.contact.address.city} merkezli bir vergi ve mali danışmanlık firmasıdır. Şirketlere vergi, finans ve uyum süreçlerinde; yükümlülüklerin takibinden kalıcı bir mali yapının kurulmasına kadar danışmanlık verir.`}
+      />
 
       {/*
         DOĞRULANMAMIŞ İDDİALAR: "150+ aktif müşteri", "%98 başarı oranı" gibi ifadeler
@@ -63,18 +60,20 @@ export default function CorporatePage() {
         </p>
       ) : null}
 
-      <section className="mt-12 space-y-8">
-        {APPROACH.map((item) => (
-          <div key={item.heading}>
-            <h2 className="mb-2 text-[length:var(--text-xl)] text-[var(--color-text)]">
-              {item.heading}
-            </h2>
-            <p className="text-[length:var(--text-base)] leading-relaxed text-[var(--color-text-secondary)]">
-              {item.body}
-            </p>
-          </div>
-        ))}
-      </section>
+      <Reveal className="mt-12">
+        <div className="space-y-8">
+          {APPROACH.map((item) => (
+            <section key={item.heading}>
+              <h2 className="mb-2 text-[length:var(--text-xl)] text-[var(--color-text)]">
+                {item.heading}
+              </h2>
+              <p className="text-[length:var(--text-base)] leading-relaxed text-[var(--color-text-secondary)]">
+                {item.body}
+              </p>
+            </section>
+          ))}
+        </div>
+      </Reveal>
 
       <section aria-label="Ekip" className="mt-14">
         <div className="ledger-rule pb-3">

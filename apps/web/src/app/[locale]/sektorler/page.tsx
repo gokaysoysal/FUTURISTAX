@@ -1,4 +1,5 @@
 import { Breadcrumbs } from '@/components/content/Breadcrumbs';
+import { PageHero } from '@/components/content/PageHero';
 import { RequestCta } from '@/components/content/RequestCta';
 import { Reveal } from '@/components/motion/Reveal';
 import { SECTORS } from '@/lib/data';
@@ -17,19 +18,15 @@ export const metadata: Metadata = {
 export default function SectorsHubPage() {
   return (
     <div className="mx-auto max-w-6xl px-5 py-16">
-      <Breadcrumbs trail={[{ name: 'Sektörler', path: '/sektorler' }]} />
+      <PageHero
+        eyebrow="Sektörler"
+        title="Sektörel yaklaşım"
+        backdrop="geometric-shadow"
+        breadcrumbs={<Breadcrumbs trail={[{ name: 'Sektörler', path: '/sektorler' }]} />}
+        lead="Aynı vergi kuralı, her sektörde farklı bir operasyonel gerçeğe oturur. Aşağıdaki alanlarda, sektörün kendi diliyle çalışıyoruz."
+      />
 
-      <header className="ledger-rule mt-6 pb-4">
-        <p className="basis-ref uppercase">Sektörler</p>
-        <h1 className="mt-1 text-[length:var(--text-3xl)]">Sektörel yaklaşım</h1>
-      </header>
-
-      <p className="mt-6 max-w-prose text-[length:var(--text-base)] text-[var(--color-text-secondary)]">
-        Aynı vergi kuralı, her sektörde farklı bir operasyonel gerçeğe oturur. Aşağıdaki alanlarda,
-        sektörün kendi diliyle çalışıyoruz.
-      </p>
-
-      <Reveal className="mt-10">
+      <Reveal className="mt-12">
         <ul className="grid gap-px bg-[var(--color-rule)] sm:grid-cols-2 lg:grid-cols-3">
           {SECTORS.map((sector) => (
             <li key={sector.slug} className="bg-[var(--color-canvas)]">

@@ -1,4 +1,5 @@
 import { Breadcrumbs } from '@/components/content/Breadcrumbs';
+import { PageHero } from '@/components/content/PageHero';
 import { RequestCta } from '@/components/content/RequestCta';
 import { StatusPanel } from '@/components/ui/StatusPanel';
 import { publishableTestimonials } from '@/lib/data';
@@ -19,12 +20,13 @@ export const metadata: Metadata = {
 export default function ReferencesPage() {
   return (
     <div className="mx-auto max-w-3xl px-5 py-16">
-      <Breadcrumbs trail={[{ name: 'Referanslar', path: '/referanslar' }]} />
-
-      <header className="ledger-rule mt-6 pb-4">
-        <p className="basis-ref uppercase">Referanslar</p>
-        <h1 className="mt-1 text-[length:var(--text-3xl)]">Müşteri görüşleri</h1>
-      </header>
+      <PageHero
+        eyebrow="Referanslar"
+        title="Müşteri görüşleri"
+        backdrop="light-field"
+        breadcrumbs={<Breadcrumbs trail={[{ name: 'Referanslar', path: '/referanslar' }]} />}
+        lead="Müşteri görüşlerini yalnızca ilgili müşteriden yazılı izin aldığımızda yayınlıyoruz."
+      />
 
       {testimonials.length === 0 ? (
         <div className="mt-8">

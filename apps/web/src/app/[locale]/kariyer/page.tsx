@@ -1,4 +1,5 @@
 import { Breadcrumbs } from '@/components/content/Breadcrumbs';
+import { PageHero } from '@/components/content/PageHero';
 import { StatusPanel } from '@/components/ui/StatusPanel';
 import { site } from '@futuristax/config';
 import type { Metadata } from 'next';
@@ -20,17 +21,13 @@ export default function CareersPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-5 py-16">
-      <Breadcrumbs trail={[{ name: 'Kariyer', path: '/kariyer' }]} />
-
-      <header className="ledger-rule mt-6 pb-4">
-        <p className="basis-ref uppercase">Kariyer</p>
-        <h1 className="mt-1 text-[length:var(--text-3xl)]">Ekibe katılın</h1>
-      </header>
-
-      <p className="mt-6 text-[length:var(--text-base)] leading-relaxed text-[var(--color-text-secondary)]">
-        Vergi ve mali danışmanlıkta işini titizlikle yapan, bir sonucun nasıl çıktığını
-        açıklayabilen kişilerle çalışmak isteriz.
-      </p>
+      <PageHero
+        eyebrow="Kariyer"
+        title="Ekibe katılın"
+        backdrop="concrete"
+        breadcrumbs={<Breadcrumbs trail={[{ name: 'Kariyer', path: '/kariyer' }]} />}
+        lead="Vergi ve mali danışmanlıkta işini titizlikle yapan, bir sonucun nasıl çıktığını açıklayabilen kişilerle çalışmak isteriz."
+      />
 
       <section aria-label="Açık pozisyonlar" className="mt-12">
         <div className="ledger-rule pb-3">

@@ -1,6 +1,8 @@
 import { Breadcrumbs } from '@/components/content/Breadcrumbs';
 import { FaqSection } from '@/components/content/FaqSection';
+import { PageHero } from '@/components/content/PageHero';
 import { RequestCta } from '@/components/content/RequestCta';
+import { Reveal } from '@/components/motion/Reveal';
 import { FaqJsonLd } from '@/components/seo/JsonLd';
 import { FAQ_CATEGORIES, GENERAL_FAQS } from '@/lib/data';
 import type { Metadata } from 'next';
@@ -20,23 +22,26 @@ export default function FaqPage() {
       <FaqJsonLd
         items={GENERAL_FAQS.map((item) => ({ question: item.question, answer: item.answer }))}
       />
-      <Breadcrumbs trail={[{ name: 'SSS', path: '/sss' }]} />
+      <PageHero
+        eyebrow="SSS"
+        title="Sık sorulan sorular"
+        backdrop="light-field"
+        breadcrumbs={<Breadcrumbs trail={[{ name: 'SSS', path: '/sss' }]} />}
+        lead="Çalışma biçimimiz, kapsam ve süre, gizlilik ve veri işleme hakkında en çok gelen sorular."
+      />
 
-      <header className="ledger-rule mt-6 pb-4">
-        <p className="basis-ref uppercase">SSS</p>
-        <h1 className="mt-1 text-[length:var(--text-3xl)]">Sık sorulan sorular</h1>
-      </header>
-
-      <div className="mt-10 space-y-12">
-        {FAQ_CATEGORIES.map((category) => (
-          <FaqSection
-            key={category.slug}
-            heading={category.title}
-            items={category.items}
-            withSchema={false}
-          />
-        ))}
-      </div>
+      <Reveal className="mt-12">
+        <div className="space-y-12">
+          {FAQ_CATEGORIES.map((category) => (
+            <FaqSection
+              key={category.slug}
+              heading={category.title}
+              items={category.items}
+              withSchema={false}
+            />
+          ))}
+        </div>
+      </Reveal>
 
       <div className="mt-14">
         <RequestCta

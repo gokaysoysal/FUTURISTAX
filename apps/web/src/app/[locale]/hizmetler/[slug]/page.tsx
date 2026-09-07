@@ -1,8 +1,10 @@
 import { Breadcrumbs } from '@/components/content/Breadcrumbs';
 import { ContentSections } from '@/components/content/ContentSections';
 import { FaqSection } from '@/components/content/FaqSection';
+import { PageHero } from '@/components/content/PageHero';
 import { RelatedContent, type RelatedItem } from '@/components/content/RelatedContent';
 import { RequestCta } from '@/components/content/RequestCta';
+import { Reveal } from '@/components/motion/Reveal';
 import { ServiceJsonLd } from '@/components/seo/JsonLd';
 import { getSector, getService } from '@/lib/data';
 import type { Metadata } from 'next';
@@ -62,25 +64,24 @@ export default async function ServiceDetailPage({
   return (
     <div className="mx-auto max-w-4xl px-5 py-16">
       <ServiceJsonLd name={service.title} description={service.seo.description} path={canonical} />
-      <Breadcrumbs
-        trail={[
-          { name: 'Hizmetler', path: '/hizmetler' },
-          { name: service.title, path: canonical },
-        ]}
+      <PageHero
+        eyebrow="Hizmet"
+        title={service.title}
+        backdrop="document-grid"
+        breadcrumbs={
+          <Breadcrumbs
+            trail={[
+              { name: 'Hizmetler', path: '/hizmetler' },
+              { name: service.title, path: canonical },
+            ]}
+          />
+        }
+        lead={service.summary}
       />
 
-      <header className="ledger-rule mt-6 pb-4">
-        <p className="basis-ref uppercase">Hizmet</p>
-        <h1 className="mt-1 text-[length:var(--text-3xl)]">{service.title}</h1>
-      </header>
-
-      <p className="mt-6 max-w-prose text-[length:var(--text-base)] text-[var(--color-text-secondary)]">
-        {service.summary}
-      </p>
-
-      <div className="mt-12">
+      <Reveal className="mt-12">
         <ContentSections sections={service.sections} />
-      </div>
+      </Reveal>
 
       <div className="mt-14">
         <FaqSection items={service.faqs} />
