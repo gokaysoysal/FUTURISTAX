@@ -1,6 +1,9 @@
 import { CookieConsent } from '@/components/consent/CookieConsent';
 import { SiteFooter } from '@/components/layout/SiteFooter';
 import { SiteHeader } from '@/components/layout/SiteHeader';
+import { RouteTransition } from '@/components/motion/RouteTransition';
+import { ScrollProgress } from '@/components/motion/ScrollProgress';
+import { SmoothScroll } from '@/components/motion/SmoothScroll';
 import { CommandPalette } from '@/components/search/CommandPalette';
 import { OrganizationJsonLd } from '@/components/seo/JsonLd';
 import { site } from '@futuristax/config';
@@ -9,6 +12,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { Familjen_Grotesk, IBM_Plex_Mono, Space_Grotesk } from 'next/font/google';
 import type { ReactNode } from 'react';
+import 'lenis/dist/lenis.css';
 import '@/styles/tokens.css';
 import '@/styles/depth.css';
 import '@/styles/art.css';
@@ -99,6 +103,9 @@ export default async function LocaleLayout({
           İçeriğe geç
         </a>
         <NextIntlClientProvider messages={messages}>
+          <SmoothScroll />
+          <ScrollProgress />
+          <RouteTransition />
           <SiteHeader />
           <main id="main">{children}</main>
           <SiteFooter />
