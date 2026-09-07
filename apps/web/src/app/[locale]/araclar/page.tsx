@@ -1,6 +1,6 @@
 import { Breadcrumbs } from '@/components/content/Breadcrumbs';
-import { YearComparisonPanel } from '@/components/dashboards/YearComparisonPanel';
 import { RequestCta } from '@/components/content/RequestCta';
+import { YearComparisonPanel } from '@/components/dashboards/YearComparisonPanel';
 import { Reveal } from '@/components/motion/Reveal';
 import { TOOLS } from '@/lib/tools';
 import type { Metadata } from 'next';

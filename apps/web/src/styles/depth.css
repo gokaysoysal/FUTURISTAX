@@ -19,11 +19,7 @@
     color-mix(in oklab, var(--color-accent-glow) 10%, transparent) 32%,
     transparent 62%
   );
-  --gradient-aurora: linear-gradient(
-    135deg,
-    var(--color-accent) 0%,
-    var(--color-accent-glow) 100%
-  );
+  --gradient-aurora: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-glow) 100%);
   --gradient-hairline: linear-gradient(
     to right,
     transparent,
@@ -116,8 +112,8 @@
     gap: 0.4ch;
     font-weight: 500;
     border-radius: var(--radius-md);
-    transition: background-color 0.18s ease, border-color 0.18s ease,
-      box-shadow 0.18s ease, transform 0.18s ease;
+    transition: background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease,
+      transform 0.18s ease;
   }
   .btn-primary {
     background-color: var(--color-accent-strong);

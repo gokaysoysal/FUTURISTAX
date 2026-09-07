@@ -2,7 +2,16 @@
 
 import { useChartColors } from '@/lib/charts/tokens';
 import { formatCurrency } from '@/lib/format';
-import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 
 /** Yıl karşılaştırma görsel katmanı (tembel). aria-hidden — SR karşılığı tablo. */
 
@@ -51,7 +60,13 @@ export function YearComparisonChart({ data }: { data: YearBar[] }) {
           />
           <Legend wrapperStyle={{ fontSize: 12, color: c.textSecondary }} />
           {series.map((s) => (
-            <Bar key={s.key} dataKey={s.key} name={s.name} fill={s.color} isAnimationActive={false} />
+            <Bar
+              key={s.key}
+              dataKey={s.key}
+              name={s.name}
+              fill={s.color}
+              isAnimationActive={false}
+            />
           ))}
         </BarChart>
       </ResponsiveContainer>

@@ -40,7 +40,9 @@ export function CommandPalette() {
     const q = normalizeTr(query);
     if (!q) {
       // Boş sorgu: her gruptan ilk birkaç giriş — keşif için.
-      return index.filter((e) => e.group === 'Hesaplayıcı' || e.group === 'Hizmet').slice(0, MAX_RESULTS);
+      return index
+        .filter((e) => e.group === 'Hesaplayıcı' || e.group === 'Hizmet')
+        .slice(0, MAX_RESULTS);
     }
     return fuse.search(q, { limit: MAX_RESULTS }).map((r) => r.item);
   }, [query, fuse, index]);
@@ -86,14 +88,18 @@ export function CommandPalette() {
     if (el instanceof HTMLElement) el.focus();
   }, []);
 
-  useEffect(() => {
-    setActive(0);
-  }, [query]);
-
   // Bileşen açıkken sökülürse scroll kilidini bırak.
-  useEffect(() => () => {
-    document.documentElement.style.overflow = '';
-  }, []);
+  useEffect(
+    () => () => {
+      document.documentElement.style.overflow = '';
+    },
+    [],
+  );
+
+  const onQueryChange = (value: string) => {
+    setQuery(value);
+    setActive(0); // yeni sorguda seçimi başa al
+  };
 
   const go = useCallback(
     (entry: SearchEntry | undefined) => {
@@ -124,6 +130,7 @@ export function CommandPalette() {
   };
 
   return (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: backdrop tıklamasıyla kapatma; klavyeyle kapatma native <dialog> Esc → onClose ile karşılanır
     <dialog
       ref={dialogRef}
       className="cmdk"
@@ -139,13 +146,18 @@ export function CommandPalette() {
           <div className="flex items-center gap-3 border-b border-[var(--color-rule)] px-4 py-3">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.6" />
-              <path d="m20 20-3.5-3.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+              <path
+                d="m20 20-3.5-3.5"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+              />
             </svg>
             <input
               ref={inputRef}
               type="text"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => onQueryChange(e.target.value)}
               onKeyDown={onInputKeyDown}
               placeholder="Hizmet, sektör, makale, hesaplayıcı, SSS ara…"
               role="combobox"
@@ -156,21 +168,39 @@ export function CommandPalette() {
               spellCheck={false}
               className="w-full bg-transparent text-[length:var(--text-base)] text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] focus:outline-none"
             />
-            <kbd className="basis-ref rounded border border-[var(--color-rule)] px-1.5 py-0.5">Esc</kbd>
+            <kbd className="basis-ref rounded border border-[var(--color-rule)] px-1.5 py-0.5">
+              Esc
+            </kbd>
           </div>
 
-          <ul id="cmdk-listbox" role="listbox" aria-label="Arama sonuçları" className="overflow-y-auto py-2">
+          {/*
+           * WAI-ARIA APG "combobox with listbox popup" deseni: odak input'ta
+           * kalır, liste aria-activedescendant ile yönetilir. Native <select>/
+           * <option> zengin içerik / grup / async desteklemediği için
+           * useSemanticElements bilinçli bastırılıyor. tabIndex={-1}: script ile
+           * odaklanabilir ama tab sırasında değil.
+           */}
+          <div
+            id="cmdk-listbox"
+            // biome-ignore lint/a11y/useSemanticElements: komut paleti — <select> zengin içerik/grup/async taşımaz
+            role="listbox"
+            aria-label="Arama sonuçları"
+            tabIndex={-1}
+            className="overflow-y-auto py-2"
+          >
             {results.length === 0 ? (
-              <li className="px-4 py-6 text-center text-[length:var(--text-sm)] text-[var(--color-text-secondary)]">
+              <p className="px-4 py-6 text-center text-[length:var(--text-sm)] text-[var(--color-text-secondary)]">
                 “{query}” için sonuç yok. Farklı bir terim deneyin.
-              </li>
+              </p>
             ) : (
               results.map((entry, i) => (
-                <li
+                <div
                   key={entry.id}
                   id={`cmdk-opt-${i}`}
+                  // biome-ignore lint/a11y/useSemanticElements: listbox içi option — <option> zengin içerik taşımaz
                   role="option"
                   aria-selected={i === active}
+                  tabIndex={-1}
                 >
                   <button
                     type="button"
@@ -189,10 +219,10 @@ export function CommandPalette() {
                       {entry.description}
                     </span>
                   </button>
-                </li>
+                </div>
               ))
             )}
-          </ul>
+          </div>
         </div>
       ) : null}
     </dialog>

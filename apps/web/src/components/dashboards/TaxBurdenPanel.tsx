@@ -25,19 +25,16 @@ import { useId, useMemo, useState } from 'react';
  * - Doğrulanmamış yıl için UnverifiedRatesNotice görünür.
  */
 
-const Charts = dynamic(
-  () => import('./TaxBurdenCharts').then((m) => m.TaxBurdenCharts),
-  { ssr: false, loading: () => <SkeletonText lines={4} className="sm:col-span-2" /> },
-);
+const Charts = dynamic(() => import('./TaxBurdenCharts').then((m) => m.TaxBurdenCharts), {
+  ssr: false,
+  loading: () => <SkeletonText lines={4} className="sm:col-span-2" />,
+});
 
 export function TaxBurdenPanel() {
   const [values, setValues] = useState<Omit<BurdenInput, 'year'>>(BURDEN_DEFAULTS);
   const groupId = useId();
 
-  const result = useMemo(
-    () => computeBurden({ ...values, year: DEFAULT_YEAR }),
-    [values],
-  );
+  const result = useMemo(() => computeBurden({ ...values, year: DEFAULT_YEAR }), [values]);
 
   const set = (key: keyof Omit<BurdenInput, 'year'>, raw: number) => {
     const clean = Number.isFinite(raw) ? Math.max(0, raw) : 0;
@@ -127,8 +124,8 @@ export function TaxBurdenPanel() {
       <div className="mt-6 space-y-3 border-t border-[var(--color-rule)] pt-4">
         <p className="text-[length:var(--text-xs)] text-[var(--color-text-muted)]">
           Hesaplanan KDV, ciro üzerinden standart oranla ve <strong>brüt</strong> gösterilir;
-          indirilecek KDV mahsubu dâhil değildir. Yıl içi dağılım eşit varsayımlıdır, geçici
-          vergi dönemleri yaklaşık gösterilir.
+          indirilecek KDV mahsubu dâhil değildir. Yıl içi dağılım eşit varsayımlıdır, geçici vergi
+          dönemleri yaklaşık gösterilir.
         </p>
         <UnverifiedRatesNotice provenance={result.provenance} />
         <p className="text-[length:var(--text-xs)] text-[var(--color-text-muted)]">

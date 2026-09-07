@@ -1,10 +1,10 @@
 import {
+  type RateProvenance,
+  type TaxYear,
   calculateCorporateTax,
   calculatePayrollCost,
   calculateVat,
   getRates,
-  type RateProvenance,
-  type TaxYear,
 } from '@futuristax/tax-engine';
 
 /**
@@ -50,8 +50,22 @@ export type BurdenResult = {
 /** Pano girdileri — Vergi Yükü Panosu ve Yıl Karşılaştırma ortak kullanır. */
 export const BURDEN_FIELDS = [
   { key: 'revenue', label: 'Yıllık ciro', min: 0, max: 50_000_000, step: 250_000, money: true },
-  { key: 'profit', label: 'Yıllık ticari kâr', min: 0, max: 15_000_000, step: 100_000, money: true },
-  { key: 'avgGross', label: 'Ortalama aylık brüt ücret', min: 0, max: 300_000, step: 5_000, money: true },
+  {
+    key: 'profit',
+    label: 'Yıllık ticari kâr',
+    min: 0,
+    max: 15_000_000,
+    step: 100_000,
+    money: true,
+  },
+  {
+    key: 'avgGross',
+    label: 'Ortalama aylık brüt ücret',
+    min: 0,
+    max: 300_000,
+    step: 5_000,
+    money: true,
+  },
   { key: 'headcount', label: 'Çalışan sayısı', min: 0, max: 500, step: 1, money: false },
 ] as const satisfies ReadonlyArray<{
   key: keyof Omit<BurdenInput, 'year'>;

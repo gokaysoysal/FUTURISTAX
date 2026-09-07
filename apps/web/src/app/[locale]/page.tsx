@@ -144,7 +144,10 @@ export default function HomePage() {
             değerlendirelim. Görüşme yüz yüze ya da çevrim içi yapılabilir.
           </p>
           <MagneticButton className="mt-6">
-            <Link href="/iletisim" className="btn btn-primary px-6 py-3 text-[length:var(--text-sm)]">
+            <Link
+              href="/iletisim"
+              className="btn btn-primary px-6 py-3 text-[length:var(--text-sm)]"
+            >
               Görüşme talep et
             </Link>
           </MagneticButton>

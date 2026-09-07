@@ -67,10 +67,8 @@
      buradaki ek yığın yalnızca güvenlik ağı. Türkçe glif doğrulaması
      layout.tsx yorumunda + PROJECT-STATUS'ta.
        Display: Space Grotesk · Gövde: Familjen Grotesk · Mono: IBM Plex Mono */
-  --font-display: var(--font-display-loaded, "Space Grotesk"), ui-sans-serif,
-    system-ui, sans-serif;
-  --font-sans: var(--font-sans-loaded, "Familjen Grotesk"), ui-sans-serif,
-    system-ui, sans-serif;
+  --font-display: var(--font-display-loaded, "Space Grotesk"), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-sans-loaded, "Familjen Grotesk"), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-mono-loaded, "IBM Plex Mono"), ui-monospace, monospace;
 
   /* Tip ölçeği — display tarafı Bölüm 3'te büyür (hero 4–5rem) */
@@ -100,8 +98,8 @@
 
   --shadow-raised: 0 1px 0 0 var(--color-rule), 0 18px 48px -24px rgb(0 0 0 / 0.75);
   /* Hover parıltısı — buton ve kartlarda; layout tetiklemez. */
-  --shadow-glow: 0 0 0 1px color-mix(in oklab, var(--color-accent) 38%, transparent),
-    0 14px 36px -14px color-mix(in oklab, var(--color-accent) 55%, transparent);
+  --shadow-glow: 0 0 0 1px color-mix(in oklab, var(--color-accent) 38%, transparent), 0 14px 36px
+    -14px color-mix(in oklab, var(--color-accent) 55%, transparent);
 }
 
 /* ── Açık tema ──────────────────────────────────────────────

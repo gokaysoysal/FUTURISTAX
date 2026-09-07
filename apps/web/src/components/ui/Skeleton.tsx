@@ -18,14 +18,15 @@ export function Skeleton({
 }
 
 /** Metin satırları için hazır iskelet grubu. */
-export function SkeletonText({ lines = 3, className = '' }: { lines?: number; className?: string }) {
+export function SkeletonText({
+  lines = 3,
+  className = '',
+}: { lines?: number; className?: string }) {
   return (
     <div className={`flex flex-col gap-2 ${className}`.trim()} aria-hidden="true">
       {Array.from({ length: lines }, (_, i) => (
-        <Skeleton
-          key={i}
-          style={{ height: '0.85rem', width: i === lines - 1 ? '60%' : '100%' }}
-        />
+        // biome-ignore lint/suspicious/noArrayIndexKey: sabit uzunluklu, sırası değişmeyen iskelet çizgileri
+        <Skeleton key={i} style={{ height: '0.85rem', width: i === lines - 1 ? '60%' : '100%' }} />
       ))}
     </div>
   );

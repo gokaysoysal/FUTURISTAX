@@ -30,7 +30,11 @@ const STATIC_PAGES: { title: string; description: string; href: string }[] = [
   { title: 'İletişim', description: 'Görüşme talebi ve iletişim bilgileri', href: '/iletisim' },
   { title: 'Kariyer', description: 'Açık pozisyonlar ve başvuru', href: '/kariyer' },
   { title: 'Mevzuat merkezi', description: 'Editoryal yazılar ve resmî besleme', href: '/mevzuat' },
-  { title: 'Hesaplama araçları', description: 'Tüm hesaplayıcılar ve yıl karşılaştırma', href: '/araclar' },
+  {
+    title: 'Hesaplama araçları',
+    description: 'Tüm hesaplayıcılar ve yıl karşılaştırma',
+    href: '/araclar',
+  },
   { title: 'Sıkça sorulan sorular', description: 'Çalışma biçimi ve süreç soruları', href: '/sss' },
 ];
 
@@ -60,10 +64,24 @@ export function buildSearchIndex(): SearchEntry[] {
 
   const entries: SearchEntry[] = [
     ...SERVICES.map((s) =>
-      entry(`svc-${s.slug}`, s.title, s.summary, 'Hizmet', `/hizmetler/${s.slug}`, s.seo.keywords?.join(' ') ?? ''),
+      entry(
+        `svc-${s.slug}`,
+        s.title,
+        s.summary,
+        'Hizmet',
+        `/hizmetler/${s.slug}`,
+        s.seo.keywords?.join(' ') ?? '',
+      ),
     ),
     ...SECTORS.map((s) =>
-      entry(`sec-${s.slug}`, s.title, s.summary, 'Sektör', `/sektorler/${s.slug}`, s.seo.keywords?.join(' ') ?? ''),
+      entry(
+        `sec-${s.slug}`,
+        s.title,
+        s.summary,
+        'Sektör',
+        `/sektorler/${s.slug}`,
+        s.seo.keywords?.join(' ') ?? '',
+      ),
     ),
     ...LEGISLATION_ARTICLES.map((a) =>
       entry(`art-${a.slug}`, a.title, a.summary, 'Makale', `/mevzuat/${a.slug}`),
