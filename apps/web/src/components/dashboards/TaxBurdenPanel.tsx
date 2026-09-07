@@ -1,9 +1,10 @@
 'use client';
 
+import { BurdenFields } from '@/components/dashboards/BurdenFields';
 import { Counter } from '@/components/motion/Counter';
 import { SkeletonText } from '@/components/ui/Skeleton';
 import { UnverifiedRatesNotice } from '@/components/ui/UnverifiedRatesNotice';
-import { type BurdenInput, computeBurden } from '@/lib/charts/burden';
+import { BURDEN_DEFAULTS, type BurdenInput, computeBurden } from '@/lib/charts/burden';
 import { formatCurrency, formatPercent } from '@/lib/format';
 import { site } from '@futuristax/config';
 import { DEFAULT_YEAR } from '@futuristax/tax-engine';
@@ -29,22 +30,8 @@ const Charts = dynamic(
   { ssr: false, loading: () => <SkeletonText lines={4} className="sm:col-span-2" /> },
 );
 
-const FIELDS = [
-  { key: 'revenue', label: 'Yıllık ciro', min: 0, max: 50_000_000, step: 250_000 },
-  { key: 'profit', label: 'Yıllık ticari kâr', min: 0, max: 15_000_000, step: 100_000 },
-  { key: 'avgGross', label: 'Ortalama aylık brüt ücret', min: 0, max: 300_000, step: 5_000 },
-  { key: 'headcount', label: 'Çalışan sayısı', min: 0, max: 500, step: 1 },
-] as const;
-
-const DEFAULTS: Omit<BurdenInput, 'year'> = {
-  revenue: 6_000_000,
-  profit: 900_000,
-  avgGross: 45_000,
-  headcount: 8,
-};
-
 export function TaxBurdenPanel() {
-  const [values, setValues] = useState<Omit<BurdenInput, 'year'>>(DEFAULTS);
+  const [values, setValues] = useState<Omit<BurdenInput, 'year'>>(BURDEN_DEFAULTS);
   const groupId = useId();
 
   const result = useMemo(
@@ -52,7 +39,7 @@ export function TaxBurdenPanel() {
     [values],
   );
 
-  const set = (key: keyof typeof DEFAULTS, raw: number) => {
+  const set = (key: keyof Omit<BurdenInput, 'year'>, raw: number) => {
     const clean = Number.isFinite(raw) ? Math.max(0, raw) : 0;
     setValues((prev) => ({ ...prev, [key]: clean }));
   };
@@ -69,48 +56,8 @@ export function TaxBurdenPanel() {
         <p className="basis-ref">Kurumlar vergisi · KDV · SGK · {DEFAULT_YEAR}</p>
       </div>
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        {FIELDS.map((field) => {
-          const id = `${groupId}-${field.key}`;
-          const value = values[field.key];
-          return (
-            <div key={field.key}>
-              <label
-                htmlFor={id}
-                className="flex items-baseline justify-between gap-2 text-[length:var(--text-sm)] text-[var(--color-text-secondary)]"
-              >
-                <span>{field.label}</span>
-                <span data-numeric className="text-[var(--color-text)]">
-                  {field.key === 'headcount' ? value : formatCurrency(value)}
-                </span>
-              </label>
-              <div className="mt-2 flex items-center gap-3">
-                <input
-                  id={id}
-                  type="range"
-                  min={field.min}
-                  max={field.max}
-                  step={field.step}
-                  value={value}
-                  onChange={(event) => set(field.key, event.target.valueAsNumber)}
-                  className="h-1 flex-1 accent-[var(--color-accent)]"
-                />
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  min={field.min}
-                  max={field.max}
-                  step={field.step}
-                  value={value}
-                  onChange={(event) => set(field.key, event.target.valueAsNumber)}
-                  aria-label={`${field.label} (sayısal giriş)`}
-                  data-numeric
-                  className="w-28 border border-[var(--color-rule)] bg-[var(--color-surface)] px-2 py-1 text-right text-[length:var(--text-sm)] text-[var(--color-text)] focus:border-[var(--color-accent)] focus:outline-none"
-                />
-              </div>
-            </div>
-          );
-        })}
+      <div className="mt-6">
+        <BurdenFields idPrefix={groupId} values={values} onChange={set} />
       </div>
 
       <div className="mt-8 flex flex-wrap items-baseline gap-x-6 gap-y-1">

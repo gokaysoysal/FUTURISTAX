@@ -47,6 +47,28 @@ export type BurdenResult = {
   provenance: RateProvenance;
 };
 
+/** Pano girdileri — Vergi Yükü Panosu ve Yıl Karşılaştırma ortak kullanır. */
+export const BURDEN_FIELDS = [
+  { key: 'revenue', label: 'Yıllık ciro', min: 0, max: 50_000_000, step: 250_000, money: true },
+  { key: 'profit', label: 'Yıllık ticari kâr', min: 0, max: 15_000_000, step: 100_000, money: true },
+  { key: 'avgGross', label: 'Ortalama aylık brüt ücret', min: 0, max: 300_000, step: 5_000, money: true },
+  { key: 'headcount', label: 'Çalışan sayısı', min: 0, max: 500, step: 1, money: false },
+] as const satisfies ReadonlyArray<{
+  key: keyof Omit<BurdenInput, 'year'>;
+  label: string;
+  min: number;
+  max: number;
+  step: number;
+  money: boolean;
+}>;
+
+export const BURDEN_DEFAULTS: Omit<BurdenInput, 'year'> = {
+  revenue: 6_000_000,
+  profit: 900_000,
+  avgGross: 45_000,
+  headcount: 8,
+};
+
 const MONTHS = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
 
 /** Geçici vergi 3'er aylık dönemler hâlinde ödenir; burada çeyrek sonlarına

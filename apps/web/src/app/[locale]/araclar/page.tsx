@@ -1,4 +1,5 @@
 import { Breadcrumbs } from '@/components/content/Breadcrumbs';
+import { YearComparisonPanel } from '@/components/dashboards/YearComparisonPanel';
 import { RequestCta } from '@/components/content/RequestCta';
 import { Reveal } from '@/components/motion/Reveal';
 import { TOOLS } from '@/lib/tools';
@@ -28,6 +29,10 @@ export default function ToolsHubPage() {
         Her araç yalnızca sonucu değil, hesabın nasıl çıktığını da gösterir. Kalemlerin dayandığı
         kanun maddeleri satır satır belirtilir; oranlar seçtiğiniz vergi yılına göre gelir.
       </p>
+
+      <Reveal className="mt-10">
+        <YearComparisonPanel />
+      </Reveal>
 
       <Reveal className="mt-10">
         <ul className="grid gap-px bg-[var(--color-rule)] sm:grid-cols-2 lg:grid-cols-3">
