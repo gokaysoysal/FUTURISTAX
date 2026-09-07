@@ -1,26 +1,41 @@
 import { CookieConsent } from '@/components/consent/CookieConsent';
 import { SiteFooter } from '@/components/layout/SiteFooter';
 import { SiteHeader } from '@/components/layout/SiteHeader';
+import { CommandPalette } from '@/components/search/CommandPalette';
 import { OrganizationJsonLd } from '@/components/seo/JsonLd';
 import { site } from '@futuristax/config';
 import type { Metadata, Viewport } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
-import { IBM_Plex_Mono, Inter, Newsreader } from 'next/font/google';
+import { Familjen_Grotesk, IBM_Plex_Mono, Space_Grotesk } from 'next/font/google';
 import type { ReactNode } from 'react';
 import '@/styles/tokens.css';
+import '@/styles/depth.css';
 
 /*
- * Fontlar self-host edilir (next/font). Üç rolün de tam Türkçe glif desteği
- * vardır — eski sitedeki "AKTIF MUSTERI" tipi karakter düşürmelerinin sebebi
- * Cinzel'in yetersiz glif kapsamıydı.
+ * Fontlar self-host edilir (next/font/google → .woff2 derlemede indirilir ve
+ * uygulama ile paketlenir, dış istek yok). display: swap.
+ *
+ * Roller (Bölüm 3):
+ *  - Display: Space Grotesk (değişken) — geniş, teknik grotesk; hero'da sıkı
+ *    tracking'le çalışır. Inter/Newsreader jenerikliğinden çıkış.
+ *  - Gövde:  Familjen Grotesk (değişken) — sakin, yüksek x-height, uzun Türkçe
+ *    metin için okunaklı; display'den ayrışır.
+ *  - Mono:   IBM Plex Mono (400/500) — kanun maddesi göndermeleri. Kalıyor.
+ * Değişken fontlarda weight verilmez: tek dosya, tüm ağırlıklar.
+ *
+ * TÜRKÇE GLİF DOĞRULAMASI: üçünün de Google Fonts 'latin-ext' alt kümesi var.
+ * Gerekli 12 glif — ı (U+0131, latin) · İ (U+0130) · ğ Ğ (U+011E–F) ·
+ * ş Ş (U+015E–F) [latin-ext] · ç Ç ö Ö ü Ü (latin) — sunulan unicode-range
+ * içinde. next/font, ailede olmayan alt küme istenirse derlemeyi kırar;
+ * bu istek ('latin' + 'latin-ext') başlı başına derleme-zamanı kontrolüdür.
  */
-const display = Newsreader({
+const display = Space_Grotesk({
   subsets: ['latin', 'latin-ext'],
   variable: '--font-display-loaded',
   display: 'swap',
 });
-const sans = Inter({
+const sans = Familjen_Grotesk({
   subsets: ['latin', 'latin-ext'],
   variable: '--font-sans-loaded',
   display: 'swap',
@@ -78,7 +93,7 @@ export default async function LocaleLayout({
       <body>
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:bg-[var(--color-ink)] focus:px-4 focus:py-2 focus:text-white"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:bg-[var(--color-accent-strong)] focus:px-4 focus:py-2 focus:text-white"
         >
           İçeriğe geç
         </a>
@@ -87,6 +102,7 @@ export default async function LocaleLayout({
           <main id="main">{children}</main>
           <SiteFooter />
           <CookieConsent />
+          <CommandPalette />
         </NextIntlClientProvider>
         <OrganizationJsonLd />
       </body>

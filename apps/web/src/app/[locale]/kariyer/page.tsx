@@ -46,7 +46,7 @@ export default function CareersPage() {
               action={
                 <a
                   href={`mailto:${site.contact.email}?subject=${subject}`}
-                  className="inline-block bg-[var(--color-ink)] px-6 py-3 text-[length:var(--text-sm)] font-medium text-white hover:bg-[var(--color-ink-strong)]"
+                  className="btn btn-primary px-6 py-3 text-[length:var(--text-sm)]"
                 >
                   Genel başvuru gönder
                 </a>

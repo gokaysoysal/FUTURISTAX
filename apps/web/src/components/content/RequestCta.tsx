@@ -22,7 +22,7 @@ export function RequestCta({
       </p>
       <Link
         href="/iletisim"
-        className="mt-6 inline-block bg-[var(--color-ink)] px-6 py-3 text-[length:var(--text-sm)] font-medium text-white hover:bg-[var(--color-ink-strong)]"
+        className="btn btn-primary mt-6 px-6 py-3 text-[length:var(--text-sm)]"
       >
         Görüşme talep et
       </Link>

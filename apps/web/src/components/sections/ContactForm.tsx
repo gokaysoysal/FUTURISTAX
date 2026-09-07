@@ -251,7 +251,7 @@ export function ContactForm({ turnstileSiteKey }: { turnstileSiteKey: string }) 
       <button
         type="submit"
         disabled={status.kind === 'sending'}
-        className="w-full bg-[var(--color-ink)] px-6 py-3 text-[length:var(--text-sm)] font-medium text-white transition-colors hover:bg-[var(--color-ink-strong)] disabled:opacity-60"
+        className="btn btn-primary w-full px-6 py-3 text-[length:var(--text-sm)] disabled:opacity-60"
       >
         {status.kind === 'sending' ? 'Gönderiliyor…' : 'Talebi gönder'}
       </button>

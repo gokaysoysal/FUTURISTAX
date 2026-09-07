@@ -1,61 +1,77 @@
 @import "tailwindcss";
 
 /*
- * FuturistaX tasarım sistemi — "mali belge" estetiği.
+ * FuturistaX tasarım sistemi — modern fintech: koyu taban, ışıklı aksan.
  *
- * Yön: lüks siyah-altın değil, resmî belge dili. Defter çizgileri, mürekkep
- * mavisi, tasdik damgası. Süsleme değil kesinlik.
+ * Yön (Bölüm 1'de yeniden yazıldı): Cirform referansı. Parlak yüzeyler,
+ * derinlik, akışkan hareket, veri görselleştirme. "Mali belge" / defter
+ * çizgisi yönünden uzaklaşıldı. Ayrıntı: CLAUDE.md → "Tasarım yönü".
  *
- * KONTRAST NOTU: her metin tokeni WCAG 2.2 AA'ya göre doğrulanmıştır.
- * Yeni bir renk eklerken oranı yorum olarak yazın; doğrulanmamış renk eklemeyin.
+ * KONTRAST NOTU: her metin tokeni WCAG 2.2'ye göre hesaplandı; oran yorumda.
+ * Oranlar --color-canvas (#07090d) üzerinde. Gövde metni hiçbir yüzeyde
+ * 4.5:1 altına düşmez. Yeni renk eklerken oranı hesapla ve yaz.
  */
 
 @theme {
-  /* ── Yüzeyler ─────────────────────────────────────────────
-     Saf siyah değil: mavi-gri mürekkep. Ekranda daha az yorar,
-     baskılı belge hissini korur. */
-  --color-canvas: #0d1013;
-  --color-surface: #12161a;
-  --color-raised: #191f24;
-  --color-sunken: #090c0e;
+  /* ── Yüzeyler — koyu taban ────────────────────────────────
+     Derin lacivert-siyah zemin; üstüne ışık biner. Saf siyah değil,
+     mavi-mor mürekkep tonu. */
+  --color-canvas: #07090d; /* en derin zemin */
+  --color-surface: #0d1117; /* yüzey */
+  --color-surface-lift: #141b24; /* yükseltilmiş kart */
+  --color-raised: #141b24; /* geriye dönük ad — surface-lift ile aynı */
+  --color-sunken: #05070a;
 
   /* ── Çizgiler ─────────────────────────────────────────────
-     Defter-i kebir hattı. Yalnızca veri bağlamlarında kullanılır,
-     dekoratif olarak değil. */
-  --color-rule: #262f36;
-  --color-rule-strong: #38444d;
+     Yalnızca ince ayraç/kenarlık. Defter motifi bırakıldı. */
+  --color-rule: #1c2530;
+  --color-rule-strong: #2b3947;
 
   /* ── Metin ────────────────────────────────────────────────
-     Eski sitede gövde metni %30 opaklıktaydı (~3:1, AA altı).
-     Bu tokenler o hatayı tekrarlamaz. */
-  --color-text: #e9eef1; /* canvas üzerinde 15.8:1 */
-  --color-text-secondary: #a3b0b8; /* canvas üzerinde 8.4:1 */
-  --color-text-muted: #7d8a93; /* canvas üzerinde 5.2:1 — yalnızca 16px+ */
+     Oran sırası: canvas · surface · surface-lift. */
+  --color-text: #eaf0f7; /* 17.4:1 · 16.5:1 · 15.1:1 */
+  --color-text-secondary: #9aa9bc; /* 8.3:1 · 7.9:1 · 7.2:1 */
+  --color-text-muted: #808e9c; /* 5.9:1 · 5.6:1 · 5.2:1 — 16px altı için de AA */
 
-  /* ── Tasdik mavisi: birincil eylem ────────────────────────
-     Resmî mühür mürekkebi. Marka aksanı budur. */
-  --color-ink: #4b7fd6; /* canvas üzerinde 6.1:1 */
-  --color-ink-strong: #2f5fb0;
-  --color-ink-soft: #16233a;
+  /* ── Azur: birincil eylem + bağlantı + ikon ──────────────
+     Metin/ikon olarak parlak azur. Buton ZEMİNİ olursa üstüne
+     --color-on-accent (koyu) gelir, beyaz değil. */
+  --color-accent: #4d7cff; /* 5.35:1 · 5.08:1 · 4.66:1 */
+  --color-ink: #4d7cff; /* geriye dönük ad */
+  --color-accent-strong: #3563e6; /* buton zemini + BEYAZ metin: 5.15:1 */
+  --color-ink-strong: #3563e6; /* geriye dönük ad */
+  --color-accent-soft: #121b33; /* azur zemin dokunuşu (rozet, seçili satır) */
+  --color-ink-soft: #121b33; /* geriye dönük ad */
+  --color-on-accent: #07090d; /* parlak azur zemin üzerinde metin — 5.35:1 */
 
-  /* ── Damga kırmızısı: YALNIZCA aciliyet ───────────────────
-     Marka rengi değildir. Sadece yaklaşan son tarih ve KKEG gibi
-     olumsuz kalemlerde kullanılır. Başka yerde kullanmayın. */
-  --color-stamp: #d9705c; /* canvas üzerinde 6.5:1 */
-  --color-stamp-soft: #2c1613;
+  /* ── Menekşe parıltı: YALNIZCA gradyan ve glow ───────────
+     Metin rengi DEĞİL. Işık kaynağı gradyanlarında azur→menekşe. */
+  --color-accent-glow: #7b6bff; /* 5.11:1 — yalnızca büyük dekoratif kullanım */
 
-  /* ── Onay yeşili: doğrulanmış/olumlu kalem ────────────────*/
-  --color-approved: #5fb894; /* canvas üzerinde 8.0:1 */
-  --color-approved-soft: #10241d;
+  /* ── Signal: son tarih + KKEG uyarıları ──────────────────
+     Marka rengi değil. Yalnızca olumsuz/aciliyet kalemleri. */
+  --color-signal: #ff6b4a; /* 7.07:1 · 6.72:1 */
+  --color-stamp: #ff6b4a; /* geriye dönük ad */
+  --color-signal-soft: #2a120c;
+  --color-stamp-soft: #2a120c; /* geriye dönük ad */
+
+  /* ── Positive: olumlu / doğrulanmış kalem ────────────────*/
+  --color-positive: #3ddc97; /* 11.3:1 · 10.7:1 */
+  --color-approved: #3ddc97; /* geriye dönük ad */
+  --color-positive-soft: #08251b;
+  --color-approved-soft: #08251b; /* geriye dönük ad */
 
   /* ── Tipografi ────────────────────────────────────────────
-     Üç rol, hepsi tam Türkçe glif desteğine sahip.
-     Cinzel KULLANILMAZ: ı/ğ/ş/İ gliflerinde yetersiz. */
-  --font-display: "Newsreader", ui-serif, Georgia, serif;
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+     Aileler next/font ile self-host (layout.tsx). --font-*-loaded
+     değişkenleri orada tanımlanır ve kendi fallback'lerini taşır;
+     buradaki ek yığın yalnızca güvenlik ağı. Türkçe glif doğrulaması
+     layout.tsx yorumunda + PROJECT-STATUS'ta.
+       Display: Space Grotesk · Gövde: Familjen Grotesk · Mono: IBM Plex Mono */
+  --font-display: var(--font-display-loaded, "Space Grotesk"), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-sans-loaded, "Familjen Grotesk"), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono-loaded, "IBM Plex Mono"), ui-monospace, monospace;
 
-  /* Tip ölçeği — 1.25 majör üçlü */
+  /* Tip ölçeği — display tarafı Bölüm 3'te büyür (hero 4–5rem) */
   --text-2xs: 0.6875rem;
   --text-xs: 0.8125rem;
   --text-sm: 0.9375rem;
@@ -66,6 +82,10 @@
   --text-3xl: 2.375rem;
   --text-4xl: 3rem;
   --text-5xl: 3.75rem;
+  --text-6xl: 4.5rem; /* hero */
+  --text-7xl: 5.25rem; /* hero XL */
+
+  --tracking-tight: -0.03em; /* display başlıklar */
 
   /* ── Ritim ────────────────────────────────────────────────*/
   --spacing-section: 7rem;
@@ -73,29 +93,46 @@
   --radius-none: 0;
   --radius-sm: 2px;
   --radius-md: 4px;
+  --radius-lg: 14px; /* fintech kartlar daha yumuşak */
+  --radius-xl: 22px;
 
-  --shadow-raised: 0 1px 0 0 var(--color-rule), 0 12px 32px -16px rgb(0 0 0 / 0.7);
+  --shadow-raised: 0 1px 0 0 var(--color-rule), 0 18px 48px -24px rgb(0 0 0 / 0.75);
+  /* Hover parıltısı — buton ve kartlarda; layout tetiklemez. */
+  --shadow-glow: 0 0 0 1px color-mix(in oklab, var(--color-accent) 38%, transparent), 0 14px 36px
+    -14px color-mix(in oklab, var(--color-accent) 55%, transparent);
 }
 
 /* ── Açık tema ──────────────────────────────────────────────
-   Kâğıt tarafı: soğuk beyaz, krem değil. Aynı mürekkep aksanı. */
+   Koyu taban birincil yön; açık tema korunuyor (erişilebilirlik +
+   prefers-color-scheme). Aynı azur ailesi, kâğıt için koyulaştırılmış.
+   Oran sırası: canvas (#f5f7f8) · surface (#fff) · sunken (#eceff1). */
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
     --color-canvas: #f5f7f8;
     --color-surface: #ffffff;
+    --color-surface-lift: #ffffff;
     --color-raised: #ffffff;
     --color-sunken: #eceff1;
     --color-rule: #d7dde1;
     --color-rule-strong: #b3bdc4;
-    --color-text: #14191d; /* 15.9:1 */
-    --color-text-secondary: #48545d; /* 8.1:1 */
-    --color-text-muted: #616e77; /* 5.3:1 */
-    --color-ink: #2456a8; /* 6.9:1 */
-    --color-ink-strong: #1b4a8f;
-    --color-ink-soft: #e5edf9;
-    --color-stamp: #a8412c; /* 6.4:1 */
+    --color-text: #14191d; /* 16.5:1 · 17.7:1 · 15.3:1 */
+    --color-text-secondary: #48545d; /* 7.2:1 · 7.8:1 · 6.7:1 */
+    --color-text-muted: #586269; /* canvas 5.8:1 · surface 6.2:1 · sunken 5.4:1 · accent-soft 5.3:1 */
+    --color-accent: #2c5be0; /* 5.3:1 · 5.7:1 · 4.9:1 */
+    --color-ink: #2c5be0;
+    --color-accent-strong: #2450c9; /* buton zemini + beyaz metin: 6.8:1 */
+    --color-ink-strong: #2450c9;
+    --color-accent-soft: #e6edfc;
+    --color-ink-soft: #e6edfc;
+    --color-on-accent: #ffffff;
+    --color-accent-glow: #6a5cf0; /* yalnızca dekoratif gradyan */
+    --color-signal: #a8412c; /* 5.7:1 · 6.1:1 · 5.3:1 */
+    --color-stamp: #a8412c;
+    --color-signal-soft: #fbeae6;
     --color-stamp-soft: #fbeae6;
-    --color-approved: #1c6b52; /* 6.1:1 */
+    --color-positive: #1c6b52; /* 6.0:1 · 6.4:1 · 5.6:1 */
+    --color-approved: #1c6b52;
+    --color-positive-soft: #e3f2ec;
     --color-approved-soft: #e3f2ec;
   }
 }
@@ -119,7 +156,7 @@
 
   body {
     margin: 0;
-    background: var(--color-canvas);
+    background-color: var(--color-canvas);
     color: var(--color-text);
     font-family: var(--font-sans);
     font-size: var(--text-base);
@@ -133,9 +170,9 @@
   h3,
   h4 {
     font-family: var(--font-display);
-    font-weight: 400;
-    line-height: 1.15;
-    letter-spacing: -0.015em;
+    font-weight: 500; /* Space Grotesk — medium, display ağırlığı */
+    line-height: 1.12;
+    letter-spacing: var(--tracking-tight); /* -0.03em — sıkı display tracking */
     text-wrap: balance;
   }
 

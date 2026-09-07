@@ -29,9 +29,27 @@ const PAGES = [
   '/iletisim',
 ];
 
+/**
+ * Sayfayı sonuna kadar kaydırıp scroll-reveal animasyonlarını (Reveal:
+ * whileInView) tetikler, sonra başa döner. Böylece axe geçici opacity:0
+ * karesini değil, içeriğin nihai render hâlini denetler.
+ */
+async function settleReveals(page: import('@playwright/test').Page) {
+  await page.evaluate(async () => {
+    const step = Math.max(window.innerHeight * 0.8, 400);
+    for (let y = 0; y <= document.body.scrollHeight; y += step) {
+      window.scrollTo(0, y);
+      await new Promise((r) => setTimeout(r, 120));
+    }
+    window.scrollTo(0, 0);
+  });
+  await page.waitForTimeout(400);
+}
+
 for (const path of PAGES) {
   test(`${path} — axe ihlali yok`, async ({ page }) => {
     await page.goto(path);
+    await settleReveals(page);
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
       .analyze();

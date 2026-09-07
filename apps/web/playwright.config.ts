@@ -6,7 +6,15 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   reporter: [['html', { open: 'never' }]],
-  use: { baseURL: 'http://localhost:3000', trace: 'on-first-retry' },
+  use: {
+    baseURL: 'http://localhost:3000',
+    trace: 'on-first-retry',
+    // Site birincil dili Türkçe (`/`). next-intl localeDetection, tarayıcı
+    // dili İngilizce olduğunda `/` → `/en` yönlendirir; testler Türkçe siteyi
+    // doğruladığı için tarayıcı dilini tr-TR sabitliyoruz.
+    locale: 'tr-TR',
+    timezoneId: 'Europe/Istanbul',
+  },
   projects: [
     { name: 'desktop', use: { ...devices['Desktop Chrome'] } },
     { name: 'mobile', use: { ...devices['Pixel 7'] } },
