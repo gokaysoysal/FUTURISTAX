@@ -2,10 +2,81 @@
 
 > **Her yeni oturumda önce bu dosyayı oku.** Kurallar ve mimari için `CLAUDE.md`.
 
-**Son güncelleme:** Aşama 4–8 tamamlandı (tek ajan koşusu, `tam-insa` dalı)
-**Depo:** github.com/gokaysoysal/FUTURISTAX — çalışma dalı `v2`, ajan dalı `tam-insa`
+**Son güncelleme:** 2026-09-07 — TASARIM YÖNÜ DEĞİŞİMİ koşusu (`v2-tasarim` dalı).
+Önceki: Aşama 4–8 (tek ajan koşusu, `tam-insa` dalı).
+**Depo:** github.com/gokaysoysal/FUTURISTAX — çalışma dalı `v2`, tasarım koşusu `v2-tasarim`
 **Önizleme:** deploy-preview-1--futuristax.netlify.app
 **Canlı site:** futuristax.com — hâlâ ESKİ sürüm (`main` dalı, `legacy/index.html`)
+
+---
+
+## 0. TASARIM YÖNÜ DEĞİŞİMİ KOŞUSU — 2026-09-07 (`v2-tasarim`)
+
+Yön değişti: "mali belge estetiği, değiştirilmez" **iptal**. Yeni yön Cirform
+(AI Finance) referanslı modern fintech — koyu taban, ışıklı aksan, derinlik,
+akışkan hareket, veri görselleştirme. `CLAUDE.md → "Tasarım yönü"` baştan yazıldı.
+
+**Çalışma kopyası:** İç içe `…/FUTURISTAX/FUTURISTAX/` (kullanıcı seçimi —
+bağımlılıklar kuruluydu). Parent `…/FUTURISTAX/` bir kopya klon olarak
+`untracked` duruyor; ikisi de aynı remote/dal. Dal `v2-tasarim`, `v2`'den çıktı.
+
+**Her bölüm:** `pnpm typecheck` + `pnpm test` (65) + `pnpm build` YEŞİL, ayrı commit.
+`cffe16c` (1) · `e817eba` (2) · `349888c` (3) · `e776564` (4) · `4c7c73e` (5) ·
+`d5e7983` (6) · `2e8162f` (7).
+
+### Tam biten
+
+| # | Bölüm | Not |
+|---|---|---|
+| 1 | Tasarım yönü + tokenlar | CLAUDE.md yeniden yazıldı. tokens.css yeni palet (canvas #07090D, accent #4D7CFF, signal #FF6B4A, positive #3DDC97); WCAG kontrast oranları Node betiğiyle hesaplandı, yoruma yazıldı — gövde metni her yüzeyde ≥ 4.5:1. Geriye dönük ad aliasları korundu. Açık tema korundu (azur #2C5BE0). |
+| 2 | Görsel dil | `depth.css`: `.glass` (yalnızca sticky header), `body::before` gren dokusu (SVG feTurbulence, açık temada kapalı), ışık kaynağı gradyanları (menekşe yalnızca burada), `.surface-glow`, `.section-beam`, `.btn/.btn-primary/.btn-ghost` (8 kopya dizenin yerine, azur zemin + beyaz 5.15:1), `.card`. |
+| 3 | Tipografi | **Display: Space Grotesk**, **Gövde: Familjen Grotesk** (ikisi de değişken), **Mono: IBM Plex Mono**. Türkçe glif doğrulaması: `curl` ile Google Fonts CSS `unicode-range` incelendi — 12 gerekli glif `latin`+`latin-ext` içinde; `next/font` alt küme yoksa build'i kırar. `--font-*-loaded` → tokens zinciri bağlandı (önceden bağlı değildi, site fallback fontla render oluyordu). |
+| 4 | Hareket sistemi | `src/lib/motion/` (config + variants tek yerde). `Reveal*`, `Parallax`, `ScrollZoom`, `Counter` (tabular-nums korunur, layout kaymaz, sr aria-label), `MagneticButton` (reduced-motion + dokunmatik'te düz), `Skeleton`, `[locale]/template.tsx` sayfa geçişi (ilk yüklemede kapalı — LCP). Hepsinde `prefers-reduced-motion` guard. |
+
+### Kısmen biten — alt öğeler eksik
+
+| # | Yapıldı | YAPILMADI |
+|---|---|---|
+| 5 | Ana sayfa **Vergi Yükü Panosu** (Recharts, tema tokenlı renk, sr-only tablo eşleniği, tembel chart, UnverifiedRatesNotice). `lib/charts/burden.ts` saf toplama — yeni vergi mantığı yok. | 5.2 hesaplayıcı sonuçlarına dağılım grafiği (ResultLedger yanı) · 5.3 Vergi Takvimi zaman çizelgesi görünümü. Altyapı (`useChartColors`, tembel chart deseni) hazır. |
+| 6 | **Yıl karşılaştırma** (`/araclar`): 2024/2025/2026 yan yana, Fark + % değişim, doğrulanmamış her yıl için UnverifiedRatesNotice, gruplu bar + sr tablo. | 6.2 senaryo karşılaştırma + URL serileştirme · 6.3 `/hizmetler` hizmet karşılaştırma matrisi. |
+| 7 | **Komut paleti** (Cmd/Ctrl+K): native `<dialog>` (odak tuzağı/Esc), fuse.js, `normalizeTr` Türkçe normalizasyon ("sirket"→"şirket", birim testli), combobox/listbox ARIA, klavye tam. Header'da "Ara ⌘K" düğmesi. | 7.2 mevzuat merkezi kategori/tarih/etiket filtreleri + URL durumu · 7.3 hesaplayıcı hub mükellef tipi/konu filtresi. |
+
+### Doğrulama boşlukları — SONRAKİ OTURUM YAPMALI
+
+- **`pnpm lint`** bu koşuda çalıştırılmadı. Bu iç içe çalışma kopyasında CRLF
+  satır sonları yüzünden ZATEN kırmızı (82 hata, koştan bağımsız); `core.autocrlf=true`
+  commit'te LF'e normalize ediyor. Kanonik kopyada tekrar doğrulanmalı.
+- **e2e** (`e2e/hydration.spec.ts`, `e2e/accessibility.spec.ts`) çalıştırılamadı
+  (tarayıcı + `pnpm start` gerekiyor). CI'da veya yerelde koşulmalı.
+- **axe taraması yeni bileşenler için EKLENMEDİ**: `TaxBurdenPanel`,
+  `YearComparisonPanel`, `CommandPalette` için `e2e/accessibility.spec.ts`'e
+  senaryo eklenmeli (brief bunu istiyor). Bileşenler ARIA'ya göre yazıldı ama
+  otomatik tarama yapılmadı.
+- `lighthouserc.json` eşikleri güncellendi (perf 0.85, LCP 2500ms, total-byte
+  900000, script-size 340000). Lighthouse bu ortamda koşulmadı.
+
+### Teknik notlar
+
+- **recharts@^3.10.1** eklendi (v2 branch'i deprecated). Tembel chunk **~380 KB ham**
+  (~110 KB gz), ilk yüke girmiyor ama ana sayfa panosu mount olunca yükleniyor.
+  Optimizasyon adayı: chart mount'unu IntersectionObserver'a ertele (sr-only tablo
+  zaten DOM'da, veri erişimi gecikmez) veya daha hafif kütüphane.
+- **fuse.js@^7** eklendi; paylaşılan ilk yük JS 102→103 KB.
+- İlk yük JS (Next "First Load JS"): ana sayfa 172 KB, `/araclar` 168 KB — hedef
+  220 KB altında. "220 KB" brief'te bu metriği kastediyor; Lighthouse
+  `resource-summary:script:size` recharts'ı da sayacağı için eşiği 340 KB.
+
+### YAPMA listesi — uyum teyidi
+
+- `main` dalına dokunulmadı. İş `v2-tasarim`'de.
+- Vergi oranları değiştirilmedi, "doğrulanmış" işaretlenmedi.
+- `UnverifiedRatesNotice` kaldırılmadı — yeni panolar da (`TaxBurdenPanel`,
+  `YearComparisonPanel`) doğrulanmamış yıl için gösteriyor.
+- `LEGAL_TEXTS_APPROVED` değiştirilmedi.
+- Test gevşetilmedi (65 test aynen).
+- `ui-ux-pro-max` skill scriptleri çalıştırılmadı; Anthropic `frontend-design`
+  skill'i kullanıldı.
+- Gradyan her yüzeye uygulanmadı: `.surface-glow` / `--gradient-beam` seçici.
 
 ---
 
@@ -122,9 +193,43 @@ Bunların hepsi bilerek eksik bırakıldı.
 10. **Yasal metinler.** `LEGAL_TEXTS_APPROVED = false`. KVKK/gizlilik/çerez
     metinleri hukukçu onayı bekliyor; ilgili sayfalar `noindex`.
 
+### Tasarım koşusundan (2026-09-07, `v2-tasarim`) — UYDURULMAZ, SORULUR
+
+11. **Açık tema kalsın mı?** Brief "koyu taban" diyor; açık tema silinmedi,
+    azur (#2C5BE0) ile güncellendi ve WCAG doğrulandı. Firma dark-only isterse
+    `tokens.css`'teki `@media (prefers-color-scheme: light)` bloğu kaldırılır.
+
+12. **Kalan alt öğeler yapılsın mı, öncelik?** 5.2 (hesaplayıcı sonuç grafiği),
+    5.3 (takvim zaman çizelgesi), 6.2 (senaryo karşılaştırma + URL), 6.3
+    (hizmet matrisi), 7.2 (mevzuat filtreleri + URL), 7.3 (hesaplayıcı hub
+    filtresi). Altyapı hazır; sıra ve kapsam kararı firmadan.
+
+13. **"Fark" sütunu renk eşlemesi.** Yıl karşılaştırmada vergi artışı `--signal`
+    (turuncu), azalış `--positive` (yeşil) ile gösteriliyor. `--signal`'in
+    "yalnızca son tarih/KKEG" kısıtına küçük bir genişletme — onay ister; değilse
+    nötr `--text-secondary`'ye çekilir.
+
+14. **Recharts ağırlığı.** Tembel chunk ~380 KB ham. Kabul mü, yoksa daha hafif
+    bir grafik kütüphanesi mi (visx/uPlot/elle SVG)? Şu an gevşetilmiş bütçeye
+    (perf 0.85 / 900 KB) uyuyor.
+
+15. **Fontshare tercih ediliyorsa.** Clash Display / Satoshi gibi Fontshare
+    aileleri seçilirse `fonttools` ile 12 Türkçe glif doğrulanıp `.woff2`
+    dosyaları repoya eklenerek `next/font/local` ile self-host edilmeli. Bu
+    koşuda Google (Space/Familjen Grotesk) seçildi çünkü glif tablosu bu ortamda
+    programatik doğrulanamıyordu.
+
 ---
 
 ## 5. Açık teknik borçlar (bu koşudan sonra)
+
+0. **Yeni bileşenler için axe + e2e (tasarım koşusu).** `TaxBurdenPanel`,
+   `YearComparisonPanel`, `CommandPalette` için `e2e/accessibility.spec.ts`'e
+   senaryo eklenmeli; `pnpm test:e2e` ve Lighthouse CI'da/yerelde koşulmalı.
+   `pnpm lint` kanonik kopyada doğrulanmalı (bu iç içe kopyada CRLF nedeniyle
+   önceden kırmızı). Ana sayfa panosu chart mount'u IntersectionObserver'a
+   ertelenerek ilk yük düşürülebilir.
+
 
 1. **CSP zorlayıcı moda geçiş.** Report-Only raporları toplanmalı (bir
    `report-to`/`report-uri` uç noktası gerekebilir); ihlal kalmadığına emin

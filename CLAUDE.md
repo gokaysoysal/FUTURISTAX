@@ -120,15 +120,21 @@ Parlak azur bir buton **zemini** olarak kullanılırsa üstüne koyu metin gelir
 
 ### Tipografi
 
-- **Display + gövde:** standart fontlardan çıkıldı. Adaylar: Clash Display /
-  Cabinet Grotesk / Satoshi / General Sans (fontshare) veya Türkçe-güvenli
-  Google alternatifleri (Space Grotesk, Bricolage Grotesque, Familjen Grotesk).
-  **Kesin seçim Bölüm 3'te**, Türkçe glif kontrolü (ı İ ğ Ğ ş Ş ç Ç ö Ö ü Ü)
-  sonrası; sonuç buraya ve `PROJECT-STATUS.md`'ye yazılır.
-- **Mono:** IBM Plex Mono — kalıyor.
-- `next/font` ile self-host, `display: swap`, yalnızca kullanılan ağırlıklar,
-  değişken font tercih. Display ölçeği büyür (hero 4–5rem), sıkı
-  letter-spacing (`-0.03em`), yakın satır aralığı; gövde okunaklı kalır.
+- **Display:** **Space Grotesk** (değişken) — geniş, teknik grotesk; hero'da
+  sıkı tracking (`-0.03em`) ile. Inter/Newsreader jenerikliğinden çıkış.
+- **Gövde:** **Familjen Grotesk** (değişken) — sakin, yüksek x-height, uzun
+  Türkçe metinde okunaklı; display'den ayrışır.
+- **Mono:** IBM Plex Mono — kanun maddesi göndermeleri. Kalıyor.
+- Türkçe glif doğrulaması (ı İ ğ Ğ ş Ş ç Ç ö Ö ü Ü): üçünün de Google Fonts
+  `latin-ext` alt kümesi var; gerekli codepoint'ler sunulan `unicode-range`
+  içinde. `next/font`, ailede olmayan alt küme istenirse derlemeyi kırar —
+  `['latin','latin-ext']` isteği başlı başına derleme-zamanı kontrolü.
+  Fontshare adayları (Clash/Satoshi vb.) elenmedi ama seçilmedi: bu ortamda
+  font ikili glif tablosu programatik doğrulanamıyordu; Google + `latin-ext`
+  garantili yol. Ayrıntı: `apps/web/src/app/[locale]/layout.tsx` yorumu.
+- `next/font/google` ile self-host, `display: swap`, iki grotesk değişken
+  sürümle (weight verilmez → tek dosya). `--font-*-loaded` → tokens.css'te
+  `--font-display/sans/mono` zinciriyle bağlı.
 
 ### Hareket
 
