@@ -59,11 +59,11 @@ export default function HomePage() {
 
   return (
     <>
-      <section className="mx-auto max-w-6xl px-5 pt-16 pb-[var(--spacing-section-sm)]">
+      <section className="section-beam mx-auto max-w-6xl px-5 pt-16 pb-[var(--spacing-section)]">
         <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-start">
           <Reveal className="lg:pt-8">
             <p className="basis-ref uppercase">Ankara · {site.brand.foundedYear}'ten beri</p>
-            <h1 className="mt-4 text-[length:var(--text-4xl)] text-[var(--color-text)]">
+            <h1 className="mt-4 text-[length:var(--text-4xl)] text-[var(--color-text)] sm:text-[length:var(--text-6xl)]">
               Vergi, yönetilebilir bir kalem hâline gelir.
             </h1>
             <p className="mt-5 max-w-prose text-[length:var(--text-base)] text-[var(--color-text-secondary)]">
@@ -72,23 +72,20 @@ export default function HomePage() {
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                href="/iletisim"
-                className="bg-[var(--color-ink)] px-6 py-3 text-[length:var(--text-sm)] font-medium text-white hover:bg-[var(--color-ink-strong)]"
-              >
+              <Link href="/iletisim" className="btn btn-primary px-6 py-3 text-[length:var(--text-sm)]">
                 Görüşme talep et
               </Link>
               <Link
                 href="/araclar"
-                className="border border-[var(--color-rule-strong)] px-6 py-3 text-[length:var(--text-sm)] text-[var(--color-text)] hover:border-[var(--color-ink)]"
+                className="btn btn-ghost px-6 py-3 text-[length:var(--text-sm)]"
               >
                 Hesaplama araçları
               </Link>
             </div>
           </Reveal>
 
-          {/* İmza bileşeni */}
-          <Reveal delay={0.08}>
+          {/* İmza bileşeni — kenar parıltısıyla öne çıkar */}
+          <Reveal delay={0.08} className="surface-glow">
             <TaxCalendarPanel referenceDate={referenceDate} horizonDays={60} limit={6} />
           </Reveal>
         </div>
@@ -127,16 +124,13 @@ export default function HomePage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-5 py-[var(--spacing-section-sm)]">
-        <Reveal className="border border-[var(--color-rule)] bg-[var(--color-surface)] p-8 sm:p-12">
+        <Reveal className="card surface-glow p-8 sm:p-12">
           <h2 className="text-[length:var(--text-2xl)]">İlk görüşme ücretsizdir</h2>
           <p className="mt-3 max-w-prose text-[length:var(--text-sm)] text-[var(--color-text-secondary)]">
             Mevcut vergi yapınızı, risk alanlarınızı ve optimizasyon fırsatlarınızı birlikte
             değerlendirelim. Görüşme yüz yüze ya da çevrim içi yapılabilir.
           </p>
-          <Link
-            href="/iletisim"
-            className="mt-6 inline-block bg-[var(--color-ink)] px-6 py-3 text-[length:var(--text-sm)] font-medium text-white hover:bg-[var(--color-ink-strong)]"
-          >
+          <Link href="/iletisim" className="btn btn-primary mt-6 px-6 py-3 text-[length:var(--text-sm)]">
             Görüşme talep et
           </Link>
         </Reveal>

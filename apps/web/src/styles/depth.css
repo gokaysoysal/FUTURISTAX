@@ -1,0 +1,197 @@
+/*
+ * Derinlik katmanı — Bölüm 2 (görsel dil).
+ *
+ * Işık kaynağı mantığı: gradyan dekorasyon değil, bir yerden gelen ışık.
+ * Bu yardımcılar SEÇİCİ kullanılır — her yüzeye değil. Ayrıntı: CLAUDE.md.
+ *
+ * Kurallar:
+ * - Yalnızca transform/opacity/filter animasyonu; layout tetikleyen yok.
+ * - prefers-reduced-motion: dekoratif hareket (aurora kayması) durur;
+ *   statik gradyanlar kalır (hareket değil, ışık).
+ * - Cam efekti yalnızca üst üste binen katmanlarda.
+ */
+
+:root {
+  /* Işık kaynağı gradyanları. Menekşe (--accent-glow) YALNIZCA burada. */
+  --gradient-beam: radial-gradient(
+    120% 120% at 100% 0%,
+    color-mix(in oklab, var(--color-accent) 20%, transparent) 0%,
+    color-mix(in oklab, var(--color-accent-glow) 10%, transparent) 32%,
+    transparent 62%
+  );
+  --gradient-aurora: linear-gradient(
+    135deg,
+    var(--color-accent) 0%,
+    var(--color-accent-glow) 100%
+  );
+  --gradient-hairline: linear-gradient(
+    to right,
+    transparent,
+    color-mix(in oklab, var(--color-accent) 45%, transparent) 50%,
+    transparent
+  );
+}
+
+@layer base {
+  /*
+   * İnce gren dokusu — düz koyu yüzeylerde bantlaşmayı kırar.
+   *
+   * Zemin rengi html'de; body şeffaf. Böylece body::before (z-index:-1)
+   * zeminin ÜSTÜNDE ama akıştaki içeriğin ALTINDA kalır — çocuklara
+   * z-index dayatmadan. Sabit konumlu, tıklanamaz. SVG feTurbulence,
+   * çok düşük opaklık. Açık temada kapalı (bantlaşma koyu gradyan sorunu).
+   */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) body::before {
+      opacity: 0;
+    }
+  }
+}
+
+@layer components {
+  /*
+   * Cam katman — sticky header, açılır panel, öne çıkan veri kartı.
+   * Yalnızca bir şeyin ÜSTÜNDE dururken. Tek başına yüzeyde kullanma.
+   */
+  .glass {
+    background-color: color-mix(in srgb, var(--color-surface) 72%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-text) 9%, transparent);
+    backdrop-filter: blur(14px) saturate(1.35);
+    -webkit-backdrop-filter: blur(14px) saturate(1.35);
+  }
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .glass {
+      background-color: var(--color-surface);
+    }
+  }
+
+  /*
+   * Kenar parıltısı — kartın BİR köşesinden gelen ışık.
+   * Ebeveyn: position:relative; overflow:hidden. Dekorasyon değil, yön.
+   */
+  .surface-glow {
+    position: relative;
+    isolation: isolate;
+  }
+  .surface-glow::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: var(--gradient-beam);
+    pointer-events: none;
+  }
+
+  /* Aurora dolgu — yalnızca büyük başlık/rakam vurgusu ve buton zeminleri. */
+  .fill-aurora {
+    background-image: var(--gradient-aurora);
+    color: var(--color-on-accent);
+  }
+  .text-aurora {
+    background-image: var(--gradient-aurora);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /*
+   * Buton primitifi — 8 kopya Tailwind dizesinin yerine.
+   * Birincil: azur zemin + beyaz metin (5.15:1). Hover: parıltı + hafif
+   * yükselme (reduced-motion'da yükselme kapalı, renk sabit kalır).
+   */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4ch;
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    transition: background-color 0.18s ease, border-color 0.18s ease,
+      box-shadow 0.18s ease, transform 0.18s ease;
+  }
+  .btn-primary {
+    background-color: var(--color-accent-strong);
+    color: #fff;
+  }
+  .btn-primary:hover {
+    box-shadow: var(--shadow-glow);
+  }
+  .btn-ghost {
+    border: 1px solid var(--color-rule-strong);
+    color: var(--color-text);
+  }
+  .btn-ghost:hover {
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-glow);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .btn-primary:hover,
+    .btn-ghost:hover {
+      transform: translateY(-1px);
+    }
+  }
+
+  /*
+   * Kart — yükseltilmiş yüzey, hover'da parıltı ve yükselme.
+   * transform/box-shadow ile; layout tetiklemez.
+   */
+  .card {
+    background-color: var(--color-surface-lift);
+    border: 1px solid var(--color-rule);
+    border-radius: var(--radius-lg);
+    transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+  }
+  .card-interactive:hover {
+    border-color: color-mix(in oklab, var(--color-accent) 40%, var(--color-rule));
+    box-shadow: var(--shadow-glow);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .card-interactive:hover {
+      transform: translateY(-2px);
+    }
+  }
+
+  /*
+   * Bölüm geçişi ışık huzmesi — iki bölüm arasında ince yatay parıltı.
+   * Bir <div aria-hidden> ya da ::before olarak. Yükseklik küçük, blur yumuşak.
+   */
+  .section-beam {
+    position: relative;
+  }
+  .section-beam::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 1px;
+    background-image: var(--gradient-hairline);
+    pointer-events: none;
+  }
+  .section-beam::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -80px;
+    width: min(720px, 90vw);
+    height: 160px;
+    transform: translateX(-50%);
+    background: radial-gradient(
+      50% 50% at 50% 50%,
+      color-mix(in oklab, var(--color-accent) 14%, transparent) 0%,
+      transparent 70%
+    );
+    filter: blur(24px);
+    pointer-events: none;
+  }
+}

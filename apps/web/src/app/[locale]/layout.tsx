@@ -9,6 +9,7 @@ import { getMessages } from 'next-intl/server';
 import { IBM_Plex_Mono, Inter, Newsreader } from 'next/font/google';
 import type { ReactNode } from 'react';
 import '@/styles/tokens.css';
+import '@/styles/depth.css';
 
 /*
  * Fontlar self-host edilir (next/font). Üç rolün de tam Türkçe glif desteği
@@ -78,7 +79,7 @@ export default async function LocaleLayout({
       <body>
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:bg-[var(--color-ink)] focus:px-4 focus:py-2 focus:text-white"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:bg-[var(--color-accent-strong)] focus:px-4 focus:py-2 focus:text-white"
         >
           İçeriğe geç
         </a>

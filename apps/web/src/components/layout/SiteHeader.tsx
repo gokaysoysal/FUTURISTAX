@@ -26,7 +26,7 @@ export function SiteHeader() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--color-rule)] bg-[var(--color-canvas)]/95 backdrop-blur">
+    <header className="glass sticky top-0 z-40 border-x-0 border-t-0">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-5 py-4">
         <Link
           href="/"
@@ -61,7 +61,7 @@ export function SiteHeader() {
         <div className="flex items-center gap-3">
           <Link
             href="/iletisim"
-            className="hidden bg-[var(--color-ink)] px-4 py-2 text-[length:var(--text-xs)] font-medium text-white hover:bg-[var(--color-ink-strong)] sm:block"
+            className="btn btn-primary hidden px-4 py-2 text-[length:var(--text-xs)] sm:inline-flex"
           >
             Görüşme talep et
           </Link>

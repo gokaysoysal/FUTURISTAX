@@ -84,7 +84,7 @@ export function CookieConsent() {
           <button
             type="button"
             onClick={() => decide('granted')}
-            className="bg-[var(--color-ink)] px-5 py-2.5 text-[length:var(--text-xs)] font-medium text-white hover:bg-[var(--color-ink-strong)]"
+            className="btn btn-primary px-5 py-2.5 text-[length:var(--text-xs)]"
           >
             Tümünü kabul et
           </button>

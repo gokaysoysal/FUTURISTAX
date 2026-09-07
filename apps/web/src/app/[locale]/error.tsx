@@ -31,7 +31,7 @@ export default function ErrorBoundary({
         <button
           type="button"
           onClick={reset}
-          className="bg-[var(--color-ink)] px-6 py-3 text-[length:var(--text-sm)] font-medium text-white hover:bg-[var(--color-ink-strong)]"
+          className="btn btn-primary px-6 py-3 text-[length:var(--text-sm)]"
         >
           Yeniden dene
         </button>
