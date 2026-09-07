@@ -1,3 +1,4 @@
+import { TaxBurdenPanel } from '@/components/dashboards/TaxBurdenPanel';
 import { MagneticButton } from '@/components/motion/MagneticButton';
 import { Reveal } from '@/components/motion/Reveal';
 import { TaxCalendarPanel } from '@/components/tax-calendar/TaxCalendarPanel';
@@ -95,6 +96,12 @@ export default function HomePage() {
             <TaxCalendarPanel referenceDate={referenceDate} horizonDays={60} limit={6} />
           </Reveal>
         </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-5 py-[var(--spacing-section-sm)]">
+        <Reveal>
+          <TaxBurdenPanel />
+        </Reveal>
       </section>
 
       <section
