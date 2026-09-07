@@ -1,3 +1,4 @@
+import { MagneticButton } from '@/components/motion/MagneticButton';
 import Link from 'next/link';
 
 /**
@@ -20,12 +21,17 @@ export function RequestCta({
       <p className="mt-3 max-w-prose text-[length:var(--text-sm)] text-[var(--color-text-secondary)]">
         {body}
       </p>
-      <Link
-        href="/iletisim"
-        className="btn btn-primary mt-6 px-6 py-3 text-[length:var(--text-sm)]"
-      >
-        Görüşme talep et
-      </Link>
+      <MagneticButton className="mt-6">
+        <Link
+          href="/iletisim"
+          className="btn btn-primary group px-6 py-3 text-[length:var(--text-sm)]"
+        >
+          Görüşme talep et
+          <span aria-hidden="true" className="btn-arrow">
+            →
+          </span>
+        </Link>
+      </MagneticButton>
     </section>
   );
 }
