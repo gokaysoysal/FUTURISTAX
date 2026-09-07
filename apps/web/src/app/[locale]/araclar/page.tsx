@@ -1,46 +1,58 @@
-import { VehicleExpenseCalculator } from '@/components/calculators/VehicleExpenseCalculator';
+import { Breadcrumbs } from '@/components/content/Breadcrumbs';
+import { RequestCta } from '@/components/content/RequestCta';
+import { Reveal } from '@/components/motion/Reveal';
+import { TOOLS } from '@/lib/tools';
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Hesaplama araçları',
   description:
-    'Binek araç gider kısıtı, KDV, kurumlar vergisi ve kıdem tazminatı hesaplayıcıları. ' +
-    'Yıl bazlı oranlar ve adım adım hesap dökümü.',
+    'KDV, gelir vergisi, kurumlar vergisi, binek araç gider ve kira kısıtı, SGK işveren maliyeti, ' +
+    'kıdem tazminatı, TÜFE güncelleme ve kur çevirici. Yıl bazlı oranlar, adım adım döküm.',
+  alternates: { canonical: '/araclar' },
+  openGraph: { title: 'Hesaplama araçları', url: '/araclar', type: 'website' },
 };
 
-export default function ToolsPage() {
+export default function ToolsHubPage() {
   return (
     <div className="mx-auto max-w-6xl px-5 py-16">
-      <div className="ledger-rule pb-4">
+      <Breadcrumbs trail={[{ name: 'Araçlar', path: '/araclar' }]} />
+
+      <header className="ledger-rule mt-6 pb-4">
         <p className="basis-ref uppercase">Araçlar</p>
         <h1 className="mt-1 text-[length:var(--text-3xl)]">Hesaplama araçları</h1>
-      </div>
+      </header>
 
       <p className="mt-6 max-w-prose text-[length:var(--text-base)] text-[var(--color-text-secondary)]">
         Her araç yalnızca sonucu değil, hesabın nasıl çıktığını da gösterir. Kalemlerin dayandığı
-        kanun maddeleri satır satır belirtilir.
+        kanun maddeleri satır satır belirtilir; oranlar seçtiğiniz vergi yılına göre gelir.
       </p>
 
-      <section aria-labelledby="vehicle-heading" className="mt-12">
-        <h2 id="vehicle-heading" className="text-[length:var(--text-xl)]">
-          Binek araç gider kısıtı
-        </h2>
-        <p className="mt-2 max-w-prose text-[length:var(--text-sm)] text-[var(--color-text-secondary)]">
-          GVK Md. 40/5 uyarınca binek otomobil giderlerinin yalnızca bir kısmı indirilebilir; kalan
-          tutar ve ona isabet eden KDV kanunen kabul edilmeyen giderdir.
-        </p>
-        <div className="mt-6">
-          <VehicleExpenseCalculator />
-        </div>
-      </section>
+      <Reveal className="mt-10">
+        <ul className="grid gap-px bg-[var(--color-rule)] sm:grid-cols-2 lg:grid-cols-3">
+          {TOOLS.map((tool) => (
+            <li key={tool.slug} className="bg-[var(--color-canvas)]">
+              <Link
+                href={`/araclar/${tool.slug}`}
+                className="block h-full p-6 transition-colors hover:bg-[var(--color-surface)]"
+              >
+                <h2 className="text-[length:var(--text-lg)] text-[var(--color-text)]">
+                  {tool.short}
+                </h2>
+                <p className="mt-2 line-clamp-3 text-[length:var(--text-sm)] text-[var(--color-text-secondary)]">
+                  {tool.description}
+                </p>
+                <span className="basis-ref mt-3 inline-block">{tool.basis}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </Reveal>
 
-      {/*
-        TODO(faz-3): Diğer sekiz hesaplayıcı aynı desende eklenecek.
-        Motor tarafı hazır ve testli: calculateVat, calculateCorporateTax,
-        calculateIncomeTax, calculateRentExpense, calculatePayrollCost,
-        calculateSeverance, calculateInflationAdjustment, convertCurrency.
-        Her biri kendi sayfasına (/araclar/[slug]) taşınacak.
-      */}
+      <div className="mt-12">
+        <RequestCta />
+      </div>
     </div>
   );
 }

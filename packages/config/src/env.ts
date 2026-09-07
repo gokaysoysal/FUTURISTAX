@@ -49,6 +49,16 @@ const serverSchema = z.object({
   ANTHROPIC_API_KEY: z.string().optional(),
   SANITY_API_READ_TOKEN: z.string().optional(),
   SANITY_REVALIDATE_SECRET: z.string().optional(),
+
+  /**
+   * Resmî mevzuat/duyuru beslemesi (RSS/Atom veya JSON) URL'i.
+   *
+   * OPSİYONEL ve bilinçli olarak boş: firma stabil bir kaynağa (kendi
+   * derleyicisi, RG/GİB için bir RSS köprüsü vb.) işaret edene kadar
+   * /mevzuat sayfasındaki resmî duyuru bölümü "şu an güncellenemiyor"
+   * durumunu gösterir. YEDEK/UYDURMA içerik ÜRETİLMEZ (birinci kural).
+   */
+  LEGISLATION_FEED_URL: z.string().url().optional(),
 });
 
 const clientSchema = z.object({

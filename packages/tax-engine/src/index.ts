@@ -39,3 +39,15 @@ export type {
   ObligationRule,
   TaxpayerType,
 } from './calendar/tax-calendar';
+export {
+  shiftToNextBusinessDay,
+  isBusinessDay,
+  isWeekend,
+  publicHoliday,
+  inFiscalBreak,
+  religiousHolidaysKnown,
+  FIXED_HOLIDAYS,
+  FISCAL_BREAK,
+  RELIGIOUS_HOLIDAYS_BY_YEAR,
+} from './calendar/holidays';
+export type { FixedHoliday, DateRange, ShiftResult, HolidayHit } from './calendar/holidays';

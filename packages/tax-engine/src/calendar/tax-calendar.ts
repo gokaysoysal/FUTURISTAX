@@ -4,11 +4,17 @@
  * Yükümlülükler tekrar eden kurallar olarak tanımlanır; somut tarihler
  * bunlardan türetilir. Böylece her yıl elle tarih girilmesi gerekmez.
  *
- * ⚠️ Resmî tatil ve mali tatil kaydırmaları HENÜZ UYGULANMIYOR.
- * VUK Md. 18 gereği son gün tatile denk gelirse süre takip eden ilk iş günü
- * sonuna uzar. Yayına almadan önce `docs/decisions/0003-holiday-shift.md`
- * kararına göre resmî tatil tablosu eklenmelidir.
+ * VUK Md. 18 kaydırması UYGULANIR: kanuni son gün hafta sonu veya resmî tatile
+ * denk gelirse, gösterilen `date` takip eden ilk iş günüdür. Ham kanuni tarih
+ * `statutoryDate` alanında korunur (bkz. `./holidays`).
+ *
+ * Mali tatil (1–20 Temmuz, 5604): kesin +7 gün kuralı modellenmedi; bu aralığa
+ * denk gelen son tarihler kaydırılmaz, `fiscalBreakCaution` ile işaretlenir.
+ * Dinî bayram tatilleri: tarih verisi doğrulanana kadar hesaba katılmaz
+ * (`RELIGIOUS_HOLIDAYS_BY_YEAR`), takvim bunu kullanıcıya bildirir.
  */
+
+import { inFiscalBreak, shiftToNextBusinessDay } from './holidays';
 
 export type TaxpayerType = 'corporate' | 'soleTrader' | 'employer' | 'all';
 export type Frequency = 'monthly' | 'quarterly' | 'annual';
@@ -108,10 +114,24 @@ export interface Deadline {
   title: string;
   description: string;
   basis: string;
-  /** Son gün, ISO 8601 tarih (YYYY-MM-DD) */
+  /**
+   * Etkin son gün, ISO 8601 (YYYY-MM-DD). VUK Md. 18 kaydırması uygulanmıştır:
+   * hafta sonu/resmî tatile denk gelen kanuni tarih ilk iş gününe uzatılmıştır.
+   */
   date: string;
+  /** Kaydırma öncesi ham kanuni tarih, ISO 8601. */
+  statutoryDate: string;
+  /** `date`, `statutoryDate`'ten farklı mı? */
+  shifted: boolean;
+  /** Kaydırma sebebi: "hafta sonu" | "resmî tatil: Zafer Bayramı" vb. */
+  shiftReason?: string;
+  /**
+   * Etkin son gün 1–20 Temmuz mali tatiline denk geliyor. Süre 5604 sayılı
+   * Kanun uyarınca ayrıca uzayabilir; bu motor kesin tarihi hesaplamaz.
+   */
+  fiscalBreakCaution: boolean;
   taxpayerTypes: TaxpayerType[];
-  /** Referans tarihe göre kalan gün. Geçmişse negatif. */
+  /** Referans tarihe göre etkin son güne kalan gün. Geçmişse negatif. */
   daysRemaining: number;
   /** Aciliyet — UI'da damga kırmızısı bu bayrağa bakar */
   urgency: 'past' | 'imminent' | 'soon' | 'upcoming';
@@ -177,7 +197,12 @@ export function getUpcomingDeadlines(query: DeadlineQuery): Deadline[] {
         continue;
       }
 
-      const date = toIsoDate(year, month, rule.dayOfMonth);
+      const statutoryDate = toIsoDate(year, month, rule.dayOfMonth);
+      const shift = shiftToNextBusinessDay(statutoryDate);
+      const date = shift.date;
+
+      // Filtre ETKİN tarihe göre: kanuni tarihi ufuk içindeyken kaydırma
+      // sonucu ufkun dışına taşan bir yükümlülük gösterilmez.
       const daysRemaining = daysBetween(query.referenceDate, date);
       if (daysRemaining < 0 || daysRemaining > horizon) continue;
 
@@ -187,6 +212,10 @@ export function getUpcomingDeadlines(query: DeadlineQuery): Deadline[] {
         description: rule.description,
         basis: rule.basis,
         date,
+        statutoryDate,
+        shifted: shift.shifted,
+        shiftReason: shift.reason,
+        fiscalBreakCaution: inFiscalBreak(date),
         taxpayerTypes: rule.taxpayerTypes,
         daysRemaining,
         urgency: classifyUrgency(daysRemaining),

@@ -1,10 +1,15 @@
 'use client';
 
+import { TurnstileWidget } from '@/components/consent/TurnstileWidget';
+import {
+  type ContactInput,
+  TOPIC_LABELS,
+  contactSchema,
+  contactTopics,
+} from '@/lib/validation/contact';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { TurnstileWidget } from '@/components/consent/TurnstileWidget';
-import { TOPIC_LABELS, type ContactInput, contactSchema, contactTopics } from '@/lib/validation/contact';
 
 /**
  * Danışmanlık talep formu.
@@ -19,6 +24,9 @@ type Status = { kind: 'idle' | 'sending' } | { kind: 'sent' | 'failed'; message:
 export function ContactForm({ turnstileSiteKey }: { turnstileSiteKey: string }) {
   const [status, setStatus] = useState<Status>({ kind: 'idle' });
   const [turnstileToken, setTurnstileToken] = useState('');
+  // Turnstile betiği yüklenemezse form KİLİTLENMEZ — jetonsuz gönderilir ve
+  // sunucu tarafında daha katı ele alınır. Eski davranış lead kaybettiriyordu.
+  const [verificationDown, setVerificationDown] = useState(false);
 
   const {
     register,
@@ -28,14 +36,9 @@ export function ContactForm({ turnstileSiteKey }: { turnstileSiteKey: string }) 
   } = useForm<ContactInput>({ resolver: zodResolver(contactSchema) });
 
   async function onSubmit(values: ContactInput) {
-    if (!turnstileToken) {
-      setStatus({
-        kind: 'failed',
-        message: 'Güvenlik doğrulaması henüz tamamlanmadı. Birkaç saniye bekleyip tekrar deneyin.',
-      });
-      return;
-    }
-
+    // Jeton yoksa da gönderiyoruz. Sunucu jetonsuz isteği reddetmez; sıkı hız
+    // sınırına alır, bal küpü ve alan doğrulamasını korur, kaydı "doğrulanmamış"
+    // işaretler.
     setStatus({ kind: 'sending' });
 
     let response: Response;
@@ -229,7 +232,21 @@ export function ContactForm({ turnstileSiteKey }: { turnstileSiteKey: string }) 
         </p>
       )}
 
-      <TurnstileWidget siteKey={turnstileSiteKey} onToken={setTurnstileToken} />
+      <TurnstileWidget
+        siteKey={turnstileSiteKey}
+        onToken={(token) => {
+          setTurnstileToken(token);
+          if (token) setVerificationDown(false);
+        }}
+        onUnavailable={() => setVerificationDown(true)}
+      />
+
+      {verificationDown && (
+        <p className="text-[length:var(--text-xs)] text-[var(--color-text-muted)]">
+          Güvenlik doğrulaması yüklenemedi. Talebinizi yine de gönderebilirsiniz; ek bir güvenlik
+          kontrolünden geçirilecektir.
+        </p>
+      )}
 
       <button
         type="submit"

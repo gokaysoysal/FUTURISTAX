@@ -20,7 +20,8 @@
       "playwright-report",
       "test-results",
       "legacy",
-      "pnpm-lock.yaml"
+      "pnpm-lock.yaml",
+      "**/db/migrations/**"
     ]
   },
   "organizeImports": { "enabled": true },

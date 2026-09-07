@@ -174,6 +174,40 @@
     border-bottom: 1px solid var(--color-rule);
   }
 
+  /* ── Mali belge motifi ──────────────────────────────────────
+     Bu üç yardımcı YALNIZCA veri bağlamlarında kullanılır: takvim,
+     hesaplayıcı sonuç tablosu, karşılaştırma tabloları, durum panelleri.
+     Dekoratif kullanım yasak. */
+
+  /* Tasdik kenarı: sol kenarda mürekkep şeridi — resmî belge damgası. */
+  .ledger-margin {
+    border-left: 2px solid var(--color-ink-strong);
+  }
+
+  /* Defter-i kebir kâğıdı: veri panelinin arkasında ince yatay çizgi ritmi.
+     Satır yüksekliğiyle hizalı (1.75rem). Süsleme değil; sayısal içeriğin
+     satır satır okunmasını destekler. */
+  .ledger-paper {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent calc(1.75rem - 1px),
+      color-mix(in srgb, var(--color-rule) 60%, transparent) calc(1.75rem - 1px),
+      color-mix(in srgb, var(--color-rule) 60%, transparent) 1.75rem
+    );
+  }
+
+  /* Milimetrik ızgara: karşılaştırma tablolarında hücre hatları. */
+  .ledger-grid {
+    border-collapse: collapse;
+  }
+  .ledger-grid :is(th, td) {
+    border: 1px solid var(--color-rule);
+  }
+  .ledger-grid thead :is(th, td) {
+    border-bottom-color: var(--color-rule-strong);
+  }
+
   /* Yasal dayanak etiketi: kanun maddesi göndermeleri mono ile. */
   .basis-ref {
     font-family: var(--font-mono);

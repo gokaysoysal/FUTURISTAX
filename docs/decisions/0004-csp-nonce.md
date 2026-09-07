@@ -1,7 +1,7 @@
-# ADR 0004 — CSP geçici olarak devre dışı (AÇIK)
+# ADR 0004 — CSP nonce + Report-Only (KISMEN KAPANDI)
 
-**Durum:** Açık — Aşama 12'de çözülecek
-**Tarih:** 2026-08-22
+**Durum:** Kısmen kapandı — Report-Only yayında, zorlayıcı moda geçiş bekliyor
+**Tarih:** 2026-08-22 · **Güncelleme:** 2026-09-06
 
 ## Bağlam
 
@@ -31,16 +31,27 @@ karşılamaz.
 
 Diğer güvenlik başlıkları yerinde kalıyor.
 
-## Yapılması gereken (Aşama 12)
+## Yapıldı (2026-09-06)
 
-1. `next-intl` middleware'i ile Next.js nonce mekanizmasını birleştir:
-   `intlMiddleware` çağrısını, değiştirilmiş istek başlıklarını taşıyan bir
-   `NextRequest` ile yap ve dönen yanıta CSP başlığını ekle.
-2. Turnstile (`challenges.cloudflare.com`) ve analitik için gereken kaynakları
-   politikaya dahil et.
-3. Önce `Content-Security-Policy-Report-Only` ile yayına al, rapor topla,
-   ihlal kalmadığına emin olduktan sonra zorlayıcı moda geç.
-4. Playwright'a bir test ekle: hesaplayıcıya değer gir, sonucun değiştiğini
-   doğrula. Hydration kırılırsa CI yakalasın.
+1. ✅ `src/middleware.ts` doğru zinciri kuruyor: nonce üretilir, `x-nonce` ve
+   `content-security-policy` İSTEK başlıklarına yazılır (Next.js nonce'u buradan
+   okur), next-intl middleware'i çalıştırılır, yanıt değiştirilmiş istek
+   başlıklarını taşıyacak biçimde `NextResponse.rewrite/next({ request })` ile
+   yeniden kurulur; next-intl'in çerezleri ve rewrite'ı aktarılır.
+2. ✅ `src/lib/security/csp.ts`: Turnstile (`challenges.cloudflare.com`) script/
+   frame/connect kaynakları; `strict-dynamic` + nonce; stiller için
+   `'unsafe-inline'` (bilinçli, düşük risk); dev'de `unsafe-eval` + `ws:`.
+3. ✅ **Report-Only** olarak yayında (`Content-Security-Policy-Report-Only`).
+   Hiçbir şeyi engellemez — hydration'ı bozamaz.
+4. ✅ `src/components/seo/JsonLd.tsx` inline JSON-LD script'leri nonce alıyor.
+5. ✅ `e2e/hydration.spec.ts`: hesaplayıcı girdisi sonuca yansıyor mu, mobil
+   menü açılıyor mu, CSP-RO başlığı nonce ile geliyor mu, zorlayıcı ihlal var
+   mı — kontrol eder.
 
-Bu adım tamamlanmadan CSP "hazır" sayılmaz.
+## Kalan — zorlayıcı moda geçiş
+
+- Report-Only raporları toplanacak (bir `report-uri`/`report-to` uç noktası
+  gerekebilir).
+- İhlal kalmadığına emin olununca `content-security-policy-report-only`
+  başlığı `content-security-policy` ile değiştirilecek.
+- `style-src 'unsafe-inline'` daha sonra hash/nonce ile sıkılaştırılabilir.

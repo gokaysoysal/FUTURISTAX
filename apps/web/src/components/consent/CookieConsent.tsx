@@ -43,8 +43,9 @@ export function CookieConsent() {
   }
 
   return (
-    <div
-      role="dialog"
+    // Kalıcı, modal olmayan onay bandı: bir <section> landmark'ı (etiketli)
+    // doğru semantiktir; role="dialog" odak tuzağı ve modal davranış ima eder.
+    <section
       aria-labelledby="consent-heading"
       aria-describedby="consent-description"
       className="fixed inset-x-0 bottom-0 z-50 border-t border-[var(--color-rule)] bg-[var(--color-surface)]"
@@ -89,6 +90,6 @@ export function CookieConsent() {
           </button>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

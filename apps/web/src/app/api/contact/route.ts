@@ -1,11 +1,11 @@
+import { db, schema } from '@/db/client';
+import { LEGAL_VERSIONS } from '@/lib/legal/versions';
+import { TOPIC_LABELS, contactRequestSchema } from '@/lib/validation/contact';
 import { serverEnv, site } from '@futuristax/config';
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 import { type NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
-import { db, schema } from '@/db/client';
-import { LEGAL_VERSIONS } from '@/lib/legal/versions';
-import { TOPIC_LABELS, contactRequestSchema } from '@/lib/validation/contact';
 
 /**
  * İletişim formu endpoint'i.
@@ -14,15 +14,29 @@ import { TOPIC_LABELS, contactRequestSchema } from '@/lib/validation/contact';
  * göndermiyordu — gelen her talep kayboluyordu. Bu route o hatayı kapatır.
  *
  * Akış: doğrula → bot kontrolü → hız sınırı → kaydet → bildir → onayla
+ *
+ * DAYANIKLILIK: Turnstile jetonu alınamazsa (CF betiği yüklenmedi, ağ engeli,
+ * kullanıcı erken gönderdi) istek REDDEDİLMEZ. Jetonsuz istek daha katı hız
+ * sınırına tabi tutulur, bal küpü ve alan doğrulaması korunur, kayıt
+ * `attribution.verification = 'unverified'` ile işaretlenir. Bir danışmanlık
+ * sitesinde kilitlenen form doğrudan lead kaybıdır.
  */
 
 export const runtime = 'nodejs';
 
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
-  // Aynı kişiden 10 dakikada en fazla 3 talep
+  // Doğrulanmış istek: aynı kişiden 10 dakikada en fazla 3 talep
   limiter: Ratelimit.slidingWindow(3, '10 m'),
   prefix: 'contact',
+  analytics: true,
+});
+
+// Jetonsuz / doğrulanamayan istek: belirgin biçimde daha sıkı.
+const strictRatelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(2, '1 h'),
+  prefix: 'contact-unverified',
   analytics: true,
 });
 
@@ -67,8 +81,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('[contact] yapılandırma eksik', error);
     return fail(
-      'Form şu anda yapılandırma nedeniyle çalışmıyor. Lütfen doğrudan ' +
-        `${site.contact.email} adresine yazın ya da ${site.contact.phoneDisplay} numarasını arayın.`,
+      `Form şu anda yapılandırma nedeniyle çalışmıyor. Lütfen doğrudan ${site.contact.email} adresine yazın ya da ${site.contact.phoneDisplay} numarasını arayın.`,
       503,
     );
   }
@@ -97,22 +110,28 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true, message: 'Talebiniz alındı.' });
   }
 
-  const { success: withinLimit } = await ratelimit.limit(ip);
+  // Bot kontrolü: jeton varsa doğrula. Jeton yoksa veya doğrulanamazsa istek
+  // REDDEDİLMEZ — "doğrulanmamış" olarak işaretlenir ve sıkı sınıra girer.
+  const hasToken = data.turnstileToken.length > 0;
+  const humanVerified = hasToken
+    ? await verifyTurnstile(env.TURNSTILE_SECRET_KEY, data.turnstileToken, ip)
+    : false;
+  const verificationReason = humanVerified
+    ? undefined
+    : hasToken
+      ? 'turnstile-failed'
+      : 'turnstile-missing';
+
+  const limiter = humanVerified ? ratelimit : strictRatelimit;
+  const { success: withinLimit } = await limiter.limit(ip);
   if (!withinLimit) {
+    const phone = site.contact.phoneDisplay;
     return fail(
-      'Kısa sürede çok fazla talep gönderildi. 10 dakika sonra tekrar deneyin ya da ' +
-        `doğrudan ${site.contact.phoneDisplay} numarasını arayın.`,
+      humanVerified
+        ? `Kısa sürede çok fazla talep gönderildi. 10 dakika sonra tekrar deneyin ya da doğrudan ${phone} numarasını arayın.`
+        : `Kısa sürede çok fazla doğrulanmamış talep alındı. Sayfayı yenileyip güvenlik doğrulamasının yüklenmesini bekleyin ya da doğrudan ${phone} arayın.`,
       429,
     );
-  }
-
-  const humanVerified = await verifyTurnstile(
-    env.TURNSTILE_SECRET_KEY,
-    data.turnstileToken,
-    ip,
-  );
-  if (!humanVerified) {
-    return fail('Güvenlik doğrulaması tamamlanamadı. Sayfayı yenileyip tekrar deneyin.', 403);
   }
 
   const resend = new Resend(env.RESEND_API_KEY);
@@ -134,6 +153,11 @@ export async function POST(request: NextRequest) {
         consentPolicyVersion: LEGAL_VERSIONS.kvkkNotice,
         sourceIp: ip,
         userAgent: request.headers.get('user-agent'),
+        // Bot kontrolü sonucu kayıtta işaretlenir — reddetmiyoruz, işaretliyoruz.
+        attribution: {
+          verification: humanVerified ? 'verified' : 'unverified',
+          ...(verificationReason ? { verificationReason } : {}),
+        },
       })
       .returning({ id: schema.leads.id });
 
@@ -142,8 +166,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('[contact] kayıt başarısız', { ip, error });
     return fail(
-      'Talebiniz kaydedilemedi. Lütfen birkaç dakika sonra tekrar deneyin ya da ' +
-        `${site.contact.email} adresine yazın.`,
+      `Talebiniz kaydedilemedi. Lütfen birkaç dakika sonra tekrar deneyin ya da ${site.contact.email} adresine yazın.`,
       500,
     );
   }
@@ -160,6 +183,7 @@ export async function POST(request: NextRequest) {
         `Telefon  : ${data.phone || '—'}`,
         `Şirket   : ${data.company || '—'}`,
         `Konu     : ${topicLabel}`,
+        `Doğrulama: ${humanVerified ? 'DOĞRULANDI' : `DOĞRULANMADI (${verificationReason})`}`,
         '',
         'Mesaj:',
         data.message,
