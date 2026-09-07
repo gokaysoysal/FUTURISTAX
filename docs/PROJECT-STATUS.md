@@ -41,19 +41,40 @@ bağımlılıklar kuruluydu). Parent `…/FUTURISTAX/` bir kopya klon olarak
 | 6 | **Yıl karşılaştırma** (`/araclar`): 2024/2025/2026 yan yana, Fark + % değişim, doğrulanmamış her yıl için UnverifiedRatesNotice, gruplu bar + sr tablo. | 6.2 senaryo karşılaştırma + URL serileştirme · 6.3 `/hizmetler` hizmet karşılaştırma matrisi. |
 | 7 | **Komut paleti** (Cmd/Ctrl+K): native `<dialog>` (odak tuzağı/Esc), fuse.js, `normalizeTr` Türkçe normalizasyon ("sirket"→"şirket", birim testli), combobox/listbox ARIA, klavye tam. Header'da "Ara ⌘K" düğmesi. | 7.2 mevzuat merkezi kategori/tarih/etiket filtreleri + URL durumu · 7.3 hesaplayıcı hub mükellef tipi/konu filtresi. |
 
-### Doğrulama boşlukları — SONRAKİ OTURUM YAPMALI
+### Doğrulama — KAPATILDI (commit `fd66bab`, `4ed3a5b`, `d8cc3f5`)
 
-- **`pnpm lint`** bu koşuda çalıştırılmadı. Bu iç içe çalışma kopyasında CRLF
-  satır sonları yüzünden ZATEN kırmızı (82 hata, koştan bağımsız); `core.autocrlf=true`
-  commit'te LF'e normalize ediyor. Kanonik kopyada tekrar doğrulanmalı.
-- **e2e** (`e2e/hydration.spec.ts`, `e2e/accessibility.spec.ts`) çalıştırılamadı
-  (tarayıcı + `pnpm start` gerekiyor). CI'da veya yerelde koşulmalı.
-- **axe taraması yeni bileşenler için EKLENMEDİ**: `TaxBurdenPanel`,
-  `YearComparisonPanel`, `CommandPalette` için `e2e/accessibility.spec.ts`'e
-  senaryo eklenmeli (brief bunu istiyor). Bileşenler ARIA'ya göre yazıldı ama
-  otomatik tarama yapılmadı.
-- `lighthouserc.json` eşikleri güncellendi (perf 0.85, LCP 2500ms, total-byte
-  900000, script-size 340000). Lighthouse bu ortamda koşulmadı.
+- **`pnpm lint` YEŞİL.** `.gitattributes` (`* text=auto eol=lf`) eklendi, çalışma
+  kopyası LF'e renormalize edildi; kalan gerçek biome uyarıları (format,
+  organizeImports, a11y) giderildi veya öznitelik düzeyinde gerekçeli
+  `biome-ignore` ile bastırıldı.
+- **e2e YEŞİL** — `pnpm exec playwright test` (desktop + mobile, **63 test**):
+  `hydration.spec.ts`, `accessibility.spec.ts` (17 sayfa × 2 proje, axe sıfır
+  ihlal), yeni `design-a11y.spec.ts`, `contact-form.spec.ts`, `tax-calendar.spec.ts`.
+- **Yeni bileşenler için axe + klavye testi EKLENDİ** (`e2e/design-a11y.spec.ts`):
+  Vergi Yükü Panosu, Yıl Karşılaştırma, Komut Paleti axe; komut paletinin
+  yalnızca klavyeyle tam akışı (aç/gez/seç/Esc + odak dönüşü).
+- Bunları yeşile çıkarmak için gereken düzeltmeler için commit `d8cc3f5`
+  gövdesine bak (öne çıkanlar: `template.tsx` kaldırıldı — aşağıda; gren dokusu
+  fixed overlay → body background-image; recharts `accessibilityLayer={false}` +
+  `inert`; Counter aria-label → sr-only; komut paleti `<button role=option>`).
+- **`template.tsx` sayfa geçişi KALDIRILDI.** Framer Motion `motion.div` SSR'da
+  `opacity:0` render ediyor ve modül-bayrak double-render'ı yüzünden animasyona
+  geçemiyordu → içerik ~7 sayfada görünmez, axe color-contrast. Sayfa geçişi
+  yeniden yapılmalı: içeriği ASLA gizlemeyen bir yaklaşım (üstte oynayan sweep,
+  ya da yalnızca transform), gerçek rota değişiminde `AnimatePresence` ile;
+  ilk yükte kapalı. Diğer 6 hareket özelliği (`Reveal`, `Parallax`, `ScrollZoom`,
+  `Counter`, `MagneticButton`, `Skeleton`) yerinde.
+- **`playwright.config.ts`**: `locale: 'tr-TR'` + `timezoneId: 'Europe/Istanbul'`.
+  next-intl `localeDetection`, İngilizce tarayıcıda `/` → `/en` yönlendiriyordu;
+  testler Türkçe siteyi (`/`) doğruluyor.
+- **`accessibility.spec.ts`**: axe'den önce sayfa sonuna kaydırılıp `Reveal`
+  (`whileInView`) animasyonları tetikleniyor — geçici `opacity:0` karesi değil
+  nihai render denetleniyor.
+- **`apps/web/.env.local`** (gitignored): `ci.yml` ile aynı `NEXT_PUBLIC_*`
+  placeholder'ları eklendi; `contact-form.spec` yerelde koşuyor.
+- **Lighthouse bu ortamda koşulmadı** (Chrome + `pnpm start` orchestration).
+  `lighthouserc.json` eşikleri güncellendi (perf 0.85, LCP 2500ms, total-byte
+  900000, script-size 340000). CI'da doğrulanmalı.
 
 ### Teknik notlar
 
@@ -193,25 +214,42 @@ Bunların hepsi bilerek eksik bırakıldı.
 10. **Yasal metinler.** `LEGAL_TEXTS_APPROVED = false`. KVKK/gizlilik/çerez
     metinleri hukukçu onayı bekliyor; ilgili sayfalar `noindex`.
 
-### Tasarım koşusundan (2026-09-07, `v2-tasarim`) — UYDURULMAZ, SORULUR
+### Tasarım koşusundan (2026-09-07, `v2-tasarim`)
 
-11. **Açık tema kalsın mı?** Brief "koyu taban" diyor; açık tema silinmedi,
-    azur (#2C5BE0) ile güncellendi ve WCAG doğrulandı. Firma dark-only isterse
-    `tokens.css`'teki `@media (prefers-color-scheme: light)` bloğu kaldırılır.
+11. **Açık tema — KARAR: KALIYOR.** (Kullanıcı onayladı.) Azur `#2C5BE0` ile,
+    tüm kontrast oranları doğrulandı (`tokens.css` `@media light`).
 
-12. **Kalan alt öğeler yapılsın mı, öncelik?** 5.2 (hesaplayıcı sonuç grafiği),
-    5.3 (takvim zaman çizelgesi), 6.2 (senaryo karşılaştırma + URL), 6.3
-    (hizmet matrisi), 7.2 (mevzuat filtreleri + URL), 7.3 (hesaplayıcı hub
-    filtresi). Altyapı hazır; sıra ve kapsam kararı firmadan.
+12. **Kalan 6 alt öğe — öncelik firmadan bekleniyor.** Liste ve durum:
+    - **5.2** ResultLedger yanına dağılım grafiği (indirilebilir vs KKEG, dilim
+      dağılımı). Altyapı: `useChartColors`, `dynamic(ssr:false)` chart deseni,
+      `inert`+sr-only tablo kalıbı hazır (`TaxBurdenCharts`'tan kopyalanır).
+    - **5.3** Vergi Takvimi zaman çizelgesi görünümü (yıl boyu yükümlülük
+      yoğunluğu, mükellef tipine göre filtre). Veri: `getUpcomingDeadlines`
+      zaten `statutoryDate`+`date` döndürüyor.
+    - **6.2** Senaryo karşılaştırma (2–3 senaryo: farklı ciro/gider/istisna;
+      tabloda karşılaştırma; senaryolar URL'e serileştirilir — paylaşılabilir).
+      `computeBurden` saf, `BurdenFields` ortak bileşen hazır; eksik olan
+      çoklu-senaryo state + `useSearchParams` serileştirme.
+    - **6.3** `/hizmetler` hub'ında etkileşimli hizmet karşılaştırma matrisi
+      (hangi hizmet hangi ihtiyaca uyar). Veri: `SERVICES` +
+      `relatedSectorSlugs`; yeni bir "ihtiyaç" ekseni tanımı gerekir (firma).
+    - **7.2** Mevzuat merkezinde kategori/tarih aralığı/etiket filtreleri, filtre
+      durumu URL'de. Veri: `LEGISLATION_ARTICLES` + `LEGISLATION_CATEGORY_LABELS`;
+      makalelerde henüz "etiket" alanı yok (eklenmeli).
+    - **7.3** Hesaplayıcı hub'ında mükellef tipi + konuya göre filtre. Veri:
+      `TOOLS` (`ToolMeta`); mükellef tipi / konu alanı `ToolMeta`'ya eklenmeli.
 
-13. **"Fark" sütunu renk eşlemesi.** Yıl karşılaştırmada vergi artışı `--signal`
-    (turuncu), azalış `--positive` (yeşil) ile gösteriliyor. `--signal`'in
-    "yalnızca son tarih/KKEG" kısıtına küçük bir genişletme — onay ister; değilse
-    nötr `--text-secondary`'ye çekilir.
+13. **"Fark" sütunu renk eşlemesi — KULLANICI GERİ BİLDİRİMİYLE DÜZELTİLDİ**
+    (commit `4ed3a5b`). Artış/azalış ▲/▼ ok + işaret + `sr-only` sözcük
+    ("artış"/"azalış"/"değişim yok") ile — renk tek başına anlam taşımıyor
+    (WCAG 1.4.1). `--signal` YALNIZCA mükellef için olumsuz kalemde: `costRow`
+    olan satırda ödenen tutarın artışı. `--positive` artık kullanılmıyor.
+    `ROWS`'a `costRow` bayrağı — ileride "matrah" gibi non-cost satır eklenirse
+    artış olumsuz sayılmaz.
 
-14. **Recharts ağırlığı.** Tembel chunk ~380 KB ham. Kabul mü, yoksa daha hafif
-    bir grafik kütüphanesi mi (visx/uPlot/elle SVG)? Şu an gevşetilmiş bütçeye
-    (perf 0.85 / 900 KB) uyuyor.
+14. **Recharts ağırlığı — KARAR: KABUL.** (Kullanıcı onayladı.) Tembel chunk
+    ~380 KB ham, ilk yüke girmiyor. Yine de 5.2/5.3'te chart mount'unu
+    IntersectionObserver'a erteleme optimizasyonu açık (bkz. §5).
 
 15. **Fontshare tercih ediliyorsa.** Clash Display / Satoshi gibi Fontshare
     aileleri seçilirse `fonttools` ile 12 Türkçe glif doğrulanıp `.woff2`
