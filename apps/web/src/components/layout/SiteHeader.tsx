@@ -1,5 +1,6 @@
 'use client';
 
+import { MagneticButton } from '@/components/motion/MagneticButton';
 import { site } from '@futuristax/config';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -59,12 +60,14 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <Link
-            href="/iletisim"
-            className="btn btn-primary hidden px-4 py-2 text-[length:var(--text-xs)] sm:inline-flex"
-          >
-            Görüşme talep et
-          </Link>
+          <MagneticButton className="hidden sm:inline-flex">
+            <Link
+              href="/iletisim"
+              className="btn btn-primary px-4 py-2 text-[length:var(--text-xs)]"
+            >
+              Görüşme talep et
+            </Link>
+          </MagneticButton>
 
           <button
             type="button"

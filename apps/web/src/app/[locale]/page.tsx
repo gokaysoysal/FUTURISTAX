@@ -1,3 +1,4 @@
+import { MagneticButton } from '@/components/motion/MagneticButton';
 import { Reveal } from '@/components/motion/Reveal';
 import { TaxCalendarPanel } from '@/components/tax-calendar/TaxCalendarPanel';
 import { site } from '@futuristax/config';
@@ -72,9 +73,14 @@ export default function HomePage() {
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/iletisim" className="btn btn-primary px-6 py-3 text-[length:var(--text-sm)]">
-                Görüşme talep et
-              </Link>
+              <MagneticButton>
+                <Link
+                  href="/iletisim"
+                  className="btn btn-primary px-6 py-3 text-[length:var(--text-sm)]"
+                >
+                  Görüşme talep et
+                </Link>
+              </MagneticButton>
               <Link
                 href="/araclar"
                 className="btn btn-ghost px-6 py-3 text-[length:var(--text-sm)]"
@@ -130,9 +136,11 @@ export default function HomePage() {
             Mevcut vergi yapınızı, risk alanlarınızı ve optimizasyon fırsatlarınızı birlikte
             değerlendirelim. Görüşme yüz yüze ya da çevrim içi yapılabilir.
           </p>
-          <Link href="/iletisim" className="btn btn-primary mt-6 px-6 py-3 text-[length:var(--text-sm)]">
-            Görüşme talep et
-          </Link>
+          <MagneticButton className="mt-6">
+            <Link href="/iletisim" className="btn btn-primary px-6 py-3 text-[length:var(--text-sm)]">
+              Görüşme talep et
+            </Link>
+          </MagneticButton>
         </Reveal>
       </section>
     </>

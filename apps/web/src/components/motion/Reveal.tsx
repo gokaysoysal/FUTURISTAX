@@ -1,28 +1,25 @@
 'use client';
 
-import { type Variants, motion, useReducedMotion } from 'motion/react';
+import { fadeUp, staggerContainer, staggerItem, viewportOnce } from '@/lib/motion';
+import { motion, useReducedMotion } from 'motion/react';
 import type { ReactNode } from 'react';
 
 /**
- * Scroll reveal + sayfa yüklenme koreografisi.
+ * Scroll reveal + yüklenme koreografisi. Merkezî varyantları
+ * (`@/lib/motion`) kullanır.
  *
- * prefers-reduced-motion altında TAMAMEN kapalı: hareket tercihi kapalıysa
- * içerik hiçbir dönüşüm/geçiş olmadan doğrudan render edilir (Motion CSS
- * geçişi değil JS animasyonu kullandığı için bu guard şart).
+ * prefers-reduced-motion altında TAMAMEN kapalı: içerik hiçbir
+ * dönüşüm/geçiş olmadan doğrudan render edilir.
  *
- * `once: true` — bir kez görününce sabit kalır; kaydırdıkça yanıp sönmez.
+ * `once: true` — bir kez görününce sabit kalır.
  */
-const EASE = [0.22, 1, 0.36, 1] as const;
-
 export function Reveal({
   children,
   delay = 0,
-  y = 12,
   className,
 }: {
   children: ReactNode;
   delay?: number;
-  y?: number;
   className?: string;
 }) {
   const reduce = useReducedMotion();
@@ -31,24 +28,16 @@ export function Reveal({
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '0px 0px -8% 0px' }}
-      transition={{ duration: 0.42, ease: EASE, delay }}
+      variants={fadeUp}
+      initial="hidden"
+      whileInView="shown"
+      viewport={viewportOnce}
+      transition={{ delay }}
     >
       {children}
     </motion.div>
   );
 }
-
-const listVariants: Variants = {
-  hidden: {},
-  shown: { transition: { staggerChildren: 0.06 } },
-};
-const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 10 },
-  shown: { opacity: 1, y: 0, transition: { duration: 0.36, ease: EASE } },
-};
 
 /**
  * Bir grup öğeyi kademeli (staggered) ortaya çıkarır. Kart ızgaraları için.
@@ -67,10 +56,10 @@ export function RevealGroup({
   return (
     <motion.div
       className={className}
-      variants={listVariants}
+      variants={staggerContainer}
       initial="hidden"
       whileInView="shown"
-      viewport={{ once: true, margin: '0px 0px -8% 0px' }}
+      viewport={viewportOnce}
     >
       {children}
     </motion.div>
@@ -87,7 +76,7 @@ export function RevealItem({
   const reduce = useReducedMotion();
   if (reduce) return <div className={className}>{children}</div>;
   return (
-    <motion.div className={className} variants={itemVariants}>
+    <motion.div className={className} variants={staggerItem}>
       {children}
     </motion.div>
   );

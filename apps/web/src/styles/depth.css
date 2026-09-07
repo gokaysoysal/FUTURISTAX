@@ -162,6 +162,40 @@
   }
 
   /*
+   * İskelet yükleme — sweep yalnızca transform:translateX ile.
+   * reduced-motion: global kural sweep'i durdurur; ayrıca ::after gizlenir.
+   */
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--color-surface-lift);
+    border-radius: var(--radius-md);
+  }
+  .skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in oklab, var(--color-text) 7%, transparent),
+      transparent
+    );
+    animation: skeleton-sweep 1.4s ease-in-out infinite;
+  }
+  @keyframes skeleton-sweep {
+    to {
+      transform: translateX(100%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton::after {
+      display: none;
+    }
+  }
+
+  /*
    * Bölüm geçişi ışık huzmesi — iki bölüm arasında ince yatay parıltı.
    * Bir <div aria-hidden> ya da ::before olarak. Yükseklik küçük, blur yumuşak.
    */
