@@ -16,7 +16,7 @@ Yalnızca görünen katman yeniden inşa ediliyor (bkz. `docs/V3-SUNUM-PROMPT.md
 `tax-engine`, API route'ları, DB, form, dağıtım DEĞİŞMİYOR. 8 bölüm, her biri
 ayrı commit, her bölüm sonunda `pnpm typecheck · lint · test · build` yeşil.
 
-`a7e644b` (1) · `359d56d` (2) · `9a1268b` (3) · `878a685` (4).
+`a7e644b` (1) · `359d56d` (2) · `9a1268b` (3) · `878a685` (4) · `ca28e7b` (5).
 
 ### Biten
 
@@ -26,34 +26,32 @@ ayrı commit, her bölüm sonunda `pnpm typecheck · lint · test · build` yeş
 | 2 | WebGL hero | R3F **shader alanı** seçildi (sıvı gradyan + noise, palet tokenlı). `HeroCanvas` karar katmanı: yalnızca ≥768px + WebGL + reduced-motion yok → `HeroScene` (`dynamic ssr:false`); aksi `HeroFallback` (statik CSS gradyan + grain). visibilitychange'de render durur. |
 | 3 | Scroll + geçiş | `SmoothScroll` (Lenis; reduced-motion'da HİÇ başlamaz), `ScrollProgress` (üst çubuk), `RouteTransition` (perde; ilk sert yükte YOK — LCP), `SplitHeading` (split-type + Türkçe glif kontrolü: düşen karakter varsa revert). `lib/motion/scroll.ts` merkezî. |
 | 4 | Ana sayfa sinematik akış | 8 sahne: hero → güven bandı → vergi takvimi → hizmetler → süreç → araçlar → sektörler → kapanış. `components/home/`: `SceneSection` (eyebrow + SplitHeading + lead + seçici `SceneBackdrop`), `ProcessScene`+`TrustBand` (pin YOK), `ServicesRail` (native overflow-x + ince ScrollTrigger drift), `SectorsGrid`, `ToolsShowcase` (araç listesi + canlı `TaxBurdenPanel`). Hero tek CTA'ya indi; `TaxCalendarPanel` hero'dan çıkıp kendi sahnesine geçti. |
+| 5 | Araçlar çalışma alanı | `ToolWorkspace` + `ToolSelector` — 9 hesaplayıcı tek yüzey. Seçici APG tabs (roving tabindex, ok/Home/End), dar ekranda yatay kaydırılır, tuzak yok. Her aracın kendi URL'i: `history.pushState` → `/araclar/[slug]`, `popstate` senkron; sunucu `[slug]` sayfası metadata + HowTo/FAQ JSON-LD taşımayı sürdürür. Araç değişince `AnimatePresence` geçiş (reduced-motion: anında). `LedgerChart` — **araca özel** görsel kırılım (her hesaplayıcı `segments`'ini kendi `result.detail`'inden kurar; saf SVG/div, recharts yok; tümüyle `aria-hidden`, veri = `ResultLedger` sr-only steps tablosu); kur-cevirici hariç 8 araç. `RollingNumber` — sonuç değişince yeniden sayan sayaç (ResultLedger başlığı). `ToolCalculator` kaldırıldı. |
 
 ### Kalan — V3-SUNUM-PROMPT bölümleri
 
-- **5 (ÖNEMLİ)** `/araclar` tek "çalışma alanı": segment/sekme araç seçici (rotayı
-  yansıtır, derin link + paylaşım), araç değişiminde akışkan geçiş, HER ARAÇ kendi
-  girdisi/sonuç dökümü/**kendi gerçek sonucunu gösteren grafiği**, yıl seçici +
-  `UnverifiedRatesNotice` korunur, sonuç değişince sayı sayma animasyonu.
-  Mevcut hâl: 9 hesaplayıcı `ToolCalculator` slug eşlemesiyle ayrı sayfalarda,
-  grafik yok. Sonuç sözleşmesi tek tip: `CalculationResult<T>` (`headline` + `steps`
-  + `provenance`).
 - **6** Ana sayfadaki dili tüm iç sayfalara taşı (hizmet/sektör detay, kurumsal,
   mevzuat, SSS, iletişim). İletişim sayfası özellikle güçlü.
 - **7** Performans: WebGL/Lottie/grafik hepsi `dynamic` + IntersectionObserver;
   görseller AVIF/WebP + blur; GSAP/Three yalnızca kullanan sayfada; bundle analizi
   + en ağır 3 modül raporu. `lighthouserc.json`: perf 0.75 / LCP 3000 / CLS 0.05 /
-  a11y 1.0. **Ana sayfa ilk yük JS şu an 237 kB** (Bölüm 4'te 173→237: her
+  a11y 1.0. **İlk yük JS şu an: ana sayfa 237 kB** (Bölüm 4'te 173→237: her
   SceneSection başlığı SplitHeading = GSAP ilk bundle'da; `ServicesRail` useGSAP;
-  `ToolsShowcase`→`TaxBurdenPanel`). 220 kB hedefinin üstünde — Bölüm 7'nin işi.
+  `ToolsShowcase`→`TaxBurdenPanel`); **`/araclar` 182, `/araclar/[slug]` 178 kB**
+  (Bölüm 5: `AnimatePresence` + `RollingNumber` ilk bundle'da). 220 kB hedefinin
+  üstünde — Bölüm 7'nin işi (GSAP/motion/grafik dynamic import + IO ertelemesi).
 - **8** Erişilebilirlik (ESNEMEZ): tüm sayfalarda axe sıfır ihlal, reduced-motion
   tam, klavyeyle tüm akışlar (araç seçici, yatay rail, grafikler), pin klavye
   tuzağı yok, grafik sr-only tablo, Türkçe karakter split-type sonrası kontrol.
 
-### Bölüm 4 doğrulaması
+### Bölüm 4–5 doğrulaması
 
 `pnpm typecheck · lint · test` (tax-engine 65) `· build` — hepsi yeşil.
-**e2e bu ortamda koşulmadı** (tarayıcı + `pnpm start` gerekiyor); yeni ana sayfa
-sahneleri için `e2e/` axe/klavye senaryoları CI'da/yerelde doğrulanmalı.
-`RouteTransition` / `SmoothScroll` reduced-motion no-op yolu birim testli değil.
+**e2e bu ortamda koşulmadı** (tarayıcı + `pnpm start` gerekiyor). CI'da/yerelde
+doğrulanmalı: yeni ana sayfa sahneleri axe/klavye; **araç seçici tam klavye akışı
+(ok/Home/End, sekme→panel), `/araclar/[slug]` derin link + geri/ileri (`popstate`),
+`LedgerChart` sr karşılığı, `RollingNumber` reduced-motion**. `RouteTransition` /
+`SmoothScroll` / `RollingNumber` reduced-motion no-op yolu birim testli değil.
 
 ---
 
