@@ -35,15 +35,19 @@ const PAGES = [
  * karesini değil, içeriğin nihai render hâlini denetler.
  */
 async function settleReveals(page: import('@playwright/test').Page) {
+  // GSAP + split-type artık tembel `import()` (Bölüm 7). Başlık animasyonu
+  // chunk inince başlar; ağ boşalana kadar bekle ki axe geçici opacity:0
+  // karesini değil nihai render'ı görsün.
+  await page.waitForLoadState('networkidle').catch(() => {});
   await page.evaluate(async () => {
     const step = Math.max(window.innerHeight * 0.8, 400);
     for (let y = 0; y <= document.body.scrollHeight; y += step) {
       window.scrollTo(0, y);
-      await new Promise((r) => setTimeout(r, 120));
+      await new Promise((r) => setTimeout(r, 140));
     }
     window.scrollTo(0, 0);
   });
-  await page.waitForTimeout(400);
+  await page.waitForTimeout(700);
 }
 
 for (const path of PAGES) {

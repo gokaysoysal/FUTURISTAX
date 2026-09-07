@@ -1,5 +1,6 @@
 import { ToolWorkspace } from '@/components/calculators/ToolWorkspace';
 import { Breadcrumbs } from '@/components/content/Breadcrumbs';
+import { PageHero } from '@/components/content/PageHero';
 import { RequestCta } from '@/components/content/RequestCta';
 import { YearComparisonPanel } from '@/components/dashboards/YearComparisonPanel';
 import { Reveal } from '@/components/motion/Reveal';
@@ -18,20 +19,15 @@ export const metadata: Metadata = {
 export default function ToolsHubPage() {
   return (
     <div className="mx-auto max-w-6xl px-5 py-16">
-      <Breadcrumbs trail={[{ name: 'Araçlar', path: '/araclar' }]} />
+      <PageHero
+        eyebrow="Araçlar"
+        title="Hesaplama araçları"
+        backdrop="document-grid"
+        breadcrumbs={<Breadcrumbs trail={[{ name: 'Araçlar', path: '/araclar' }]} />}
+        lead="Dokuz araç tek çalışma alanında. Araç değiştirdikçe form ve sonuç yerinde geçiş yapar; her araç kendi girdisini, adım adım dökümünü ve kendi sonucunu gösteren grafiğini taşır. Oranlar seçtiğiniz vergi yılına göre gelir."
+      />
 
-      <header className="ledger-rule mt-6 pb-4">
-        <p className="basis-ref uppercase">Araçlar</p>
-        <h1 className="mt-1 text-[length:var(--text-3xl)]">Hesaplama araçları</h1>
-      </header>
-
-      <p className="mt-6 max-w-prose text-[length:var(--text-base)] text-[var(--color-text-secondary)]">
-        Dokuz araç tek çalışma alanında. Araç değiştirdikçe form ve sonuç yerinde geçiş yapar; her
-        araç kendi girdisini, adım adım dökümünü ve kendi sonucunu gösteren grafiğini taşır. Oranlar
-        seçtiğiniz vergi yılına göre gelir.
-      </p>
-
-      <Reveal className="mt-10">
+      <Reveal className="mt-12">
         <YearComparisonPanel />
       </Reveal>
 

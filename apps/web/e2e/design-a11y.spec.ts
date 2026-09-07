@@ -14,6 +14,8 @@ test.describe('yeni bileşenler — axe', () => {
   test('Vergi Yükü Panosu — grafik yüklendikten sonra ihlal yok', async ({ page }) => {
     await page.goto('/');
     const panel = page.getByTestId('tax-burden-panel');
+    // Grafik IntersectionObserver ile ertelendi (Bölüm 7); panel görünüre gelsin.
+    await panel.scrollIntoViewIfNeeded();
     await expect(panel).toBeVisible();
 
     // Bir girdiyi oynat; sonuçlar ve tembel grafik güncellensin.
@@ -33,6 +35,7 @@ test.describe('yeni bileşenler — axe', () => {
   test('Yıl Karşılaştırma — ihlal yok + yön metinle de var (WCAG 1.4.1)', async ({ page }) => {
     await page.goto('/araclar');
     const panel = page.getByTestId('year-comparison-panel');
+    await panel.scrollIntoViewIfNeeded();
     await expect(panel).toBeVisible();
     await expect(panel.locator('.recharts-surface').first()).toBeVisible({ timeout: 15000 });
 
