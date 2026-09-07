@@ -47,6 +47,8 @@ export function CommandPalette() {
     return fuse.search(q, { limit: MAX_RESULTS }).map((r) => r.item);
   }, [query, fuse, index]);
 
+  const hasResults = results.length > 0;
+
   const close = useCallback(() => {
     dialogRef.current?.close();
   }, []);
@@ -161,9 +163,11 @@ export function CommandPalette() {
               onKeyDown={onInputKeyDown}
               placeholder="Hizmet, sektör, makale, hesaplayıcı, SSS ara…"
               role="combobox"
-              aria-expanded="true"
-              aria-controls="cmdk-listbox"
-              aria-activedescendant={results[active] ? `cmdk-opt-${active}` : undefined}
+              aria-expanded={hasResults}
+              aria-controls={hasResults ? 'cmdk-listbox' : undefined}
+              aria-activedescendant={
+                hasResults && results[active] ? `cmdk-opt-${active}` : undefined
+              }
               autoComplete="off"
               spellCheck={false}
               className="w-full bg-transparent text-[length:var(--text-base)] text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] focus:outline-none"
@@ -173,56 +177,55 @@ export function CommandPalette() {
             </kbd>
           </div>
 
-          {/*
-           * WAI-ARIA APG "combobox with listbox popup" deseni: odak input'ta
-           * kalır, liste aria-activedescendant ile yönetilir. Native <select>/
-           * <option> zengin içerik / grup / async desteklemediği için
-           * useSemanticElements bilinçli bastırılıyor. tabIndex={-1}: script ile
-           * odaklanabilir ama tab sırasında değil.
-           */}
-          <div
-            id="cmdk-listbox"
-            // biome-ignore lint/a11y/useSemanticElements: komut paleti — <select> zengin içerik/grup/async taşımaz
-            role="listbox"
-            aria-label="Arama sonuçları"
-            tabIndex={-1}
-            className="overflow-y-auto py-2"
-          >
-            {results.length === 0 ? (
-              <p className="px-4 py-6 text-center text-[length:var(--text-sm)] text-[var(--color-text-secondary)]">
-                “{query}” için sonuç yok. Farklı bir terim deneyin.
-              </p>
-            ) : (
-              results.map((entry, i) => (
-                <div
+          {hasResults ? (
+            /*
+             * WAI-ARIA APG "combobox with listbox popup" deseni: odak input'ta
+             * kalır, liste aria-activedescendant ile yönetilir. Native <select>/
+             * <option> zengin içerik / grup / async desteklemediği için
+             * useSemanticElements bilinçli bastırılıyor. tabIndex={-1}: script
+             * ile odaklanabilir ama tab sırasında değil.
+             */
+            <div
+              id="cmdk-listbox"
+              // biome-ignore lint/a11y/useSemanticElements: komut paleti — <select> zengin içerik/grup/async taşımaz
+              role="listbox"
+              aria-label="Arama sonuçları"
+              tabIndex={-1}
+              className="overflow-y-auto py-2"
+            >
+              {results.map((entry, i) => (
+                // <button> = seçenek: native tıklama+klavye, odaklanabilir alt
+                // öğe yok (axe no-focusable-content). tabIndex={-1}: odak
+                // input'ta, seçim aria-activedescendant ile.
+                <button
                   key={entry.id}
+                  type="button"
                   id={`cmdk-opt-${i}`}
                   // biome-ignore lint/a11y/useSemanticElements: listbox içi option — <option> zengin içerik taşımaz
                   role="option"
                   aria-selected={i === active}
                   tabIndex={-1}
+                  onClick={() => go(entry)}
+                  onMouseMove={() => setActive(i)}
+                  className={`flex w-full items-baseline gap-3 px-4 py-2 text-left ${
+                    i === active ? 'bg-[var(--color-accent-soft)]' : ''
+                  }`}
                 >
-                  <button
-                    type="button"
-                    tabIndex={-1}
-                    onClick={() => go(entry)}
-                    onMouseMove={() => setActive(i)}
-                    className={`flex w-full items-baseline gap-3 px-4 py-2 text-left ${
-                      i === active ? 'bg-[var(--color-accent-soft)]' : ''
-                    }`}
-                  >
-                    <span className="text-[length:var(--text-sm)] text-[var(--color-text)]">
-                      {entry.title}
-                    </span>
-                    <span className="basis-ref shrink-0">{entry.group}</span>
-                    <span className="ml-auto hidden truncate text-[length:var(--text-xs)] text-[var(--color-text-muted)] sm:block sm:max-w-[46%]">
-                      {entry.description}
-                    </span>
-                  </button>
-                </div>
-              ))
-            )}
-          </div>
+                  <span className="text-[length:var(--text-sm)] text-[var(--color-text)]">
+                    {entry.title}
+                  </span>
+                  <span className="basis-ref shrink-0">{entry.group}</span>
+                  <span className="ml-auto hidden truncate text-[length:var(--text-xs)] text-[var(--color-text-muted)] sm:block sm:max-w-[46%]">
+                    {entry.description}
+                  </span>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <output className="block px-4 py-6 text-center text-[length:var(--text-sm)] text-[var(--color-text-secondary)]">
+              “{query}” için sonuç yok. Farklı bir terim deneyin.
+            </output>
+          )}
         </div>
       ) : null}
     </dialog>

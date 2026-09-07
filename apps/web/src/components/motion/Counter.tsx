@@ -53,9 +53,10 @@ export function Counter({ value, format = defaultFormat, duration = D.count, cla
     <span
       ref={ref}
       className={className}
-      aria-label={final}
       style={{ position: 'relative', display: 'inline-block', fontVariantNumeric: 'tabular-nums' }}
     >
+      {/* Ekran okuyucu nihai değeri okur; görünür katman animasyonlu. */}
+      <span className="sr-only">{final}</span>
       <span aria-hidden="true" style={{ visibility: 'hidden' }}>
         {final}
       </span>

@@ -31,9 +31,14 @@ export function YearComparisonChart({ data }: { data: YearBar[] }) {
   ];
 
   return (
-    <div aria-hidden="true" className="h-[240px]">
+    // inert + aria-hidden: dekoratif; SR karşılığı yıl karşılaştırma tablosu.
+    <div aria-hidden="true" inert className="h-[240px]">
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data} margin={{ top: 6, right: 6, bottom: 0, left: 0 }}>
+        <BarChart
+          data={data}
+          accessibilityLayer={false}
+          margin={{ top: 6, right: 6, bottom: 0, left: 0 }}
+        >
           <CartesianGrid stroke={c.grid} vertical={false} />
           <XAxis
             dataKey="year"
@@ -66,6 +71,7 @@ export function YearComparisonChart({ data }: { data: YearBar[] }) {
               name={s.name}
               fill={s.color}
               isAnimationActive={false}
+              tabIndex={-1}
             />
           ))}
         </BarChart>

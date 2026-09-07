@@ -46,12 +46,14 @@ export function TaxBurdenCharts({
   };
 
   return (
-    <div aria-hidden="true" className="grid gap-6 sm:grid-cols-2">
+    // inert + aria-hidden: grafik tümüyle dekoratif; SR karşılığı sr-only tablo.
+    // recharts iç <g>/<svg> odaklanabilir kalsa bile inert bunu etkisizleştirir.
+    <div aria-hidden="true" inert className="grid gap-6 sm:grid-cols-2">
       <figure className="m-0">
         <figcaption className="basis-ref mb-2 block">Dağılım</figcaption>
         <div className="h-[200px]">
           <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
+            <PieChart accessibilityLayer={false}>
               <Pie
                 data={components}
                 dataKey="annual"
@@ -62,6 +64,7 @@ export function TaxBurdenCharts({
                 stroke={c.surface}
                 strokeWidth={2}
                 isAnimationActive={false}
+                tabIndex={-1}
               >
                 {components.map((item) => (
                   <Cell key={item.key} fill={seriesColor[item.key]} />
@@ -86,7 +89,11 @@ export function TaxBurdenCharts({
         <figcaption className="basis-ref mb-2 block">Yıl içi kümülatif (tahmini)</figcaption>
         <div className="h-[200px]">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={timeline} margin={{ top: 6, right: 6, bottom: 0, left: 0 }}>
+            <AreaChart
+              data={timeline}
+              accessibilityLayer={false}
+              margin={{ top: 6, right: 6, bottom: 0, left: 0 }}
+            >
               <defs>
                 <linearGradient id="burden-fill" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor={c.accent} stopOpacity={0.35} />
@@ -125,6 +132,7 @@ export function TaxBurdenCharts({
                 strokeWidth={2}
                 fill="url(#burden-fill)"
                 isAnimationActive={false}
+                tabIndex={-1}
               />
             </AreaChart>
           </ResponsiveContainer>

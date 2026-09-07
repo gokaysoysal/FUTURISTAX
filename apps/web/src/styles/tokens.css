@@ -117,7 +117,7 @@
     --color-rule-strong: #b3bdc4;
     --color-text: #14191d; /* 16.5:1 · 17.7:1 · 15.3:1 */
     --color-text-secondary: #48545d; /* 7.2:1 · 7.8:1 · 6.7:1 */
-    --color-text-muted: #616e77; /* 4.9:1 · 5.2:1 · 4.5:1 */
+    --color-text-muted: #586269; /* canvas 5.8:1 · surface 6.2:1 · sunken 5.4:1 · accent-soft 5.3:1 */
     --color-accent: #2c5be0; /* 5.3:1 · 5.7:1 · 4.9:1 */
     --color-ink: #2c5be0;
     --color-accent-strong: #2450c9; /* buton zemini + beyaz metin: 6.8:1 */
@@ -144,9 +144,6 @@
 
   html {
     -webkit-text-size-adjust: 100%;
-    /* Zemin rengi html'de: gren dokusu (depth.css → body::before) zeminin
-       üstünde, içeriğin altında kalabilsin diye. */
-    background: var(--color-canvas);
     /* scroll-behavior: smooth KALDIRILDI — reduced-motion ile çakışıyordu.
        Aşağıda koşullu olarak açılıyor. */
   }
@@ -159,7 +156,7 @@
 
   body {
     margin: 0;
-    background: transparent;
+    background-color: var(--color-canvas);
     color: var(--color-text);
     font-family: var(--font-sans);
     font-size: var(--text-base);

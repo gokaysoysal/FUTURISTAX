@@ -43,6 +43,7 @@ export function TaxBurdenPanel() {
 
   return (
     <section
+      data-testid="tax-burden-panel"
       aria-labelledby={`${groupId}-title`}
       className="card surface-glow overflow-hidden p-6 sm:p-8"
     >

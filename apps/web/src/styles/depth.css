@@ -32,24 +32,18 @@
   /*
    * İnce gren dokusu — düz koyu yüzeylerde bantlaşmayı kırar.
    *
-   * Zemin rengi html'de; body şeffaf. Böylece body::before (z-index:-1)
-   * zeminin ÜSTÜNDE ama akıştaki içeriğin ALTINDA kalır — çocuklara
-   * z-index dayatmadan. Sabit konumlu, tıklanamaz. SVG feTurbulence,
-   * çok düşük opaklık. Açık temada kapalı (bantlaşma koyu gradyan sorunu).
+   * Zeminin KENDİSİNE işlenmiş (body background-image), ayrı bir katman DEĞİL.
+   * Böylece axe kontrast hesabı gerçek zemin rengini okur, doku üstteki metnin
+   * rengine karışmaz (fixed overlay bunu bozuyordu). Alfa (~%5) SVG'ye gömülü
+   * (feColorMatrix). Açık temada kapalı — bantlaşma koyu gradyan sorunu.
    */
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    opacity: 0.035;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  body {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
   @media (prefers-color-scheme: light) {
-    :root:not([data-theme="dark"]) body::before {
-      opacity: 0;
+    :root:not([data-theme="dark"]) body {
+      background-image: none;
     }
   }
 }

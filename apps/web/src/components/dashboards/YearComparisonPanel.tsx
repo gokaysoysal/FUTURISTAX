@@ -89,6 +89,7 @@ export function YearComparisonPanel() {
 
   return (
     <section
+      data-testid="year-comparison-panel"
       aria-labelledby={`${groupId}-title`}
       className="card surface-glow overflow-hidden p-6 sm:p-8"
     >
@@ -105,7 +106,15 @@ export function YearComparisonPanel() {
         <BurdenFields idPrefix={groupId} values={values} onChange={set} />
       </div>
 
-      <div className="mt-8 overflow-x-auto">
+      {/* Dar ekranda yatay kaydırılır. axe scrollable-region-focusable klavye
+          erişimi için tabIndex zorunlu kılıyor; biome non-interaktif öğede
+          istemiyor — attribute düzeyinde bilinçli bastırma. */}
+      <section
+        className="mt-8 overflow-x-auto"
+        // biome-ignore lint/a11y/noNoninteractiveTabindex: kaydırılabilir bölgeye klavye erişimi (axe)
+        tabIndex={0}
+        aria-label="Yıl karşılaştırma tablosu"
+      >
         <table className="ledger-grid w-full text-[length:var(--text-sm)]">
           <caption className="sr-only">
             Vergi yükü kalemlerinin {base.year}, {latest.year} ve ara yıllara göre karşılaştırması;
@@ -191,7 +200,7 @@ export function YearComparisonPanel() {
             })}
           </tbody>
         </table>
-      </div>
+      </section>
 
       <div className="mt-6">
         <Chart data={chartData} />
