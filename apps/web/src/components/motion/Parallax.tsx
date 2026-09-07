@@ -1,6 +1,6 @@
 'use client';
 
-import { ease } from '@/lib/motion';
+import { distance, ease } from '@/lib/motion';
 import { motion, useReducedMotion, useScroll, useSpring, useTransform } from 'motion/react';
 import { type ReactNode, useRef } from 'react';
 
@@ -28,7 +28,7 @@ export function Parallax({
     target: ref,
     offset: ['start end', 'end start'],
   });
-  const range = 120 * speed;
+  const range = distance.parallax * speed;
   const y = useSpring(useTransform(scrollYProgress, [0, 1], [range, -range]), {
     stiffness: 120,
     damping: 30,
