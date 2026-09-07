@@ -8,6 +8,7 @@ import {
   getRates,
 } from '@futuristax/tax-engine';
 import { useMemo, useState } from 'react';
+import { LedgerChart } from './LedgerChart';
 import { ResultLedger } from './ResultLedger';
 
 /**
@@ -85,7 +86,26 @@ export function VehicleExpenseCalculator() {
       </div>
 
       <div aria-live="polite">
-        <ResultLedger result={result} />
+        <ResultLedger
+          result={result}
+          chart={
+            <LedgerChart
+              caption="Toplam giderin indirilebilir / KKEG dağılımı"
+              segments={[
+                {
+                  label: 'İndirilebilir (gider + KDV)',
+                  value: result.detail.deductibleExpense + result.detail.deductibleVat,
+                  tone: 'positive',
+                },
+                {
+                  label: 'KKEG (gider + KDV)',
+                  value: result.detail.nonDeductibleExpense + result.detail.nonDeductibleVat,
+                  tone: 'warning',
+                },
+              ]}
+            />
+          }
+        />
       </div>
     </div>
   );

@@ -3,6 +3,7 @@
 import { StatusPanel } from '@/components/ui/StatusPanel';
 import { availableCpiYears, calculateInflationAdjustment } from '@futuristax/tax-engine';
 import { useMemo, useState } from 'react';
+import { LedgerChart } from './LedgerChart';
 import { ResultLedger } from './ResultLedger';
 import { SelectField, TextField, parseNumeric } from './fields';
 
@@ -55,7 +56,26 @@ export function InflationCalculator() {
 
       <div aria-live="polite">
         {result ? (
-          <ResultLedger result={result} />
+          <ResultLedger
+            result={result}
+            chart={
+              <LedgerChart
+                caption="Güncellenmiş değerin nominal + kayıp bileşimi"
+                segments={[
+                  {
+                    label: 'Nominal tutar',
+                    value: result.detail.adjustedAmount - result.detail.purchasingPowerLoss,
+                    tone: 'accent',
+                  },
+                  {
+                    label: 'Satın alma gücü kaybı',
+                    value: result.detail.purchasingPowerLoss,
+                    tone: 'warning',
+                  },
+                ]}
+              />
+            }
+          />
         ) : (
           <StatusPanel
             tone="empty"

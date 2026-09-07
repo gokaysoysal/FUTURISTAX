@@ -2,6 +2,7 @@
 
 import { DEFAULT_YEAR, type TaxYear, calculateSeverance, getRates } from '@futuristax/tax-engine';
 import { useMemo, useState } from 'react';
+import { LedgerChart } from './LedgerChart';
 import { ResultLedger } from './ResultLedger';
 import { TextField, YearSelect, parseNumeric } from './fields';
 
@@ -67,7 +68,18 @@ export function SeveranceCalculator() {
       </div>
 
       <div aria-live="polite">
-        <ResultLedger result={result} />
+        <ResultLedger
+          result={result}
+          chart={
+            <LedgerChart
+              caption="Brüt kıdem tazminatının dağılımı"
+              segments={[
+                { label: 'Net ödenecek', value: result.detail.netSeverance, tone: 'positive' },
+                { label: 'Damga vergisi', value: result.detail.stampDuty, tone: 'warning' },
+              ]}
+            />
+          }
+        />
       </div>
     </div>
   );

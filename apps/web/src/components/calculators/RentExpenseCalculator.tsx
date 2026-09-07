@@ -2,6 +2,7 @@
 
 import { DEFAULT_YEAR, type TaxYear, calculateRentExpense, getRates } from '@futuristax/tax-engine';
 import { useMemo, useState } from 'react';
+import { LedgerChart } from './LedgerChart';
 import { ResultLedger } from './ResultLedger';
 import { TextField, YearSelect, parseNumeric } from './fields';
 
@@ -40,7 +41,22 @@ export function RentExpenseCalculator() {
       </div>
 
       <div aria-live="polite">
-        <ResultLedger result={result} />
+        <ResultLedger
+          result={result}
+          chart={
+            <LedgerChart
+              caption="Aylık kira bedelinin sınır dağılımı"
+              segments={[
+                {
+                  label: 'Aylık indirilebilir',
+                  value: result.detail.deductibleMonthly,
+                  tone: 'positive',
+                },
+                { label: 'Aylık aşan (KKEG)', value: result.detail.excessMonthly, tone: 'warning' },
+              ]}
+            />
+          }
+        />
       </div>
     </div>
   );

@@ -1,7 +1,9 @@
+import { RollingNumber } from '@/components/motion/RollingNumber';
 import { UnverifiedRatesNotice } from '@/components/ui/UnverifiedRatesNotice';
 import { formatByKind } from '@/lib/format';
 import { site } from '@futuristax/config';
 import type { CalculationResult } from '@futuristax/tax-engine';
+import type { ReactNode } from 'react';
 
 /**
  * Hesap sonucunu defter düzeninde gösterir.
@@ -18,18 +20,30 @@ const EMPHASIS_COLOR = {
   neutral: 'text-[var(--color-text)]',
 } as const;
 
-export function ResultLedger<T>({ result }: { result: CalculationResult<T> }) {
+export function ResultLedger<T>({
+  result,
+  chart,
+}: {
+  result: CalculationResult<T>;
+  /** Araca özel görsel kırılım (LedgerChart). steps tablosunun görsel eşleniği. */
+  chart?: ReactNode;
+}) {
+  const { kind, value, label } = result.headline;
   return (
     <div className="ledger-margin border border-[var(--color-rule)] bg-[var(--color-surface)]">
       <div className="flex items-baseline justify-between gap-4 border-b border-[var(--color-rule)] px-5 py-4">
         <span className="text-[length:var(--text-xs)] uppercase tracking-wide text-[var(--color-text-secondary)]">
-          {result.headline.label}
+          {label}
         </span>
         <span
           data-numeric
           className="font-[family-name:var(--font-display)] text-[length:var(--text-2xl)] text-[var(--color-text)]"
         >
-          {formatByKind(result.headline.value, result.headline.kind)}
+          {kind === 'percent' ? (
+            formatByKind(value, kind)
+          ) : (
+            <RollingNumber value={value} format={(n) => formatByKind(n, kind)} />
+          )}
         </span>
       </div>
 
@@ -63,6 +77,8 @@ export function ResultLedger<T>({ result }: { result: CalculationResult<T> }) {
           ))}
         </tbody>
       </table>
+
+      {chart}
 
       <div className="space-y-3 border-t border-[var(--color-rule)] px-5 py-4">
         <UnverifiedRatesNotice provenance={result.provenance} />

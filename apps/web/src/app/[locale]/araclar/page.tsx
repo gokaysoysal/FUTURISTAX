@@ -1,10 +1,10 @@
+import { ToolWorkspace } from '@/components/calculators/ToolWorkspace';
 import { Breadcrumbs } from '@/components/content/Breadcrumbs';
 import { RequestCta } from '@/components/content/RequestCta';
 import { YearComparisonPanel } from '@/components/dashboards/YearComparisonPanel';
 import { Reveal } from '@/components/motion/Reveal';
 import { TOOLS } from '@/lib/tools';
 import type { Metadata } from 'next';
-import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Hesaplama araçları',
@@ -26,36 +26,20 @@ export default function ToolsHubPage() {
       </header>
 
       <p className="mt-6 max-w-prose text-[length:var(--text-base)] text-[var(--color-text-secondary)]">
-        Her araç yalnızca sonucu değil, hesabın nasıl çıktığını da gösterir. Kalemlerin dayandığı
-        kanun maddeleri satır satır belirtilir; oranlar seçtiğiniz vergi yılına göre gelir.
+        Dokuz araç tek çalışma alanında. Araç değiştirdikçe form ve sonuç yerinde geçiş yapar; her
+        araç kendi girdisini, adım adım dökümünü ve kendi sonucunu gösteren grafiğini taşır. Oranlar
+        seçtiğiniz vergi yılına göre gelir.
       </p>
 
       <Reveal className="mt-10">
         <YearComparisonPanel />
       </Reveal>
 
-      <Reveal className="mt-10">
-        <ul className="grid gap-px bg-[var(--color-rule)] sm:grid-cols-2 lg:grid-cols-3">
-          {TOOLS.map((tool) => (
-            <li key={tool.slug} className="bg-[var(--color-canvas)]">
-              <Link
-                href={`/araclar/${tool.slug}`}
-                className="block h-full p-6 transition-colors hover:bg-[var(--color-surface)]"
-              >
-                <h2 className="text-[length:var(--text-lg)] text-[var(--color-text)]">
-                  {tool.short}
-                </h2>
-                <p className="mt-2 line-clamp-3 text-[length:var(--text-sm)] text-[var(--color-text-secondary)]">
-                  {tool.description}
-                </p>
-                <span className="basis-ref mt-3 inline-block">{tool.basis}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </Reveal>
-
       <div className="mt-12">
+        <ToolWorkspace initialSlug={TOOLS[0]?.slug ?? 'kdv'} />
+      </div>
+
+      <div className="mt-14">
         <RequestCta />
       </div>
     </div>
