@@ -18,7 +18,7 @@ export function ClosingCta() {
       className="relative isolate overflow-hidden py-[var(--spacing-section)]"
     >
       <SceneBackdrop variant="light-field" />
-      <SceneRegion tone={0.9} density={0.74} depth={0.9} flow={0.45} />
+      <SceneRegion tone={0.9} density={0.78} depth={0.9} flow={0.55} />
       <div className="text-scrim relative z-10 mx-auto max-w-3xl px-5 text-center">
         <SplitHeading
           as="h2"

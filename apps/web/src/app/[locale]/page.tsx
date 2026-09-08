@@ -3,6 +3,7 @@ import { EngagementModels } from '@/components/home/EngagementModels';
 import { FeatureTriad } from '@/components/home/FeatureTriad';
 import { Hero } from '@/components/home/Hero';
 import { LogoMarquee } from '@/components/home/LogoMarquee';
+import { PhraseMarquee } from '@/components/home/PhraseMarquee';
 import { PinnedCapabilities } from '@/components/home/PinnedCapabilities';
 import { ServicesQuad } from '@/components/home/ServicesQuad';
 import { SolutionsSection } from '@/components/home/SolutionsSection';
@@ -48,6 +49,7 @@ export default function HomePage() {
         deadlineCount={deadlines.length}
         burdenTotalLabel={burdenTotalLabel}
       />
+      <PhraseMarquee />
       <SolutionsSection />
       <LogoMarquee />
       <FeatureTriad />

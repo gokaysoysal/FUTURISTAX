@@ -153,7 +153,7 @@ export function PinnedCapabilities() {
       aria-labelledby="yetenekler-title"
       className="relative isolate overflow-hidden"
     >
-      <SceneRegion tone={0.55} density={0.62} depth={0.62} flow={0.55} />
+      <SceneRegion tone={0.55} density={0.7} depth={0.62} flow={0.62} />
       <div
         data-pin
         className="flex min-h-screen flex-col justify-center py-[var(--spacing-section)]"

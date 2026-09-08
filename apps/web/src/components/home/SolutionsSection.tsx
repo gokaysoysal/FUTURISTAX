@@ -23,7 +23,7 @@ export function SolutionsSection() {
       className="relative isolate overflow-hidden py-[var(--spacing-section)]"
     >
       <SceneBackdrop variant="light-field" />
-      <SceneRegion tone={0.34} density={0.52} depth={0.36} flow={0.4} />
+      <SceneRegion tone={0.34} density={0.6} depth={0.36} flow={0.5} />
       <div className="relative z-10 mx-auto grid max-w-7xl gap-12 px-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center">
         <Parallax speed={0.15} className="text-scrim">
           <p className="basis-ref uppercase">{solutionsContent.eyebrow}</p>
