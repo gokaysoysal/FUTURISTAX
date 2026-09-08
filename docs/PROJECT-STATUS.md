@@ -17,7 +17,7 @@ Hero düzeltmeleri + scroll hareketi + tipografi (bkz. `docs/V5-HERO-PROMPT.md`)
 Altyapı (tax-engine / API / DB / form / dağıtım) DEĞİŞMEDİ. Her bölüm ayrı commit,
 sonunda `pnpm typecheck · lint · test · build` YEŞİL.
 
-`9e0c1e6` (1) · `854baac` (2) · `<3>` (3).
+`9e0c1e6` (1) · `854baac` (2) · `e2474c7` (3).
 
 **Bu ortamda TARAYICI/`pnpm start` YOK** — her bölümün "AÇ VE GÖZLE DOĞRULA"
 adımı (5 genişlikte kart çakışması, canlı görünüm, axe, Lighthouse) kullanıcı
