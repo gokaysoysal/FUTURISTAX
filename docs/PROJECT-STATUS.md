@@ -2,11 +2,57 @@
 
 > **Her yeni oturumda önce bu dosyayı oku.** Kurallar ve mimari için `CLAUDE.md`.
 
-**Son güncelleme:** 2026-09-07 — V4-AKIS koşusu (`v4-akis` dalı, `v2`'den), **6/6 bölüm bitti**.
-Önceki: V3 SUNUM KATMANI (`v2-fx`, `v2`'ye merge edildi) · TASARIM YÖNÜ DEĞİŞİMİ (`v2-tasarim`).
-**Depo:** github.com/gokaysoysal/FUTURISTAX — çalışma dalı `v2`, aktif koşu dalı `v4-akis`
+**Son güncelleme:** 2026-09-08 — V5-HERO koşusu (`v5-hero` dalı, `v2`'den), **3/3 bölüm bitti**.
+Önceki: V4-AKIS (`v4-akis`, `v2`'ye merge edildi) · V3 SUNUM KATMANI (`v2-fx`, merge) ·
+TASARIM YÖNÜ DEĞİŞİMİ (`v2-tasarim`, `v2`'ye absorbe — 26 commit geride).
+**Depo:** github.com/gokaysoysal/FUTURISTAX — çalışma dalı `v2`, aktif koşu dalı `v5-hero`
 **Önizleme:** deploy-preview-1--futuristax.netlify.app
 **Canlı site:** futuristax.com — hâlâ ESKİ sürüm (`main` dalı, `legacy/index.html`)
+
+---
+
+## 0-Y. V5-HERO KOŞUSU — 2026-09-08 (`v5-hero`, `v2`'den)
+
+Hero düzeltmeleri + scroll hareketi + tipografi (bkz. `docs/V5-HERO-PROMPT.md`).
+Altyapı (tax-engine / API / DB / form / dağıtım) DEĞİŞMEDİ. Her bölüm ayrı commit,
+sonunda `pnpm typecheck · lint · test · build` YEŞİL.
+
+`9e0c1e6` (1) · `854baac` (2) · `<3>` (3).
+
+**Bu ortamda TARAYICI/`pnpm start` YOK** — her bölümün "AÇ VE GÖZLE DOĞRULA"
+adımı (5 genişlikte kart çakışması, canlı görünüm, axe, Lighthouse) kullanıcı
+veya CI'da yapılmalı. Kod tarafı doğrulaması tam.
+
+### Ön iş
+
+- Dış klasördeki `…/FUTURISTAX/CLAUDE.md` (V4 öncesi, çelişkili kopya) SİLİNDİ;
+  yalnızca iç çalışma kopyasındaki (`…/FUTURISTAX/FUTURISTAX/CLAUDE.md`) kaldı.
+- Çalışma kopyası `v2`'nin tepesindeydi (`v2-tasarim` değil); `v5-hero` `v2`'den
+  açıldı.
+
+### Bölümler
+
+| # | Bölüm | Not |
+|---|---|---|
+| 1 | Hero görünen hatalar | **Kart çakışması:** yüzen kartlar başlık sütununun (`max-w-3xl`) DIŞINDA — `xl`+ (1280px) sol/sağ raylarda (`left/right:0`, kapsayıcı 76rem, kart 12rem), negatif offset yok; `<xl` CTA altında ızgara. **Başlık kırpılması:** sabit `--text-6xl` → akışkan `--text-hero` clamp; `hyphens:auto`; `SplitHeading by="words"` artık yalnız `words` böler (`lines` → `overflow:hidden` satır div'i genişliği donduruyordu = soldan kırpma). **Siyah blok:** HeroScene vinyet tabanı 0.32→0.62 + canvas clear color `--color-canvas`. |
+| 2 | Scroll'a bağlı hareket | **Kalıcı site-geneli arka plan:** `components/backdrop/` (SiteBackdrop karar · SiteBackdropScene R3F shader `dynamic ssr:false` · SiteBackdropFallback statik · SceneRegion bölüm kaydı). `[locale]/layout.tsx`'te bir kez, `fixed -z-10`, rota değişiminde remount yok. `lib/motion/raf.ts` TEK paylaşımlı rAF (sekme gizliyken durur). `lib/motion/backdrop-scene.ts` Lenis ilerlemesi (0..1) + bölüm tone/density/depth/flow hedefleri, kare-hızından bağımsız sönümlü lerp. Hero'nun kendi WebGL canvas'ı (`hero/`) KALDIRILDI. **Kartlar:** imleç-parallax + CSS drift → GSAP ScrollTrigger scrub (derinliğe göre hız, döner/ölçeklenir, dağılarak solar; xl+ & motion açık). **Bölüm içi:** SolutionsSection `Parallax`+`ScrollZoom`. **Okunabilirlik:** `.text-scrim` (efektif zemin `--color-canvas`) hero+kapanışta; sahne alfası ≤0.55. **Perf:** DPR≤2 (mobil 1.5), mobil fbm 4→2 oktav, three ilk yükte değil. **Yedek:** reduced-motion/WebGL yok/düşük perf (`hardwareConcurrency≤4 \|\| deviceMemory≤4`) → statik. |
+| 3 | Tipografi | **Display: Space Grotesk → Syne** (değişken 400–800, ağırlık 600, `clamp(2.75rem,7vw,6rem)` hero, satır aralığı 1.05/hero 0.95). Gövde Familjen Grotesk + Mono IBM Plex Mono DEĞİŞMEDİ. Türkçe glif: Syne CSS2 `unicode-range` incelendi — 12 glif tam (`latin`: ı ç Ç ö Ö ü Ü · `latin-ext` U+0100–02BA: İ Ğ ğ Ş ş). Brief'in 7rem tavanı 6rem'e çekildi (Syne geniş; `max-w-3xl` sütunda 7rem 4+ satıra sarardı). `next/font` `['latin','latin-ext']` isteği = derleme-zamanı glif kontrolü. |
+
+### Bundle + doğrulama
+
+- **Ana sayfa ilk yük JS 177 → 181 kB** (< 220 hedefi). three/R3F/gsap ilk yükte
+  DEĞİL (backdrop sahnesi `dynamic ssr:false`).
+- `pnpm typecheck · lint · test` (tax-engine 65) `· build` — hepsi yeşil.
+- `playwright --list` temiz (92 test / 7 dosya).
+- **CI'da doğrulanacak:** hero 5 genişlikte kart-başlık çakışması yok · scroll'da
+  backdrop + kartlar hareket · `.text-scrim` altında kontrast (axe motion açık +
+  reduced-motion) · reduced-motion'da backdrop donuk + parallax kapalı · Türkçe
+  karakterler Syne'de + split-type sonrası düşmüyor · Lighthouse perf/LCP.
+
+### Sonraki adım
+
+- Kullanıcı/CI tarayıcı QA → `v5-hero` → `v2` merge.
+- `main`'e ERKEN GEÇME.
 
 ---
 

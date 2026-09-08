@@ -12,7 +12,7 @@ import { site } from '@futuristax/config';
 import type { Metadata, Viewport } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
-import { Familjen_Grotesk, IBM_Plex_Mono, Space_Grotesk } from 'next/font/google';
+import { Familjen_Grotesk, IBM_Plex_Mono, Syne } from 'next/font/google';
 import type { ReactNode } from 'react';
 import 'lenis/dist/lenis.css';
 import '@/styles/tokens.css';
@@ -24,21 +24,23 @@ import '@/styles/home.css';
  * Fontlar self-host edilir (next/font/google → .woff2 derlemede indirilir ve
  * uygulama ile paketlenir, dış istek yok). display: swap.
  *
- * Roller (Bölüm 3):
- *  - Display: Space Grotesk (değişken) — geniş, teknik grotesk; hero'da sıkı
- *    tracking'le çalışır. Inter/Newsreader jenerikliğinden çıkış.
+ * Roller (V5 Bölüm 3):
+ *  - Display: Syne (değişken, 400–800) — geniş, geometrik, çağdaş; hero'da
+ *    büyük ve iddialı, sıkı tracking (-0.03em). Space Grotesk'ten daha ayırt
+ *    edici. (Kullanıcı onayı 2026-09-08.)
  *  - Gövde:  Familjen Grotesk (değişken) — sakin, yüksek x-height, uzun Türkçe
- *    metin için okunaklı; display'den ayrışır.
- *  - Mono:   IBM Plex Mono (400/500) — kanun maddesi göndermeleri. Kalıyor.
+ *    metin için okunaklı; display'den net ayrışır. DEĞİŞMEDİ.
+ *  - Mono:   IBM Plex Mono (400/500) — kanun maddesi göndermeleri. DEĞİŞMEDİ.
  * Değişken fontlarda weight verilmez: tek dosya, tüm ağırlıklar.
  *
- * TÜRKÇE GLİF DOĞRULAMASI: üçünün de Google Fonts 'latin-ext' alt kümesi var.
- * Gerekli 12 glif — ı (U+0131, latin) · İ (U+0130) · ğ Ğ (U+011E–F) ·
- * ş Ş (U+015E–F) [latin-ext] · ç Ç ö Ö ü Ü (latin) — sunulan unicode-range
- * içinde. next/font, ailede olmayan alt küme istenirse derlemeyi kırar;
- * bu istek ('latin' + 'latin-ext') başlı başına derleme-zamanı kontrolüdür.
+ * TÜRKÇE GLİF DOĞRULAMASI (Syne, Google Fonts CSS2 unicode-range incelendi):
+ * gerekli 12 glif tam kapsanıyor —
+ *   latin      : ı (U+0131) · ç Ç ö Ö ü Ü (U+00C7/E7, 00D6/F6, 00DC/FC)
+ *   latin-ext  : İ (U+0130) · Ğ ğ (U+011E–F) · Ş ş (U+015E–F)  [U+0100–02BA]
+ * next/font, ailede olmayan alt küme istenirse derlemeyi kırar; bu istek
+ * ('latin' + 'latin-ext') başlı başına derleme-zamanı kontrolüdür.
  */
-const display = Space_Grotesk({
+const display = Syne({
   subsets: ['latin', 'latin-ext'],
   variable: '--font-display-loaded',
   display: 'swap',

@@ -120,20 +120,24 @@ Parlak azur bir buton **zemini** olarak kullanılırsa üstüne koyu metin gelir
 
 ### Tipografi
 
-- **Display:** **Space Grotesk** (değişken) — geniş, teknik grotesk; hero'da
-  sıkı tracking (`-0.03em`) ile. Inter/Newsreader jenerikliğinden çıkış.
+- **Display:** **Syne** (değişken, 400–800) — geniş, geometrik, çağdaş; hero'da
+  büyük ve iddialı (`--text-hero` = `clamp(2.75rem, 7vw, 6rem)`), sıkı tracking
+  (`-0.03em`), yakın satır aralığı (başlık 1.05 / hero 0.95). Başlık ağırlığı
+  600. **V5 Bölüm 3'te Space Grotesk'in yerini aldı** (kullanıcı onayı
+  2026-09-08); Space Grotesk "sıradan" bulundu.
 - **Gövde:** **Familjen Grotesk** (değişken) — sakin, yüksek x-height, uzun
-  Türkçe metinde okunaklı; display'den ayrışır.
-- **Mono:** IBM Plex Mono — kanun maddesi göndermeleri. Kalıyor.
-- Türkçe glif doğrulaması (ı İ ğ Ğ ş Ş ç Ç ö Ö ü Ü): üçünün de Google Fonts
-  `latin-ext` alt kümesi var; gerekli codepoint'ler sunulan `unicode-range`
-  içinde. `next/font`, ailede olmayan alt küme istenirse derlemeyi kırar —
+  Türkçe metinde okunaklı; display'den net ayrışır. **DEĞİŞMEDİ.**
+- **Mono:** IBM Plex Mono — kanun maddesi göndermeleri. **DEĞİŞMEDİ.**
+- Türkçe glif doğrulaması (ı İ ğ Ğ ş Ş ç Ç ö Ö ü Ü): Syne'nin Google Fonts
+  CSS2 `unicode-range`'i incelendi — `latin` alt kümesi ı + ç/Ç/ö/Ö/ü/Ü'yü,
+  `latin-ext` (U+0100–02BA) İ + Ğ/ğ + Ş/ş'yi kapsıyor. 12 glifin tamamı var.
+  `next/font`, ailede olmayan alt küme istenirse derlemeyi kırar —
   `['latin','latin-ext']` isteği başlı başına derleme-zamanı kontrolü.
-  Fontshare adayları (Clash/Satoshi vb.) elenmedi ama seçilmedi: bu ortamda
-  font ikili glif tablosu programatik doğrulanamıyordu; Google + `latin-ext`
-  garantili yol. Ayrıntı: `apps/web/src/app/[locale]/layout.tsx` yorumu.
-- `next/font/google` ile self-host, `display: swap`, iki grotesk değişken
-  sürümle (weight verilmez → tek dosya). `--font-*-loaded` → tokens.css'te
+  Fontshare adayları (Clash/Satoshi vb.) yine seçilmedi: bu ortamda ikili glif
+  tablosu programatik doğrulanamıyor; Google CSS2 `unicode-range` garantili yol.
+  Ayrıntı: `apps/web/src/app/[locale]/layout.tsx` yorumu.
+- `next/font/google` ile self-host, `display: swap`, değişken sürümlerle
+  (weight verilmez → tek dosya). `--font-*-loaded` → tokens.css'te
   `--font-display/sans/mono` zinciriyle bağlı.
 
 ### Hareket — DİSİPLİN (V4-AKIS)

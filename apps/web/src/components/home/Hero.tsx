@@ -40,7 +40,7 @@ export function Hero({
           <SplitHeading
             as="h1"
             by="words"
-            className="mt-4 text-[length:var(--text-hero)] text-[var(--color-text)] [hyphens:auto]"
+            className="mt-4 text-[length:var(--text-hero)] leading-[0.95] text-[var(--color-text)] [hyphens:auto]"
           >
             {heroContent.title}
           </SplitHeading>
