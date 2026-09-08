@@ -249,6 +249,41 @@
   }
 
   /*
+   * Metin perdesi (scrim) — hareketli arka plan üzerinde OKUNABİLİRLİK
+   * güvencesi (V5 Bölüm 2 · madde 4 · ESNEMEZ). Metin bloğunun arkasına
+   * yumuşak, düşük opaklıklı bir zemin katmanı koyar: efektif zemin
+   * `--color-canvas`'a döner, böylece token kontrast oranları (gövde 17.4:1)
+   * korunur. Yalnızca sahne yoğunluğu yüksek bölümlerde kullan.
+   */
+  .text-scrim {
+    position: relative;
+    isolation: isolate;
+  }
+  .text-scrim::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -1.25rem -1.75rem;
+    background: radial-gradient(
+      120% 130% at 50% 42%,
+      color-mix(in oklab, var(--color-canvas) 86%, transparent) 0%,
+      color-mix(in oklab, var(--color-canvas) 60%, transparent) 58%,
+      transparent 100%
+    );
+    pointer-events: none;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) .text-scrim::before {
+      background: radial-gradient(
+        120% 130% at 50% 42%,
+        color-mix(in oklab, var(--color-canvas) 88%, transparent) 0%,
+        color-mix(in oklab, var(--color-canvas) 64%, transparent) 58%,
+        transparent 100%
+      );
+    }
+  }
+
+  /*
    * Bölüm geçişi ışık huzmesi — iki bölüm arasında ince yatay parıltı.
    * Bir <div aria-hidden> ya da ::before olarak. Yükseklik küçük, blur yumuşak.
    */

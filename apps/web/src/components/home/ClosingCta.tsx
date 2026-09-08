@@ -1,3 +1,4 @@
+import { SceneRegion } from '@/components/backdrop/SceneRegion';
 import { SceneBackdrop } from '@/components/media/SceneBackdrop';
 import { MagneticButton } from '@/components/motion/MagneticButton';
 import { Reveal } from '@/components/motion/Reveal';
@@ -17,7 +18,8 @@ export function ClosingCta() {
       className="relative isolate overflow-hidden py-[var(--spacing-section)]"
     >
       <SceneBackdrop variant="light-field" />
-      <div className="relative z-10 mx-auto max-w-3xl px-5 text-center">
+      <SceneRegion tone={0.9} density={0.74} depth={0.9} flow={0.45} />
+      <div className="text-scrim relative z-10 mx-auto max-w-3xl px-5 text-center">
         <SplitHeading
           as="h2"
           id="closing-cta-title"

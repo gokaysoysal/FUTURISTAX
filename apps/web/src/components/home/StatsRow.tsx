@@ -1,3 +1,4 @@
+import { SceneRegion } from '@/components/backdrop/SceneRegion';
 import { SceneSection } from '@/components/home/SceneSection';
 import { Counter } from '@/components/motion/Counter';
 import { Reveal } from '@/components/motion/Reveal';
@@ -24,6 +25,7 @@ export function StatsRow() {
 
   return (
     <SceneSection id="rakamlar" eyebrow="Rakamlar" title="Sayılarla" backdrop="light-field">
+      <SceneRegion tone={0.72} density={0.4} depth={0.72} flow={0.3} />
       <Reveal>
         <dl className="grid grid-cols-2 gap-px bg-[var(--color-rule)] sm:grid-cols-4">
           {stats.map((s) => (

@@ -72,6 +72,13 @@
     height: 100%;
   }
 
+  /* Site geneli kalıcı arka plan canvas'ı (V5 Bölüm 2) — sabit sarmalayıcıyı
+     tam doldurur; taşma yaratmaz. Sarmalayıcı `SiteBackdrop`'ta fixed + -z-10. */
+  .site-backdrop {
+    position: absolute !important;
+    inset: 0;
+  }
+
   /* Bölüm arası görsel nefes — ince ışık ayracı. */
   .scene-divider {
     height: 1px;

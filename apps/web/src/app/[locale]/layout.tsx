@@ -1,3 +1,4 @@
+import { SiteBackdrop } from '@/components/backdrop/SiteBackdrop';
 import { CookieConsent } from '@/components/consent/CookieConsent';
 import { SiteFooter } from '@/components/layout/SiteFooter';
 import { SiteHeader } from '@/components/layout/SiteHeader';
@@ -98,6 +99,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className={`${display.variable} ${sans.variable} ${mono.variable}`}>
       <body>
+        <SiteBackdrop />
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:bg-[var(--color-accent-strong)] focus:px-4 focus:py-2 focus:text-white"

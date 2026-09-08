@@ -1,7 +1,10 @@
+import { SceneRegion } from '@/components/backdrop/SceneRegion';
 import { TaxBurdenPanel } from '@/components/dashboards/TaxBurdenPanel';
 import { SceneBackdrop } from '@/components/media/SceneBackdrop';
 import { MagneticButton } from '@/components/motion/MagneticButton';
+import { Parallax } from '@/components/motion/Parallax';
 import { Reveal } from '@/components/motion/Reveal';
+import { ScrollZoom } from '@/components/motion/ScrollZoom';
 import { SplitHeading } from '@/components/motion/SplitHeading';
 import { solutionsContent } from '@/lib/data/placeholder';
 import Link from 'next/link';
@@ -20,8 +23,9 @@ export function SolutionsSection() {
       className="relative isolate overflow-hidden py-[var(--spacing-section)]"
     >
       <SceneBackdrop variant="light-field" />
+      <SceneRegion tone={0.34} density={0.52} depth={0.36} flow={0.4} />
       <div className="relative z-10 mx-auto grid max-w-6xl gap-12 px-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center">
-        <div>
+        <Parallax speed={0.15} className="text-scrim">
           <p className="basis-ref uppercase">{solutionsContent.eyebrow}</p>
           <SplitHeading
             as="h2"
@@ -57,11 +61,11 @@ export function SolutionsSection() {
               </Link>
             </div>
           </Reveal>
-        </div>
+        </Parallax>
 
-        <Reveal delay={0.12} className="surface-glow">
+        <ScrollZoom from={0.94} className="surface-glow">
           <TaxBurdenPanel />
-        </Reveal>
+        </ScrollZoom>
       </div>
     </section>
   );

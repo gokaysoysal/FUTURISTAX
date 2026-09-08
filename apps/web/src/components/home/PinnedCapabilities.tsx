@@ -1,5 +1,6 @@
 'use client';
 
+import { SceneRegion } from '@/components/backdrop/SceneRegion';
 import { capabilitySteps } from '@/lib/data/placeholder';
 import { loadGsap } from '@/lib/motion/gsap-lazy';
 import { prefersReducedMotion } from '@/lib/motion/scroll';
@@ -152,6 +153,7 @@ export function PinnedCapabilities() {
       aria-labelledby="yetenekler-title"
       className="relative isolate overflow-hidden"
     >
+      <SceneRegion tone={0.55} density={0.62} depth={0.62} flow={0.55} />
       <div
         data-pin
         className="flex min-h-screen flex-col justify-center py-[var(--spacing-section)]"
