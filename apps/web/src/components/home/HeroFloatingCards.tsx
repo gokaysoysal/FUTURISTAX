@@ -13,7 +13,8 @@ import { useEffect, useRef, useState } from 'react';
  * - `prefers-reduced-motion` veya kaba işaretçi → sabit, sürüklenme yok.
  * - Kartlarda GERÇEK veri: sıradaki yükümlülük, güncel kur (istemci fetch;
  *   erişilemezse "—", uydurma kur YOK), örnek vergi yükü, 30 günlük yoğunluk.
- * - Masaüstünde absolute konumlu; `<lg` ekranda normal ızgara (aşağıda).
+ * - `xl`+ ekranda absolute konumlu (sol/sağ raylar, başlık sütununun dışında);
+ *   `<xl` ekranda CTA'ların altında normal ızgara — başlığa binmez (V5 Bölüm 1).
  */
 
 type Deadline = { title: string; date: string; daysRemaining: number };
@@ -133,13 +134,13 @@ export function HeroFloatingCards({
     <ul
       ref={layerRef}
       aria-label="Özet veriler"
-      className="hero-cards pointer-events-none mt-12 grid grid-cols-2 gap-3 lg:mt-0 lg:block"
+      className="hero-cards pointer-events-none mt-12 grid grid-cols-2 gap-3 xl:mt-0 xl:block"
     >
       {cards.map((c, i) => (
         <li
           key={c.key}
           data-depth={c.depth}
-          className={`hero-card glass rounded-xl border border-[var(--color-rule)] p-4 lg:absolute lg:w-52 hero-card-${i + 1}`}
+          className={`hero-card glass rounded-xl border border-[var(--color-rule)] p-4 xl:absolute xl:w-[12rem] hero-card-${i + 1}`}
         >
           <p className="text-[length:var(--text-xs)] text-[var(--color-text-secondary)]">
             {c.label}

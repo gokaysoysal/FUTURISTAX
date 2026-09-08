@@ -10,8 +10,13 @@ import Link from 'next/link';
  * HERO (V4-AKIS Bölüm 2 — referans sırası #1)
  *
  * Büyük display başlık (split-type kelime kelime, Türkçe glif korumalı) +
- * alt başlık + iki CTA. Başlığın çevresinde dört yüzen kart (GERÇEK veri),
- * WebGL sahnesinin önünde. Metin SSR ile gelir; sahne progressive biner.
+ * alt başlık + iki CTA. WebGL sahnesinin önünde.
+ *
+ * DÜZEN (V5 Bölüm 1 — görünen hatalar):
+ *  - Başlık sütunu `max-w-3xl`, ortalanmış; boyutu akışkan (`--text-hero`).
+ *  - Yüzen kartlar bu sütunun DIŞINDA: `xl`+ ekranda sol/sağ raylarda
+ *    (kapsayıcı `76rem`, sütun `48rem` → her rayda ~14rem, kart 12rem).
+ *    `xl` altında CTA'ların ALTINDA ızgara — başlığın üstüne asla binmez.
  */
 export function Hero({
   nextDeadline,
@@ -26,15 +31,15 @@ export function Hero({
     <section className="section-beam relative isolate flex min-h-[88vh] items-center overflow-hidden px-5 pt-20 pb-[var(--spacing-section)]">
       <HeroCanvas />
 
-      <div className="relative z-10 mx-auto w-full max-w-6xl">
-        <div className="relative lg:mx-auto lg:max-w-3xl lg:text-center">
+      <div className="relative z-10 mx-auto w-full max-w-[76rem]">
+        <div className="relative mx-auto max-w-3xl xl:text-center">
           <Reveal>
             <p className="basis-ref uppercase">{heroContent.eyebrow}</p>
           </Reveal>
           <SplitHeading
             as="h1"
             by="words"
-            className="mt-4 text-[length:var(--text-4xl)] text-[var(--color-text)] sm:text-[length:var(--text-6xl)]"
+            className="mt-4 text-[length:var(--text-hero)] text-[var(--color-text)] [hyphens:auto]"
           >
             {heroContent.title}
           </SplitHeading>
@@ -42,7 +47,7 @@ export function Hero({
             <p className="mx-auto mt-6 max-w-prose text-[length:var(--text-base)] text-[var(--color-text-secondary)] sm:text-[length:var(--text-lg)]">
               {heroContent.subtitle}
             </p>
-            <div className="mt-9 flex flex-wrap gap-3 lg:justify-center">
+            <div className="mt-9 flex flex-wrap gap-3 xl:justify-center">
               <MagneticButton>
                 <Link
                   href={heroContent.primaryCta.href}
@@ -65,13 +70,13 @@ export function Hero({
               </Link>
             </div>
           </Reveal>
-
-          <HeroFloatingCards
-            nextDeadline={nextDeadline}
-            deadlineCount={deadlineCount}
-            burdenTotalLabel={burdenTotalLabel}
-          />
         </div>
+
+        <HeroFloatingCards
+          nextDeadline={nextDeadline}
+          deadlineCount={deadlineCount}
+          burdenTotalLabel={burdenTotalLabel}
+        />
       </div>
     </section>
   );

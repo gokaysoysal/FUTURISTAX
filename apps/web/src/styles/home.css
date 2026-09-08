@@ -14,7 +14,10 @@
     transition: transform var(--dur-base) var(--ease-out);
   }
 
-  @media (min-width: 1024px) {
+  /* xl+ (≥1280px): kartlar başlık sütununun (`max-w-3xl`) DIŞINDA, sol/sağ
+     raylarda. Kapsayıcı 76rem, sütun 48rem → her ray ~14rem; kart 12rem,
+     `left/right: 0` ile raya sabit — negatif offset yok, sütuna girmez. */
+  @media (min-width: 1280px) {
     .hero-cards {
       position: absolute;
       inset: 0;
@@ -23,23 +26,23 @@
       animation: hero-drift 9s ease-in-out infinite alternate;
     }
     .hero-card-1 {
-      top: 2%;
-      left: -3%;
+      top: 4%;
+      left: 0;
       animation-delay: 0s;
     }
     .hero-card-2 {
-      top: 14%;
-      right: -5%;
+      top: 15%;
+      right: 0;
       animation-delay: -2.25s;
     }
     .hero-card-3 {
-      bottom: 12%;
-      left: 1%;
+      bottom: 10%;
+      left: 0;
       animation-delay: -4.5s;
     }
     .hero-card-4 {
       bottom: 0%;
-      right: 3%;
+      right: 0;
       animation-delay: -6.75s;
     }
   }

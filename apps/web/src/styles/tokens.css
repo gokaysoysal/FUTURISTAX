@@ -84,6 +84,9 @@
   --text-5xl: 3.75rem;
   --text-6xl: 4.5rem; /* hero */
   --text-7xl: 5.25rem; /* hero XL */
+  /* Akışkan hero başlığı — sabit boyut yerine clamp: uzun Türkçe kelimeler
+     (dönüştürüyoruz, yükümlülük) dar kapsayıcıda taşmasın (V5 Bölüm 1). */
+  --text-hero: clamp(2.5rem, 1.1rem + 5vw, 4.5rem);
 
   --tracking-tight: -0.03em; /* display başlıklar */
 

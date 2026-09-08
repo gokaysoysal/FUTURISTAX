@@ -69,8 +69,10 @@ const FRAG = /* glsl */ `
     col = mix(col, uAccent, smoothstep(0.36, 0.92, n) * 0.5);
     col = mix(col, uGlow, smoothstep(0.58, 1.0, r.x) * 0.24);
 
-    float vig = smoothstep(1.35, 0.15, length((vUv - 0.5) * vec2(uAspect, 1.0)));
-    col = mix(uBg, col, 0.32 + 0.68 * vig);
+    // Vinyet — geniş ekranda kenarları uBg'ye (neredeyse siyah) ezmesin;
+    // taban 0.62'ye çekildi, aralık genişletildi (V5 Bölüm 1: "solda siyah blok").
+    float vig = smoothstep(1.9, 0.35, length((vUv - 0.5) * vec2(uAspect, 1.0)));
+    col = mix(uBg, col, 0.62 + 0.38 * vig);
     col += (hash(gl_FragCoord.xy + uTime) - 0.5) * 0.018;
 
     gl_FragColor = vec4(col, 1.0);
@@ -146,6 +148,11 @@ export default function HeroScene() {
       gl={{ antialias: false, alpha: false, powerPreference: 'high-performance' }}
       camera={{ position: [0, 0, 1] }}
       style={{ pointerEvents: 'none' }}
+      // Boyanmamış kare pür siyah yerine sayfa zeminiyle (--color-canvas)
+      // aynı kalsın — canvas ölçüm yarışında "siyah dikdörtgen" görünmez.
+      onCreated={({ gl }) => {
+        gl.setClearColor(new THREE.Color(readColorToken('--color-canvas', '#07090d')), 1);
+      }}
     >
       <Field active={active} />
     </Canvas>
