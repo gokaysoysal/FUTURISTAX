@@ -2,12 +2,59 @@
 
 > **Her yeni oturumda önce bu dosyayı oku.** Kurallar ve mimari için `CLAUDE.md`.
 
-**Son güncelleme:** 2026-09-08 — V5-HERO koşusu (`v5-hero` dalı, `v2`'den), **3/3 bölüm bitti**.
-Önceki: V4-AKIS (`v4-akis`, `v2`'ye merge edildi) · V3 SUNUM KATMANI (`v2-fx`, merge) ·
-TASARIM YÖNÜ DEĞİŞİMİ (`v2-tasarim`, `v2`'ye absorbe — 26 commit geride).
-**Depo:** github.com/gokaysoysal/FUTURISTAX — çalışma dalı `v2`, aktif koşu dalı `v5-hero`
+**Son güncelleme:** 2026-09-08 — V6 REFERANS CİLASI (`v6-referans` dalı, `v2`'den), **3/3 bölüm bitti**.
+Önceki: V5-HERO (`v5-hero`, `v2`'ye merge) · V4-AKIS (`v4-akis`, merge) ·
+V3 SUNUM KATMANI (`v2-fx`, merge) · TASARIM YÖNÜ DEĞİŞİMİ (`v2-tasarim`, absorbe).
+**Depo:** github.com/gokaysoysal/FUTURISTAX — çalışma dalı `v2`, aktif koşu dalı `v6-referans`
 **Önizleme:** deploy-preview-1--futuristax.netlify.app
 **Canlı site:** futuristax.com — hâlâ ESKİ sürüm (`main` dalı, `legacy/index.html`)
+
+---
+
+## 0-X. V6 REFERANS CİLASI — 2026-09-08 (`v6-referans`, `v2`'den)
+
+Ana sayfayı `futureoffinance.peachweb.io`'nun hissine yaklaştırma: **bento
+düzen + hareket yoğunluğu + premium yüzey**. Bölüm sırası/akışı zaten sadıktı
+(V4-AKIS); bu koşu düzen ve cila. **Kapsam: yalnızca ana sayfa + paylaşılan
+header.** Palet ve tipografi (Syne) DEĞİŞMEDİ (kullanıcı onayı). Altyapı
+(tax-engine/API/DB/form) dokunulmadı.
+
+`352b3cd` (1) · `26bf963` (2) · `575909e` (3).
+
+**Bu ortamda tarayıcı/`pnpm start` YOK** — bento span'leri, marquee
+pürüzsüzlüğü, header scroll durumu, hareketli zemin üzerinde kontrast
+kullanıcı/CI tarayıcı QA'sında doğrulanmalı.
+
+### Bölümler
+
+| # | Bölüm | Not |
+|---|---|---|
+| 1 | Bento düzen | Yeni `components/home/Bento.tsx` (`Bento` + `BentoTile`: span→grid öğesi, `card`+`surface-glow` kabuk, `href`→Link, `as`). **ServicesQuad** `lg:grid-cols-3 lg:grid-rows-3` — Vergi danışmanlığı 2×3 kahraman + 02–04 yığın (`.text-aurora` numaralar). **FeatureTriad** `lg:grid-cols-[1.5fr_1fr]` — kahraman + yığın. **TestimonialTriad** ilk görüş 2×2 geniş alıntı. **EngagementModels** featured kutu aurora şeridi + `lg:-mt-4`. **StatsRow** tek `card surface-glow` pano + hairline ızgara, kuruluş yılı vurgulu. `SceneSection` `wide` prop (72→80rem), `section-beam` + başlık `text-scrim`. Hero/Solutions kapsayıcı genişletildi. |
+| 2 | Hareket + akış | Yeni `components/home/PhraseMarquee.tsx` — Hero'dan sonra sonsuz kelime bandı (serviceGroups+featureTriad başlıkları, `aria-hidden`, `.marquee` yeniden kullanılır). LogoMarquee çift sıra (alt sıra `.marquee-reverse .marquee-slow`). `lib/motion/config.ts` reveal 24→32px, stagger 70→80ms (easing/yön/süre ölçeği AYNI). `SiteBackdropScene` shader alfa tavanı 0.55→0.62; SceneRegion density/flow hedefleri yükseltildi. |
+| 3 | Premium yüzey + header | SiteHeader `scrolled` durumu (rAF throttle passive dinleyici) → `.is-scrolled` cam/gölge/alt-kenar güçlenir, py 4→2.5, logo küçülür (depth.css, reduced-motion'da geçiş yok). `.section-beam--strong` (hero + kapanış — geniş/parlak huzme). Header kapsayıcı 6xl→7xl. |
+
+### Doğrulama
+
+- `pnpm typecheck · lint · test` (65) `· build` — yeşil. `playwright --list`
+  temiz (92 test / 7 dosya).
+- **Ana sayfa ilk yük JS 181 kB** (< 220). Yeni kod saf bileşen/CSS;
+  three/gsap ilk yükte değil.
+- **CI/kullanıcı tarayıcı QA (raporlanacak):** bento 390/768/1024/1440/1920 —
+  taşma yok, kahraman span'ler doğru, `<lg` yığın; iki marquee pürüzsüz +
+  reduced-motion'da durur ama dolu; header scroll'da sıkışır (reduced-motion
+  sıçramasız); metin kontrastı hareketli zemin + alfa 0.62 üzerinde AA
+  (axe motion açık + reduced-motion); Türkçe karakterler bento + kelime
+  bandında düşmüyor; Lighthouse perf ≥ 85 / LCP ≤ 2.5s.
+
+### Kapsam dışı (sonraki adım)
+
+- İç sayfaların aynı bento diline taşınması (hizmetler/sektörler/kurumsal/
+  araçlar/mevzuat/sss/iletişim).
+- Palet / tipografi değişimi (istenmedi).
+
+### Sonraki adım
+
+- Kullanıcı/CI tarayıcı QA → `v6-referans` → `v2` merge. `main`'e ERKEN GEÇME.
 
 ---
 
