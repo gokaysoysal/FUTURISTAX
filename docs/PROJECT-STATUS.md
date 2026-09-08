@@ -2,12 +2,30 @@
 
 > **Her yeni oturumda önce bu dosyayı oku.** Kurallar ve mimari için `CLAUDE.md`.
 
-**Son güncelleme:** 2026-09-08 — V6 REFERANS CİLASI (`v6-referans` dalı, `v2`'den), **3/3 bölüm bitti**.
+**Son güncelleme:** 2026-09-08 — ANA SAYFA: bölüm ayraç "beyaz çizgileri" kaldırıldı (`v2`, küçük düzeltme). Öncesinde: V6 REFERANS CİLASI (`v6-referans` dalı, `v2`'den), **3/3 bölüm bitti**.
 Önceki: V5-HERO (`v5-hero`, `v2`'ye merge) · V4-AKIS (`v4-akis`, merge) ·
 V3 SUNUM KATMANI (`v2-fx`, merge) · TASARIM YÖNÜ DEĞİŞİMİ (`v2-tasarim`, absorbe).
 **Depo:** github.com/gokaysoysal/FUTURISTAX — çalışma dalı `v2`, aktif koşu dalı `v6-referans`
 **Önizleme:** deploy-preview-1--futuristax.netlify.app
 **Canlı site:** futuristax.com — hâlâ ESKİ sürüm (`main` dalı, `legacy/index.html`)
+
+---
+
+## 0-W. ANA SAYFA — BÖLÜM AYRAÇ ÇİZGİLERİ KALDIRILDI — 2026-09-08 (`v2`)
+
+Kullanıcı geri bildirimi: ana sayfayı kaydırırken bölüm altlarında "beyaz
+çizgiler" görünüyor. Koyu zeminde açık bir hairline olarak okunan iki sert
+1px ayraç kaldırıldı:
+
+- `styles/depth.css` — `.section-beam::after` (1px `--gradient-hairline`) silindi;
+  kullanılmayan `--gradient-hairline` token'ı da. `.section-beam::before`
+  (blur'lu yumuşak ışık huzmesi) KALDI — "bölüm geçişlerinde yumuşak ışık
+  huzmesi" tasarım yönü korunuyor.
+- `components/home/SceneSection.tsx` — alt `<hr className="scene-divider">` ve
+  artık gereksiz `divider` prop'u kaldırıldı. `.scene-divider` sınıfı
+  `art.css`'te kalıyor: iç sayfalarda `PageHero` hâlâ kullanıyor (kapsam dışı).
+
+`pnpm typecheck · lint · build` — yeşil.
 
 ---
 

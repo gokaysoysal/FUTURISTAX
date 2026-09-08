@@ -4,8 +4,10 @@ import type { ReactNode } from 'react';
 
 /**
  * Ana sayfa "sahne" sarmalayıcısı — her bölüm bir sahne, aralarında görsel
- * nefes (SceneBackdrop + ince ayraç). Gradyan her yüzeye yayılmaz: backdrop
- * seçici ve düşük opaklıkta.
+ * nefes yalnızca SceneBackdrop + `.section-beam` yumuşak ışık huzmesiyle
+ * verilir. Sert ayraç çizgisi KALDIRILDI (kullanıcı, 2026-09-08): koyu
+ * zeminde açık bir "beyaz çizgi" gibi okunuyordu. Gradyan her yüzeye
+ * yayılmaz: backdrop seçici ve düşük opaklıkta.
  */
 export function SceneSection({
   id,
@@ -13,7 +15,6 @@ export function SceneSection({
   title,
   lead,
   backdrop,
-  divider = true,
   wide = false,
   children,
   className = '',
@@ -23,7 +24,6 @@ export function SceneSection({
   title?: string;
   lead?: string;
   backdrop?: 'concrete' | 'geometric-shadow' | 'document-grid' | 'light-field' | 'none';
-  divider?: boolean;
   /** V6: geniş bento bölümleri için kapsayıcı 72rem → 80rem */
   wide?: boolean;
   children: ReactNode;
@@ -60,9 +60,6 @@ export function SceneSection({
         )}
         <div className={eyebrow || title ? 'mt-12' : ''}>{children}</div>
       </div>
-      {divider ? (
-        <hr className={`scene-divider mx-auto mt-[var(--spacing-section)] ${container}`} />
-      ) : null}
     </section>
   );
 }

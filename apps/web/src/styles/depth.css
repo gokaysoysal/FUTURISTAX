@@ -20,12 +20,6 @@
     transparent 62%
   );
   --gradient-aurora: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-glow) 100%);
-  --gradient-hairline: linear-gradient(
-    to right,
-    transparent,
-    color-mix(in oklab, var(--color-accent) 45%, transparent) 50%,
-    transparent
-  );
 }
 
 @layer base {
@@ -305,21 +299,12 @@
   }
 
   /*
-   * Bölüm geçişi ışık huzmesi — iki bölüm arasında ince yatay parıltı.
-   * Bir <div aria-hidden> ya da ::before olarak. Yükseklik küçük, blur yumuşak.
+   * Bölüm geçişi ışık huzmesi — iki bölüm arasında yumuşak, dağınık parıltı.
+   * YALNIZCA ::before (blur'lu radyal bloom). Sert 1px hairline KALDIRILDI —
+   * koyu zeminde açık bir "beyaz çizgi" olarak okunuyordu (kullanıcı, 2026-09-08).
    */
   .section-beam {
     position: relative;
-  }
-  .section-beam::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -1px;
-    height: 1px;
-    background-image: var(--gradient-hairline);
-    pointer-events: none;
   }
   .section-beam::before {
     content: "";
