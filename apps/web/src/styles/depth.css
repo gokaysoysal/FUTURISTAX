@@ -66,6 +66,27 @@
   }
 
   /*
+   * Sticky header — kaydırınca sıkışır, cam ve gölge güçlenir (V6).
+   * `.glass` taban değerleri; `.is-scrolled` bunları güçlendirir.
+   */
+  .site-header {
+    transition: background-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast)
+      var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+  }
+  .site-header.is-scrolled {
+    border-bottom: 1px solid var(--color-rule);
+    background-color: color-mix(in srgb, var(--color-surface) 84%, transparent);
+    box-shadow: 0 12px 32px -20px rgb(0 0 0 / 0.7);
+    backdrop-filter: blur(18px) saturate(1.4);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .site-header {
+      transition: none;
+    }
+  }
+
+  /*
    * Kenar parıltısı — kartın BİR köşesinden gelen ışık.
    * Ebeveyn: position:relative; overflow:hidden. Dekorasyon değil, yön.
    */
@@ -315,5 +336,19 @@
     );
     filter: blur(24px);
     pointer-events: none;
+  }
+
+  /* Hero + kapanış — daha geniş ve parlak huzme (V6). */
+  .section-beam--strong::before {
+    width: min(1100px, 96vw);
+    height: 260px;
+    bottom: -130px;
+    background: radial-gradient(
+      50% 50% at 50% 50%,
+      color-mix(in oklab, var(--color-accent) 22%, transparent) 0%,
+      color-mix(in oklab, var(--color-accent-glow) 10%, transparent) 40%,
+      transparent 72%
+    );
+    filter: blur(36px);
   }
 }

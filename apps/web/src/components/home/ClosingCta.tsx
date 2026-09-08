@@ -15,7 +15,7 @@ export function ClosingCta() {
     <section
       id="iletisim-cta"
       aria-labelledby="closing-cta-title"
-      className="relative isolate overflow-hidden py-[var(--spacing-section)]"
+      className="section-beam section-beam--strong relative isolate overflow-hidden py-[var(--spacing-section)]"
     >
       <SceneBackdrop variant="light-field" />
       <SceneRegion tone={0.9} density={0.78} depth={0.9} flow={0.55} />
