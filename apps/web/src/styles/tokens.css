@@ -66,8 +66,8 @@
      değişkenleri orada tanımlanır ve kendi fallback'lerini taşır;
      buradaki ek yığın yalnızca güvenlik ağı. Türkçe glif doğrulaması
      layout.tsx yorumunda + PROJECT-STATUS'ta.
-       Display: Space Grotesk · Gövde: Familjen Grotesk · Mono: IBM Plex Mono */
-  --font-display: var(--font-display-loaded, "Space Grotesk"), ui-sans-serif, system-ui, sans-serif;
+       Display: Syne (V5 Bölüm 3) · Gövde: Familjen Grotesk · Mono: IBM Plex Mono */
+  --font-display: var(--font-display-loaded, "Syne"), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-sans-loaded, "Familjen Grotesk"), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-mono-loaded, "IBM Plex Mono"), ui-monospace, monospace;
 
@@ -84,6 +84,11 @@
   --text-5xl: 3.75rem;
   --text-6xl: 4.5rem; /* hero */
   --text-7xl: 5.25rem; /* hero XL */
+  /* Akışkan hero başlığı — clamp: taşmadan iddialı (V5 Bölüm 1 + 3).
+     Syne geniş bir aile; uzun Türkçe kelimeler (dönüştürüyoruz) `max-w-3xl`
+     sütunda taşmasın diye tavan 6rem'de tutuldu — brief'teki 7rem bu sütunda
+     4+ satıra sarardı. hyphens:auto + text-wrap:balance emniyet ağı. */
+  --text-hero: clamp(2.75rem, 7vw, 6rem);
 
   --tracking-tight: -0.03em; /* display başlıklar */
 
@@ -175,8 +180,8 @@
   h3,
   h4 {
     font-family: var(--font-display);
-    font-weight: 500; /* Space Grotesk — medium, display ağırlığı */
-    line-height: 1.12;
+    font-weight: 600; /* Syne — yarı kalın, iddialı display (V5 Bölüm 3) */
+    line-height: 1.05; /* yakın satır aralığı — display hissi */
     letter-spacing: var(--tracking-tight); /* -0.03em — sıkı display tracking */
     text-wrap: balance;
   }

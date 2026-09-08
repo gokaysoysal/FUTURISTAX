@@ -1,7 +1,7 @@
 /**
  * Ana sayfa (V4-AKIS) bölüm stilleri — yalnızca ana sayfaya özgü düzen.
- * Hareket: `transform` (imleç parallax) + `translate` (sürüklenme) ayrı
- * özelliklerde tutulur ki çakışmasın. reduced-motion altında ikisi de durur.
+ * Hero kartlarının scroll hareketi GSAP'te (HeroFloatingCards, V5 Bölüm 2);
+ * burada yalnızca yerleşim. reduced-motion altında GSAP hiç kurulmaz.
  */
 @layer components {
   /* ── HERO yüzen kartlar ─────────────────────────────────────── */
@@ -9,47 +9,29 @@
     position: relative;
   }
 
-  .hero-card {
-    transform: translate3d(var(--px, 0), var(--py, 0), 0);
-    transition: transform var(--dur-base) var(--ease-out);
-  }
-
-  @media (min-width: 1024px) {
+  /* xl+ (≥1280px): kartlar başlık sütununun (`max-w-3xl`) DIŞINDA, sol/sağ
+     raylarda. Kapsayıcı 76rem, sütun 48rem → her ray ~14rem; kart 12rem,
+     `left/right: 0` ile raya sabit — negatif offset yok, sütuna girmez. */
+  @media (min-width: 1280px) {
     .hero-cards {
       position: absolute;
       inset: 0;
     }
-    .hero-card {
-      animation: hero-drift 9s ease-in-out infinite alternate;
-    }
     .hero-card-1 {
-      top: 2%;
-      left: -3%;
-      animation-delay: 0s;
+      top: 4%;
+      left: 0;
     }
     .hero-card-2 {
-      top: 14%;
-      right: -5%;
-      animation-delay: -2.25s;
+      top: 15%;
+      right: 0;
     }
     .hero-card-3 {
-      bottom: 12%;
-      left: 1%;
-      animation-delay: -4.5s;
+      bottom: 10%;
+      left: 0;
     }
     .hero-card-4 {
       bottom: 0%;
-      right: 3%;
-      animation-delay: -6.75s;
-    }
-  }
-
-  @keyframes hero-drift {
-    from {
-      translate: 0 -9px;
-    }
-    to {
-      translate: 0 9px;
+      right: 0;
     }
   }
 
@@ -91,11 +73,6 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .hero-card {
-      animation: none !important;
-      transform: none !important;
-      translate: none !important;
-    }
     .marquee {
       animation: none !important;
     }

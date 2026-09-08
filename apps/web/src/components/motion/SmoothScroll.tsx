@@ -1,5 +1,6 @@
 'use client';
 
+import { setScrollProgress } from '@/lib/motion/backdrop-scene';
 import { loadGsap } from '@/lib/motion/gsap-lazy';
 import { useReducedMotion } from 'motion/react';
 import { useEffect } from 'react';
@@ -11,6 +12,10 @@ import { useEffect } from 'react';
  * KURAL: prefers-reduced-motion: reduce altında Lenis HİÇ başlatılmaz; native
  * scroll'a bırakılır. Aksi hâlde Lenis'in rAF'ı GSAP ticker'ına, scroll olayı
  * ScrollTrigger.update'e bağlanır (tek zamanlayıcı, senkron).
+ *
+ * V5 Bölüm 2: Lenis scroll ilerlemesi (0..1) kalıcı arka plan sahnesine
+ * beslenir (`backdrop-scene.ts`). Sahne kendi rAF'ından okur — scroll'un
+ * tek doğruluk kaynağı Lenis.
  *
  * PERFORMANS: `lenis` ve `gsap` STATİK import EDİLMEZ — layout bileşeni olduğu
  * için her sayfanın ilk yük JS'ine girerdi. `import()` ile ayrı chunk; mount
@@ -40,6 +45,8 @@ export function SmoothScroll() {
       });
 
       lenis.on('scroll', ScrollTrigger.update);
+      lenis.on('scroll', () => setScrollProgress(lenis.progress));
+      setScrollProgress(lenis.progress);
 
       const onTick = (time: number) => lenis.raf(time * 1000);
       gsap.ticker.add(onTick);

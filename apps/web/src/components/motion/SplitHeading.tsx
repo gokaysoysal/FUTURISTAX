@@ -11,6 +11,11 @@ import { useEffect, useRef } from 'react';
  *
  * `by="words"` (V4-AKIS hero): kelime kelime. `by="chars"` (varsayılan): harf.
  *
+ * NOT (V5 Bölüm 1): `by="words"` artık YALNIZCA `words` böler — `lines` bırakıldı.
+ * split-type her görsel satırı `overflow: hidden` bir `<div>`e sarıp genişliğini
+ * o anki ölçümle donduruyordu; web fontu geç yüklendiğinde ya da genişlik
+ * geçişte farklıyken bu, başlığı soldan kırpıyordu ("...ergiyi yönetile...").
+ *
  * TÜRKÇE GLİF KONTROLÜ: bölme sonrası düz metin orijinaliyle karşılaştırılır
  * (boşluklar hariç). Bir karakter düşerse (ör. ı/İ/ğ) split geri alınır ve
  * animasyon yapılmaz — metin bozulmadan durur.
@@ -50,7 +55,7 @@ export function SplitHeading({
       if (cancelled) return;
 
       const split = new SplitType(el, {
-        types: by === 'words' ? 'lines,words' : 'words,chars',
+        types: by === 'words' ? 'words' : 'words,chars',
         tagName: 'span',
       });
       if ((el.textContent ?? '').replace(/\s+/g, '') !== original) {

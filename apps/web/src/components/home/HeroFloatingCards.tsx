@@ -1,19 +1,24 @@
 'use client';
 
 import { formatDaysRemaining, formatIsoDate } from '@/lib/format';
-import { distance } from '@/lib/motion';
+import { loadGsap } from '@/lib/motion/gsap-lazy';
+import { prefersReducedMotion } from '@/lib/motion/scroll';
 import type { ExchangeRateTable } from '@futuristax/tax-engine';
 import { useEffect, useRef, useState } from 'react';
 
 /**
- * Hero'nun önündeki dört yüzen kart — WebGL sahnesinin üstünde.
+ * Hero'nun önündeki dört yüzen kart — kalıcı arka plan sahnesinin üstünde.
  *
- * - İmleçle parallax (her kart farklı derinlik katsayısı) + sürekli yavaş
- *   sürüklenme (CSS `@keyframes hero-drift`, art.css).
- * - `prefers-reduced-motion` veya kaba işaretçi → sabit, sürüklenme yok.
+ * - SCROLL'A BAĞLI hareket (V5 Bölüm 2): hero kaydırıldıkça her kart derinlik
+ *   katsayısına göre farklı hızda yukarı süzülür, hafifçe döner/ölçeklenir ve
+ *   sağa/sola dağılarak solar (GSAP ScrollTrigger, scrub). Ani kaybolma yok.
+ * - `prefers-reduced-motion` → hiç hareket yok; kartlar yerinde durur.
+ * - Hareket YALNIZCA `xl`+ (kartlar absolute konumluyken); `<xl` ızgara akışında
+ *   dokunulmaz.
  * - Kartlarda GERÇEK veri: sıradaki yükümlülük, güncel kur (istemci fetch;
  *   erişilemezse "—", uydurma kur YOK), örnek vergi yükü, 30 günlük yoğunluk.
- * - Masaüstünde absolute konumlu; `<lg` ekranda normal ızgara (aşağıda).
+ * - `xl`+ ekranda absolute konumlu (sol/sağ raylar, başlık sütununun dışında);
+ *   `<xl` ekranda CTA'ların altında normal ızgara — başlığa binmez (V5 Bölüm 1).
  */
 
 type Deadline = { title: string; date: string; daysRemaining: number };
@@ -53,36 +58,54 @@ export function HeroFloatingCards({
     };
   }, []);
 
-  // İmleç parallax — yalnızca ince işaretçi + reduced-motion yoksa.
+  // Scroll'a bağlı hareket — hero kaydırıldıkça kartlar dağılarak süzülür.
+  // Yalnızca xl+ (absolute konum) ve reduced-motion kapalıyken. GSAP tembel.
   useEffect(() => {
     const layer = layerRef.current;
     if (!layer) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    if (window.matchMedia('(pointer: coarse)').matches) return;
+    if (prefersReducedMotion()) return;
+    if (!window.matchMedia('(min-width: 1280px)').matches) return;
+    const section = layer.closest('section');
+    if (!section) return;
 
-    let raf = 0;
-    const onMove = (e: PointerEvent) => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const nx = (e.clientX / window.innerWidth - 0.5) * 2;
-        const ny = (e.clientY / window.innerHeight - 0.5) * 2;
-        for (const el of Array.from(layer.children)) {
-          const depth = Number((el as HTMLElement).dataset.depth ?? '1');
-          (el as HTMLElement).style.setProperty(
-            '--px',
-            `${nx * distance.parallax * 0.12 * depth}px`,
-          );
-          (el as HTMLElement).style.setProperty(
-            '--py',
-            `${ny * distance.parallax * 0.12 * depth}px`,
-          );
-        }
+    let cancelled = false;
+    let cleanup: (() => void) | undefined;
+
+    void (async () => {
+      const { gsap, ScrollTrigger } = await loadGsap();
+      if (cancelled) return;
+      const items = Array.from(layer.children) as HTMLElement[];
+      const tweens = items.map((el, i) => {
+        const depth = Number(el.dataset.depth ?? '1');
+        const dir = i % 2 === 0 ? -1 : 1;
+        return gsap.to(el, {
+          yPercent: -(8 + depth * 12),
+          xPercent: dir * (10 + depth * 5),
+          rotate: dir * depth * 1.6,
+          scale: 1 + depth * 0.02,
+          autoAlpha: 0.08,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: section,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 0.6,
+          },
+        });
       });
-    };
-    window.addEventListener('pointermove', onMove, { passive: true });
+      cleanup = () => {
+        for (const t of tweens) {
+          t.scrollTrigger?.kill();
+          t.kill();
+        }
+        gsap.set(items, { clearProps: 'all' });
+        ScrollTrigger.refresh();
+      };
+    })();
+
     return () => {
-      window.removeEventListener('pointermove', onMove);
-      cancelAnimationFrame(raf);
+      cancelled = true;
+      cleanup?.();
     };
   }, []);
 
@@ -133,13 +156,13 @@ export function HeroFloatingCards({
     <ul
       ref={layerRef}
       aria-label="Özet veriler"
-      className="hero-cards pointer-events-none mt-12 grid grid-cols-2 gap-3 lg:mt-0 lg:block"
+      className="hero-cards pointer-events-none mt-12 grid grid-cols-2 gap-3 xl:mt-0 xl:block"
     >
       {cards.map((c, i) => (
         <li
           key={c.key}
           data-depth={c.depth}
-          className={`hero-card glass rounded-xl border border-[var(--color-rule)] p-4 lg:absolute lg:w-52 hero-card-${i + 1}`}
+          className={`hero-card glass rounded-xl border border-[var(--color-rule)] p-4 xl:absolute xl:w-[12rem] hero-card-${i + 1}`}
         >
           <p className="text-[length:var(--text-xs)] text-[var(--color-text-secondary)]">
             {c.label}
