@@ -93,7 +93,7 @@ const FRAG = /* glsl */ `
     float vig = smoothstep(1.95, 0.4, length((vUv - 0.5) * vec2(uAspect, 1.0)));
     float cover = (field * 0.8 + bright * 0.6) * (0.55 + 0.45 * vig);
 
-    float a = clamp(cover * (0.16 + 0.36 * uDensity), 0.0, 0.55);
+    float a = clamp(cover * (0.18 + 0.4 * uDensity), 0.0, 0.62);
 
     // Bantlaşmayı kır.
     col += (hash(gl_FragCoord.xy + uTime) - 0.5) * 0.02;

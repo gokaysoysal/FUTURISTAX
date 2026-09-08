@@ -46,7 +46,7 @@
     transform: translateX(3px);
   }
 
-  /* ── Logo şeridi — sonsuz kayan marka işaretleri ────────────── */
+  /* ── Kayan bantlar — logo şeridi + kelime bandı (V6) ────────── */
   .marquee {
     display: flex;
     width: max-content;
@@ -54,6 +54,13 @@
   }
   .marquee:hover {
     animation-play-state: paused;
+  }
+  /* İkinci sıra / kelime bandı — ters yön + biraz yavaş (parallax hissi). */
+  .marquee-reverse {
+    animation-direction: reverse;
+  }
+  .marquee-slow {
+    animation-duration: 46s;
   }
 
   @keyframes marquee-slide {

@@ -29,10 +29,10 @@ export function Hero({
   burdenTotalLabel: string;
 }) {
   return (
-    <section className="section-beam relative isolate flex min-h-[88vh] items-center overflow-hidden px-5 pt-20 pb-[var(--spacing-section)]">
-      <SceneRegion tone={0.12} density={0.72} depth={0.1} flow={0.5} />
+    <section className="section-beam section-beam--strong relative isolate flex min-h-[88vh] items-center overflow-hidden px-5 pt-20 pb-[var(--spacing-section)]">
+      <SceneRegion tone={0.12} density={0.78} depth={0.1} flow={0.58} />
 
-      <div className="relative z-10 mx-auto w-full max-w-[76rem]">
+      <div className="relative z-10 mx-auto w-full max-w-[80rem]">
         <div className="text-scrim relative mx-auto max-w-3xl xl:text-center">
           <Reveal>
             <p className="basis-ref uppercase">{heroContent.eyebrow}</p>

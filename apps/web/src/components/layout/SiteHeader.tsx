@@ -5,7 +5,7 @@ import { CMDK_OPEN_EVENT } from '@/components/search/CommandPalette';
 import { site } from '@futuristax/config';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 /**
  * Ana navigasyon.
@@ -13,6 +13,10 @@ import { useState } from 'react';
  * Eski sitede navigasyon `<button onclick="switchTab(...)">` ile yapılıyordu:
  * derin link yoktu, geri tuşu çalışmıyordu, bağlantı paylaşılamıyordu.
  * Artık gerçek <Link> — her sayfa kendi URL'sinde.
+ *
+ * V6: sayfa kaydırılınca header sıkışır ve cam/gölge güçlenir
+ * (`.site-header.is-scrolled`, depth.css). rAF throttle'lı passive dinleyici;
+ * reduced-motion altında geçiş yok ama durum yine değişir.
  */
 const NAV = [
   { href: '/kurumsal', label: 'Kurumsal' },
@@ -25,14 +29,42 @@ const NAV = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
 
+  useEffect(() => {
+    let raf = 0;
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        setScrolled(window.scrollY > 8);
+      });
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+
   return (
-    <header className="glass sticky top-0 z-40 border-x-0 border-t-0">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-5 py-4">
+    <header
+      className={`site-header glass sticky top-0 z-40 border-x-0 border-t-0 ${
+        scrolled ? 'is-scrolled' : ''
+      }`}
+    >
+      <div
+        className={`mx-auto flex max-w-7xl items-center justify-between gap-6 px-5 transition-[padding] duration-200 ${
+          scrolled ? 'py-2.5' : 'py-4'
+        }`}
+      >
         <Link
           href="/"
-          className="font-[family-name:var(--font-display)] text-[length:var(--text-lg)] text-[var(--color-text)]"
+          className={`font-[family-name:var(--font-display)] text-[var(--color-text)] transition-[font-size] duration-200 ${
+            scrolled ? 'text-[length:var(--text-base)]' : 'text-[length:var(--text-lg)]'
+          }`}
         >
           {site.brand.shortName}
         </Link>

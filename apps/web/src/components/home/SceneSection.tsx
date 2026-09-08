@@ -14,6 +14,7 @@ export function SceneSection({
   lead,
   backdrop,
   divider = true,
+  wide = false,
   children,
   className = '',
 }: {
@@ -23,20 +24,23 @@ export function SceneSection({
   lead?: string;
   backdrop?: 'concrete' | 'geometric-shadow' | 'document-grid' | 'light-field' | 'none';
   divider?: boolean;
+  /** V6: geniş bento bölümleri için kapsayıcı 72rem → 80rem */
+  wide?: boolean;
   children: ReactNode;
   className?: string;
 }) {
   const headingId = id && title ? `${id}-title` : undefined;
+  const container = wide ? 'max-w-7xl' : 'max-w-6xl';
   return (
     <section
       id={id}
       aria-labelledby={headingId}
-      className={`relative isolate overflow-hidden py-[var(--spacing-section)] ${className}`.trim()}
+      className={`section-beam relative isolate overflow-hidden py-[var(--spacing-section)] ${className}`.trim()}
     >
       {backdrop && backdrop !== 'none' ? <SceneBackdrop variant={backdrop} /> : null}
-      <div className="relative z-10 mx-auto max-w-6xl px-5">
+      <div className={`relative z-10 mx-auto ${container} px-5`}>
         {(eyebrow || title) && (
-          <header className="max-w-2xl">
+          <header className="text-scrim max-w-2xl">
             {eyebrow ? <p className="basis-ref uppercase">{eyebrow}</p> : null}
             {title ? (
               <SplitHeading
@@ -57,7 +61,7 @@ export function SceneSection({
         <div className={eyebrow || title ? 'mt-12' : ''}>{children}</div>
       </div>
       {divider ? (
-        <hr className="scene-divider mx-auto mt-[var(--spacing-section)] max-w-6xl" />
+        <hr className={`scene-divider mx-auto mt-[var(--spacing-section)] ${container}`} />
       ) : null}
     </section>
   );

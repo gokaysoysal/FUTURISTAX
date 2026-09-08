@@ -148,8 +148,9 @@ Parlak azur bir buton **zemini** olarak kullanılırsa üstüne koyu metin gelir
   Reveal, hover, sayaç, parallax, buton oku — hepsi bu. `inOut` YALNIZCA rota
   perde geçişi. Farklı bölümde farklı easing/yön KULLANMA.
 - **Süre ölçeği yalnızca üç değer:** fast 200ms / base 600ms / scene 1200ms
-  (+ count 1600ms sayaç). Stagger 60–80ms.
-- **Tüm reveal'lar tek desen:** 24px alttan + opaklık (`fadeUp`/`staggerItem`).
+  (+ count 1600ms sayaç). Stagger 80ms (V6, önce 70).
+- **Tüm reveal'lar tek desen:** 32px alttan + opaklık (V6, önce 24;
+  `fadeUp`/`staggerItem`). Yön/easing/süre ölçeği değişmez.
 - **Stack ayrımı:** Framer Motion (`motion/react`) = bileşen içi mikro
   etkileşim, giriş/çıkış, rota geçişi. GSAP + ScrollTrigger = YALNIZCA scroll'a
   bağlı sahne koreografisi (pin, marquee dışı). Aynı öğeyi ikisiyle animasyon
@@ -168,6 +169,14 @@ Parlak azur bir buton **zemini** olarak kullanılırsa üstüne koyu metin gelir
 - Ana sayfa akışı **referansa (futureoffinance.peachweb.io) sadıktır** — bölüm
   sırası `docs/V4-AKIS-PROMPT.md` Bölüm 2. İmza hareket = pinlenmiş "Temel
   yetenekler" bölümü.
+- **Bento düzen (V6):** ana sayfa bölümleri `components/home/Bento.tsx`
+  (`Bento` + `BentoTile`) ile asimetrik — bir "kahraman" kutu + destek kutuları,
+  `lg`+ ekranda span'li; `<lg` yığın. Yeni bölüm eklerken bu kalıba uy.
+  Kelime bandı `PhraseMarquee`, çift sıra logo şeridi `LogoMarquee` — ikisi de
+  `.marquee` (home.css), `aria-hidden`, reduced-motion'da durur.
+- **Sticky header (V6):** `SiteHeader` kaydırınca `.is-scrolled` alır (cam/
+  gölge/kenar güçlenir, sıkışır); geçiş reduced-motion'da kapalı, durum yine
+  değişir.
 - Hero yüzen kartları, "Çözümler" panosu ve "Rakamlar" bölümü **gerçek veri**
   gösterir (tax-engine + saf hesap + `site` sabitleri); dış kaynak (TCMB kur)
   erişilemezse "—", uydurma değer yok.

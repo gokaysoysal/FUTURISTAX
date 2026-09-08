@@ -1,12 +1,13 @@
+import { Bento, BentoTile } from '@/components/home/Bento';
 import { SceneSection } from '@/components/home/SceneSection';
-import { RevealGroup, RevealItem } from '@/components/motion/Reveal';
 import { featureTriad } from '@/lib/data/placeholder';
 import type { ReactNode } from 'react';
 
 /**
- * ÖZELLİKLER (V4-AKIS Bölüm 2 — referans sırası #4)
- * Üç kart: görsel + başlık + kısa açıklama. Vergi planlaması / Mevzuat uyumu /
- * Risk analizi.
+ * ÖZELLİKLER (V4-AKIS Bölüm 2 — referans sırası #4 · V6 bento)
+ *
+ * Asimetrik: ilk eksen (Vergi planlaması) `lg`+ ekranda solda tam boy kahraman
+ * kutu; Mevzuat uyumu / Risk analizi sağda yığılı. `<lg` yığın.
  */
 const ICONS: Record<string, ReactNode> = {
   planlama: (
@@ -37,33 +38,48 @@ const ICONS: Record<string, ReactNode> = {
   ),
 };
 
+function Icon({ k, big = false }: { k: string; big?: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 40 40"
+      aria-hidden="true"
+      className={`${big ? 'h-14 w-14' : 'h-10 w-10'} text-[var(--color-accent)]`}
+    >
+      {ICONS[k]}
+    </svg>
+  );
+}
+
 export function FeatureTriad() {
+  const [hero, ...rest] = featureTriad;
+
   return (
     <SceneSection
       id="ozellikler"
       eyebrow="Yaklaşım"
       title="Vergi işini üç eksende sağlamlaştırırız"
       backdrop="geometric-shadow"
+      wide
     >
-      <RevealGroup className="grid gap-px bg-[var(--color-rule)] sm:grid-cols-3">
-        {featureTriad.map((f) => (
-          <RevealItem key={f.key} className="bg-[var(--color-canvas)]">
-            <article className="card card-interactive surface-glow flex h-full flex-col gap-4 p-6">
-              <svg
-                viewBox="0 0 40 40"
-                aria-hidden="true"
-                className="h-10 w-10 text-[var(--color-accent)]"
-              >
-                {ICONS[f.key]}
-              </svg>
-              <h3 className="text-[length:var(--text-lg)] text-[var(--color-text)]">{f.title}</h3>
-              <p className="text-[length:var(--text-sm)] text-[var(--color-text-secondary)]">
-                {f.body}
-              </p>
-            </article>
-          </RevealItem>
+      <Bento className="lg:grid-cols-[1.5fr_1fr] lg:grid-rows-2">
+        <BentoTile span="lg:row-span-2" className="lg:justify-center lg:gap-6 lg:p-10">
+          <Icon k={hero.key} big />
+          <h3 className="text-[length:var(--text-2xl)] text-[var(--color-text)]">{hero.title}</h3>
+          <p className="max-w-prose text-[length:var(--text-base)] text-[var(--color-text-secondary)]">
+            {hero.body}
+          </p>
+        </BentoTile>
+
+        {rest.map((f) => (
+          <BentoTile key={f.key}>
+            <Icon k={f.key} />
+            <h3 className="text-[length:var(--text-lg)] text-[var(--color-text)]">{f.title}</h3>
+            <p className="text-[length:var(--text-sm)] text-[var(--color-text-secondary)]">
+              {f.body}
+            </p>
+          </BentoTile>
         ))}
-      </RevealGroup>
+      </Bento>
     </SceneSection>
   );
 }

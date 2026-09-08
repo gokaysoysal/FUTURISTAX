@@ -72,14 +72,15 @@ export const duration = {
 /**
  * Yer değiştirme mesafeleri (px). Reveal HER ZAMAN `revealShift` kadar
  * ALTTAN gelir — başka yön/mesafe yok (V4-AKIS Bölüm 1).
+ * V6: hareket varlığını artırmak için 24→32; yön/easing/süre ölçeği aynı.
  */
 export const distance = {
-  revealShift: 24,
+  revealShift: 32,
   parallax: 120,
 } as const;
 
-/** Kademeli (stagger) zamanlama — 60–80ms aralığında sabit. */
-export const stagger = { step: 0.07, groupDelay: 0.04 } as const;
+/** Kademeli (stagger) zamanlama — 60–80ms aralığında sabit (V6: 70→80ms). */
+export const stagger = { step: 0.08, groupDelay: 0.04 } as const;
 
 /** Scroll-driven reveal için viewport eşiği — bir kez, alttan %8 pay. */
 export const viewportOnce = { once: true, margin: '0px 0px -8% 0px' } as const;
