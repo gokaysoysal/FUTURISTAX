@@ -1,0 +1,90 @@
+/**
+ * Ana sayfa (V4-AKIS) bölüm stilleri — yalnızca ana sayfaya özgü düzen.
+ * Hero kartlarının scroll hareketi GSAP'te (HeroFloatingCards, V5 Bölüm 2);
+ * burada yalnızca yerleşim. reduced-motion altında GSAP hiç kurulmaz.
+ */
+@layer components {
+  /* ── HERO yüzen kartlar ─────────────────────────────────────── */
+  .hero-cards {
+    position: relative;
+  }
+
+  /* xl+ (≥1280px): kartlar başlık sütununun (`max-w-3xl`) DIŞINDA, sol/sağ
+     raylarda. Kapsayıcı 76rem, sütun 48rem → her ray ~14rem; kart 12rem,
+     `left/right: 0` ile raya sabit — negatif offset yok, sütuna girmez. */
+  @media (min-width: 1280px) {
+    .hero-cards {
+      position: absolute;
+      inset: 0;
+    }
+    .hero-card-1 {
+      top: 4%;
+      left: 0;
+    }
+    .hero-card-2 {
+      top: 15%;
+      right: 0;
+    }
+    .hero-card-3 {
+      bottom: 10%;
+      left: 0;
+    }
+    .hero-card-4 {
+      bottom: 0%;
+      right: 0;
+    }
+  }
+
+  /* ── Buton oku — hover'da sağa kayar (mikro etkileşim) ──────── */
+  .btn-arrow {
+    display: inline-block;
+    margin-left: 0.5em;
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+  .group:hover .btn-arrow,
+  .group:focus-visible .btn-arrow {
+    transform: translateX(3px);
+  }
+
+  /* ── Kayan bantlar — logo şeridi + kelime bandı (V6) ────────── */
+  .marquee {
+    display: flex;
+    width: max-content;
+    animation: marquee-slide 34s linear infinite;
+  }
+  .marquee:hover {
+    animation-play-state: paused;
+  }
+  /* İkinci sıra / kelime bandı — ters yön + biraz yavaş (parallax hissi). */
+  .marquee-reverse {
+    animation-direction: reverse;
+  }
+  .marquee-slow {
+    animation-duration: 46s;
+  }
+
+  @keyframes marquee-slide {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      /* iki özdeş şerit yan yana; %50 kayma kusursuz döngü */
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  /* ── Pinlenmiş bölüm ilerleme çubuğu ────────────────────────── */
+  .pin-progress > span {
+    transform-origin: left;
+    transform: scaleX(var(--pin-progress, 0));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee {
+      animation: none !important;
+    }
+    .btn-arrow {
+      transition: none;
+    }
+  }
+}

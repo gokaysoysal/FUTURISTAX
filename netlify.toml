@@ -1,0 +1,62 @@
+# Netlify yapılandırması
+#
+# Bu depo bir pnpm monorepo'sudur. Netlify'ın varsayılan davranışı kök dizini
+# statik olarak yayınlamaktır — eski tek dosyalık site böyle çalışıyordu.
+# Aşağıdaki ayarlar Netlify'a kökten kurulum yapmasını ama Next.js uygulamasını
+# apps/web altından derlemesini söyler.
+
+[build]
+  # Kök dizinde kalınır: pnpm workspace bağımlılıkları ancak buradan çözülür.
+  command = "pnpm build --filter @futuristax/web"
+  publish = "apps/web/.next"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+  # Sır tarama istisnaları.
+  #
+  # NEXT_PUBLIC_ önekli değişkenler TASARIM GEREĞİ herkese açıktır: Next.js
+  # bunları derleme sırasında istemci paketine gömer, tarayıcıya gönderir.
+  # Sır tarayıcısı onları derleme çıktısında bulup alarm veriyor — doğru
+  # davranış değil, çünkü gizli kalmaları zaten mümkün değil.
+  #
+  # Bu listeye YALNIZCA herkese açık olduğu kesin olan anahtarlar eklenir.
+  # DATABASE_URL, RESEND_API_KEY, TURNSTILE_SECRET_KEY gibi gerçek sırlar
+  # ASLA buraya yazılmaz — onların taranması bizi korur.
+  SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_SITE_URL,NEXT_PUBLIC_TURNSTILE_SITE_KEY,NEXT_PUBLIC_SANITY_PROJECT_ID,NEXT_PUBLIC_SANITY_DATASET,NEXT_PUBLIC_GA_ID"
+  # Kilit dosyasına birebir uyulur; sessiz sürüm kayması olmaz.
+  PNPM_FLAGS = "--frozen-lockfile"
+  # Next.js derleme sırasında telemetri göndermesin.
+  NEXT_TELEMETRY_DISABLED = "1"
+
+# Next.js çalışma zamanı: SSR, API route'ları ve ISR bunun üzerinden çalışır.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# ── Güvenlik başlıkları ────────────────────────────────────────────────────
+# Not: Content-Security-Policy burada TANIMLANMAZ. CSP nonce tabanlıdır ve
+# her istek için middleware.ts içinde üretilir. Burada sabit bir CSP yazmak
+# nonce'u geçersiz kılar ve sayfayı bozar.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# ── Dağıtım bağlamları ─────────────────────────────────────────────────────
+# Üretim (main dalı) Aşama 3 tamamlanana kadar ESKİ SİTEYİ yayınlamaya devam
+# eder. Yeni sürüm yalnızca dal önizlemelerinde çalışır. Geçiş, v2 main'e
+# birleştirildiğinde ve DNS doğrulandığında yapılır.
+
+[context.deploy-preview.environment]
+  NEXT_PUBLIC_SITE_URL = "https://deploy-preview-1--futuristax.netlify.app"
+
+[context.branch-deploy.environment]
+  NEXT_PUBLIC_SITE_URL = "https://v2--futuristax.netlify.app"
