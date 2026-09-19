@@ -2,12 +2,85 @@
 
 > **Her yeni oturumda önce bu dosyayı oku.** Kurallar ve mimari için `CLAUDE.md`.
 
-**Son güncelleme:** 2026-09-08 — ANA SAYFA: bölüm ayraç "beyaz çizgileri" kaldırıldı (`v2`, küçük düzeltme). Öncesinde: V6 REFERANS CİLASI (`v6-referans` dalı, `v2`'den), **3/3 bölüm bitti**.
+**Son güncelleme:** 2026-09-19 — V7 ORB (`v7-orb` dalı, `v2`'den): kalıcı arka plan
+sahnesi çok-oktavlı bulut alanından tek odaklı küre/ince halkaya sadeleştirildi,
+**1/1 bölüm bitti**. Öncesinde: ANA SAYFA bölüm ayraç "beyaz çizgileri"
+kaldırıldı (`v2`, küçük düzeltme, 2026-09-08). Öncesinde: V6 REFERANS CİLASI
+(`v6-referans` dalı, `v2`'den), **3/3 bölüm bitti**.
 Önceki: V5-HERO (`v5-hero`, `v2`'ye merge) · V4-AKIS (`v4-akis`, merge) ·
 V3 SUNUM KATMANI (`v2-fx`, merge) · TASARIM YÖNÜ DEĞİŞİMİ (`v2-tasarim`, absorbe).
-**Depo:** github.com/gokaysoysal/FUTURISTAX — çalışma dalı `v2`, aktif koşu dalı `v6-referans`
+**Depo:** github.com/gokaysoysal/FUTURISTAX — çalışma dalı `v2`, aktif koşu dalı `v7-orb`
 **Önizleme:** deploy-preview-1--futuristax.netlify.app
 **Canlı site:** futuristax.com — hâlâ ESKİ sürüm (`main` dalı, `legacy/index.html`)
+
+---
+
+## 0-V. V7 ORB — 2026-09-19 (`v7-orb`, `v2`'den)
+
+Kalıcı site-geneli arka plan sahnesini (`components/backdrop/SiteBackdropScene.tsx`,
+V5 Bölüm 2'de kurulan R3F/WebGL katman) referans hisse (futureoffinance.peachweb.io)
+göre sadeleştirme: çok-oktavlı domain-warp fbm bulut alanı yerine **tek odaklı
+küre + ince halka**. Yeni sistem kurulmadı — aynı `backdrop-scene.ts` sönümlü
+lerp/bölüm-ağırlık mimarisi (tone/density/depth/flow) korundu; yalnızca fragment
+shader'ın kürenin konum/boyut/opaklığını bu AYNI parametrelerden türetme biçimi
+değişti. **Kapsam: yalnızca `SiteBackdropScene.tsx`.** tax-engine/API/DB/vergi
+oranları/testler dokunulmadı (ayrı bir kritik hata — Vergi Yükü Panosu — bu koşudan
+ÖNCE incelendi, bulgu: mevcut kodda üretilemedi, bkz. commit mesajı).
+
+### Ne değişti
+
+- Çekirdek ışıma: `exp(-dist²)` tabanlı tek yumuşak glow (+ isteğe bağlı sıcak iç
+  çekirdek) — çok parçacıklı/çok oktavlı gürültü alanı kaldırıldı.
+- İnce halka: küre yarıçapının ~2×'i mesafede, hash tabanlı hafif organik
+  dalgalanmalı (katı CAD çemberi değil), düşük opaklık.
+- **Konum/boyut/opaklık `depth` parametresinden türüyor** — bu parametre zaten
+  hero'da düşük (yakın/parlak) kapanışta yüksek (uzak/soluk) kayıtlıydı
+  (`Hero` depth=0.1 → `ClosingCta` depth=0.9); V7 öncesinde bu yalnızca renk/
+  yoğunluk etkiliyordu, şimdi doğrudan kürenin sahne içindeki "mesafesi".
+  Kapanışta bile opaklık tabanı SIFIRA inmez (`coreAlpha` alt sınırı ~0.16-0.18)
+  — iz sürekliliği korunur.
+- `uOctaves`/`uProgress` uniformları kaldırıldı (kullanılmıyordu); `uComplexity`
+  eklendi — mobilde (`complexity<1`) sıcak iç çekirdek ve ikinci halka kapanır.
+- Bölüm hedef parametreleri (`Hero`/`SolutionsSection`/`PinnedCapabilities`/
+  `StatsRow`/`ClosingCta` içindeki `<SceneRegion>` çağrıları) **değiştirilmedi**
+  — zaten dar bir bant içindeydi (density 0.56-0.78), referansın "sakin/tek
+  odaklı" isteğiyle çelişmiyor.
+- Lenis `lerp: 0.1` zaten istenen aralıktaydı (0.08-0.1) — dokunulmadı.
+- Metin/küre z-sıralaması mimari olarak zaten garanti: sahne `fixed inset-0
+  -z-10`, sayfa içeriği `relative z-10` — bu koşuda DOM sırası değişmedi.
+
+### Doğrulama
+
+- `pnpm typecheck · lint` (`@futuristax/web`) — yeşil. `pnpm --filter
+  @futuristax/tax-engine test` — 65/65 yeşil, dokunulmadı. `pnpm build` — yeşil,
+  ana sayfa ilk yük JS **181 kB** (< 220 kB bütçesi, değişmedi — shader yalnızca
+  metin, bayt eklemedi).
+- `pnpm start` gerçek üretim sunucusunda çalıştırıldı, SSR HTML ve statik
+  yerleşim (hero, kartlar, header) doğrulandı.
+- **WebGL küre görsel doğrulaması bu ortamda YAPILAMADI:** hem Chrome-uzantısı
+  hem Playwright ile denendi; canvas doğru boyutlanıyor, WebGL bağlamı geçerli,
+  konsol/sayfa hatası yok — ama piksel taraması (`readPixels`, tüm tuval)
+  **her iki şeklide de** (V7 küresi VE değiştirilmeden önceki V6 bulut shader'ı)
+  boyanmış tek bir piksel bulamadı. Yani bu, V7'nin bir regresyonu değil —
+  ortamın (headless/otomatize Chromium, `frameloop="never"` + paylaşımlı rAF
+  mimarisiyle) önceden de var olan bir sınırlaması; V6 notunda da "tarayıcı/
+  `pnpm start` YOK" olarak işaretlenmişti. **Kullanıcı/CI tarayıcı QA'sında
+  gerçek görsel doğrulama gerekiyor** (aşağıdaki liste).
+
+### Kapsam dışı (sonraki adım)
+
+- Bölüm hedef parametrelerinin (tone/density/depth/flow) ince ayarı — yalnızca
+  kullanıcı/CI görsel geri bildirimden sonra.
+- Palet / tipografi değişimi (istenmedi).
+
+### Sonraki adım — kullanıcı/CI tarayıcı QA'sında doğrulanacak
+
+- Hero'da küre net ve tek odaklı mı (dağınık/çok parçacıklı değil).
+- Scroll'da küçülme + soluklaşma yumuşak mı, sıçrama var mı; kapanışta iz hâlâ
+  görünür mü (tamamen kaybolmamalı).
+- Metin her noktada okunabilir mi (`text-scrim` kontrastı korunmuş mu).
+- Lighthouse perf ≥ 85, LCP ≤ 2.5s; konsolda WebGL/GLSL derleme hatası yok.
+- `v7-orb` → `v2` merge kararı kullanıcı onayından sonra. `main`'e ERKEN GEÇME.
 
 ---
 

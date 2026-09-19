@@ -1,11 +1,6 @@
 'use client';
 
-import {
-  advanceScene,
-  getScrollProgress,
-  readScene,
-  settleScene,
-} from '@/lib/motion/backdrop-scene';
+import { advanceScene, readScene, settleScene } from '@/lib/motion/backdrop-scene';
 import { subscribeFrame } from '@/lib/motion/raf';
 import { readColorToken } from '@/lib/webgl';
 import { ScreenQuad } from '@react-three/drei';
@@ -15,16 +10,21 @@ import { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 
 /**
- * Site geneli KALICI arka plan sahnesi — R3F shader alanı (V5 Bölüm 2).
+ * Site geneli KALICI arka plan sahnesi — R3F shader alanı (V5 Bölüm 2,
+ * sadeleştirildi V7 — tek odaklı küre/orb).
  *
  * - `[locale]/layout.tsx` seviyesinde bir kez mount; rota değişiminde
  *   REMOUNT OLMAZ (App Router layout kalıcı).
  * - `frameloop="never"` — render TEK paylaşımlı rAF'tan (`raf.ts`) sürülür;
  *   Lenis scroll ilerlemesi 0..1 sahneye uniform geçer (`backdrop-scene.ts`).
  * - Sekme arka plandayken `raf.ts` durur → render durur.
- * - Bölüm parametreleri (tone/density/depth/flow) sönümlü lerp ile karışır.
+ * - Bölüm parametreleri (tone/density/depth/flow) AYNI sönümlü lerp ile
+ *   karışır (`backdrop-scene.ts` değişmedi) — `depth` zaten hero'da düşük
+ *   (yakın/parlak), kapanışta yüksek (uzak/soluk) olacak şekilde
+ *   kayıtlıydı; V7'de bu doğrudan kürenin konum/boyut/opaklığını sürüyor.
  * - Yedekler bu bileşenin DIŞINDA (`SiteBackdrop`): reduced-motion / WebGL yok /
- *   düşük performans → `SiteBackdropFallback`. Mobilde `complexity=0.5`.
+ *   düşük performans → `SiteBackdropFallback`. Mobilde `complexity=0.5`
+ *   (ikinci halkayı ve iç sıcak çekirdeği kapatır).
  */
 
 const VERT = /* glsl */ `
@@ -40,63 +40,56 @@ const FRAG = /* glsl */ `
   varying vec2 vUv;
   uniform float uTime;
   uniform float uAspect;
-  uniform float uProgress;
   uniform float uTone;
   uniform float uDensity;
   uniform float uDepth;
   uniform float uFlow;
-  uniform float uOctaves;
+  uniform float uComplexity;
   uniform vec2  uMouse;
   uniform vec3  uAccent;
   uniform vec3  uGlow;
 
   float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
-  float noise(vec2 p){
-    vec2 i = floor(p), f = fract(p);
-    vec2 u = f * f * (3.0 - 2.0 * f);
-    return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), u.x),
-               mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), u.y);
-  }
-  float fbm(vec2 p){
-    float v = 0.0, a = 0.5;
-    for (int k = 0; k < 4; k++) {
-      if (float(k) >= uOctaves) break;      // mobilde yarı karmaşıklık
-      v += a * noise(p);
-      p *= 2.0; a *= 0.5;
-    }
-    return v;
-  }
 
   void main(){
     vec2 uv = vUv;
     uv.x *= uAspect;
-    float zoom = mix(1.05, 1.55, uDepth);
-    uv *= zoom;
+    vec2 mouse = (uMouse - 0.5) * 0.02;
 
-    float t = uTime * (0.5 + uFlow);
-    vec2 m = (uMouse - 0.5) * 0.12;
+    // Küre konumu: hero'da üst-merkeze yakın; derinlik arttıkça yukarı/geriye
+    // kayar (parallax) — konum sıçramaz, depth zaten sönümlü.
+    vec2 center = vec2(0.5 * uAspect, mix(0.6, 0.94, uDepth)) + mouse;
+    float dist = length(uv - center);
 
-    vec2 q = vec2(fbm(uv * 1.3 + t * 0.6), fbm(uv * 1.3 - t * 0.5 + 5.2));
-    vec2 r = vec2(fbm(uv * 1.7 + q * 1.5 + t * 0.8 + m), fbm(uv * 1.7 + q * 1.5 - t * 0.7));
-    float n = fbm(uv * 1.1 + r * 1.4);
+    float radius = mix(0.3, 0.12, uDepth) * mix(0.92, 1.06, uDensity);
+    // Kürenin çekirdek opaklığı derinlikle düşer ama SIFIRA inmez — iz kalır.
+    float coreAlpha = mix(0.95, 0.18, uDepth) * mix(0.8, 1.0, uDensity);
+
+    // Tek, yumuşak iç ışıma — çok parçacık yok, tek odak noktası.
+    float core = exp(-pow(dist / radius, 2.0) * 2.6);
+    float hotCore = uComplexity > 0.5
+      ? exp(-pow(dist / (radius * 0.4), 2.0) * 3.0) * 0.55
+      : 0.0;
+
+    // İnce halka deseni — hafif organik dalgalanma, katı bir CAD çemberi değil.
+    float angle = atan(uv.y - center.y, uv.x - center.x);
+    float wobble = (hash(vec2(floor(angle * 6.0), floor(uTime * 0.08))) - 0.5) * 0.01;
+    float ringR = radius * 2.05 + wobble + sin(uTime * (0.1 + uFlow * 0.12)) * radius * 0.012;
+    float ringWidth = 0.005 + radius * 0.012;
+    float ring = smoothstep(ringWidth, 0.0, abs(dist - ringR)) * 0.45;
+    float ring2 = uComplexity > 0.5
+      ? smoothstep(ringWidth * 0.7, 0.0, abs(dist - ringR * 1.5)) * 0.18
+      : 0.0;
 
     // Renk sıcaklığı: soğuk azur → sıcak (menekşe + hafif mercan ucu).
     vec3 warm = mix(uGlow, vec3(1.0, 0.55, 0.42), 0.18);
     vec3 lightCol = mix(uAccent, warm, clamp(uTone, 0.0, 1.0));
 
-    float field = smoothstep(0.34, 0.92, n + (uProgress - 0.5) * 0.12);
-    float bright = smoothstep(0.55, 1.0, r.x) * 0.5;
+    vec3 col = lightCol * (core + hotCore + ring + ring2);
+    float a = clamp((core * 0.85 + hotCore * 0.5 + ring + ring2) * coreAlpha, 0.0, 0.62);
 
-    vec3 col = lightCol * (field + bright);
-
-    // Kenar sönümü — geniş ekranda köşeler kararmasın (V5 Bölüm 1 dersi).
-    float vig = smoothstep(1.95, 0.4, length((vUv - 0.5) * vec2(uAspect, 1.0)));
-    float cover = (field * 0.8 + bright * 0.6) * (0.55 + 0.45 * vig);
-
-    float a = clamp(cover * (0.18 + 0.4 * uDensity), 0.0, 0.62);
-
-    // Bantlaşmayı kır.
-    col += (hash(gl_FragCoord.xy + uTime) - 0.5) * 0.02;
+    // Bantlaşmayı kır — tek ince dither, yoğun doku değil.
+    col += (hash(gl_FragCoord.xy + uTime) - 0.5) * 0.015;
 
     gl_FragColor = vec4(col, a);
   }
@@ -112,12 +105,11 @@ function Driver({ complexity }: { complexity: number }) {
     () => ({
       uTime: { value: 0 },
       uAspect: { value: 1 },
-      uProgress: { value: 0 },
       uTone: { value: 0.2 },
       uDensity: { value: 0.5 },
       uDepth: { value: 0.2 },
       uFlow: { value: 0.4 },
-      uOctaves: { value: complexity < 1 ? 2 : 4 },
+      uComplexity: { value: complexity },
       uMouse: { value: new THREE.Vector2(0.5, 0.5) },
       uAccent: { value: new THREE.Color('#4d7cff') },
       uGlow: { value: new THREE.Color('#7b6bff') },
@@ -157,7 +149,6 @@ function Driver({ complexity }: { complexity: number }) {
       uniforms.uTone.value = s.tone;
       uniforms.uDensity.value = s.density;
       uniforms.uDepth.value = s.depth;
-      uniforms.uProgress.value = getScrollProgress();
       advance(performance.now());
       return;
     }
@@ -170,7 +161,6 @@ function Driver({ complexity }: { complexity: number }) {
       uniforms.uDensity.value = s.density;
       uniforms.uDepth.value = s.depth;
       uniforms.uFlow.value = s.flow;
-      uniforms.uProgress.value = getScrollProgress();
       const mv = uniforms.uMouse.value;
       mv.set(
         THREE.MathUtils.lerp(mv.x, pointer.current.x, 0.04),
