@@ -69,12 +69,11 @@ function GeometricShadow() {
 function DocumentGrid() {
   return (
     <svg viewBox={VIEWBOX} preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-      <defs>
-        <pattern id="sb-doc-grid" width="40" height="28" patternUnits="userSpaceOnUse">
-          <path d="M0 27.5 H40" stroke="currentColor" strokeWidth="1" opacity="0.09" />
-        </pattern>
-      </defs>
-      <rect width="1200" height="800" fill="url(#sb-doc-grid)" />
+      {/*
+        V10: tekrarlanan yatay ızgara çizgileri (`sb-doc-grid` deseni)
+        kaldırıldı — sayfa başlıklarında istenmeyen bir "sahte ızgara" hissi
+        veriyordu. Belge silüeti (bloklar + kenar çizgisi) korundu.
+      */}
       <g fill="currentColor">
         <rect x="80" y="96" width="220" height="10" opacity="0.14" />
         <rect x="80" y="124" width="150" height="10" opacity="0.1" />

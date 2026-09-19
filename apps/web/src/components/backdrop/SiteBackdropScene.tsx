@@ -1,6 +1,7 @@
 'use client';
 
 import { advanceScene, readScene, settleScene } from '@/lib/motion/backdrop-scene';
+import { advanceCursor, readCursor, startCursorTracking } from '@/lib/motion/cursor';
 import { subscribeFrame } from '@/lib/motion/raf';
 import { readColorToken } from '@/lib/webgl';
 import { useReducedMotion } from 'motion/react';
@@ -37,6 +38,11 @@ import { useEffect, useRef } from 'react';
  * - Yedekler bu bileşenin DIŞINDA (`SiteBackdrop`): reduced-motion / WebGL yok /
  *   düşük performans → `SiteBackdropFallback`. Mobilde `complexity=0.5` →
  *   düşük devicePixelRatio tavanı.
+ *
+ * V10: imlece duyarlı ikincil katman eklendi (`lib/motion/cursor.ts`) — sahne
+ * imlece doğru hafifçe çekilir (uCenter'a küçük, sönümlü bir ofset). Scroll'un
+ * sürdüğü ANA hareketin üstüne biner, onu ezmez. Yalnızca gerçek mouse'ta
+ * (`pointer: fine`) çalışır; dokunmatikte ve `prefers-reduced-motion`de kapalı.
  */
 
 const VERT = /* glsl */ `
@@ -274,10 +280,17 @@ export default function SiteBackdropScene({ complexity = 1 }: { complexity?: num
     function render(
       s: { tone: number; density: number; depth: number; flow: number },
       time: number,
+      cursor: { x: number; y: number },
     ) {
       // depth: hero'da düşük (büyük/yakın/parlak) → kapanışta yüksek (küçük/uzak/soluk).
       program.uniforms.uScale.value = 1.15 - s.depth * 0.75; // 1.15 → 0.40
-      program.uniforms.uCenter.value = [0.5, 0.38 + s.depth * 0.1];
+      // İmleç ofseti: hafif manyetik çekim — ana depth/scroll hareketinin
+      // ÜSTÜNE biner, genliği küçük tutulur ki ana hareketi ezmesin.
+      const pull = 0.035;
+      program.uniforms.uCenter.value = [
+        0.5 + cursor.x * pull,
+        0.38 + s.depth * 0.1 + cursor.y * pull * 0.6,
+      ];
       program.uniforms.uPresence.value =
         Math.max(0.16, 0.85 - s.depth * 0.6) * (0.85 + s.density * 0.3);
       program.uniforms.hue.value = s.tone * 45; // hafif sıcak kayma — orb'un varsayılan mor/camgöbeği/lacivert ailesinde kalır
@@ -288,7 +301,7 @@ export default function SiteBackdropScene({ complexity = 1 }: { complexity?: num
     if (reduce) {
       settleScene();
       const s = readScene();
-      render(s, 0);
+      render(s, 0, { x: 0, y: 0 });
       return () => {
         window.removeEventListener('resize', resize);
         themeQuery.removeEventListener('change', syncPalette);
@@ -297,16 +310,19 @@ export default function SiteBackdropScene({ complexity = 1 }: { complexity?: num
       };
     }
 
+    const stopCursor = startCursorTracking();
     let simTime = 0;
     const unsub = subscribeFrame((dt) => {
       advanceScene(dt);
+      advanceCursor(dt);
       const s = readScene();
       simTime += dt * (0.15 + s.flow * 0.5);
-      render(s, simTime);
+      render(s, simTime, readCursor());
     });
 
     return () => {
       unsub();
+      stopCursor();
       window.removeEventListener('resize', resize);
       themeQuery.removeEventListener('change', syncPalette);
       container.removeChild(gl.canvas);
