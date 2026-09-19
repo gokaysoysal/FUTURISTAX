@@ -11,7 +11,7 @@ export const contactTopics = [
   'finansal-danismanlik',
   'yatirim-tesvikleri',
   'uluslararasi-vergilendirme',
-  'kurumsal-yapilandirma',
+  'stratejik-yapilandirma',
   'diger',
 ] as const;
 
@@ -71,6 +71,6 @@ export const TOPIC_LABELS: Record<ContactTopic, string> = {
   'finansal-danismanlik': 'Finansal danışmanlık',
   'yatirim-tesvikleri': 'Yatırım teşvikleri',
   'uluslararasi-vergilendirme': 'Uluslararası vergilendirme',
-  'kurumsal-yapilandirma': 'Kurumsal yapılandırma',
+  'stratejik-yapilandirma': 'Stratejik yapılandırma',
   diger: 'Diğer',
 };

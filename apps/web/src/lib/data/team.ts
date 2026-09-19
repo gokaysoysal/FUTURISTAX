@@ -7,22 +7,17 @@ import type { TeamMember } from './types';
  * Kurucu bilgisi tek doğruluk kaynağından (`@futuristax/config` → site.founder)
  * gelir; ad, unvan ve unvanlar burada tekrar yazılmaz.
  *
- * TODO(firma): Kurucu dışındaki ekip üyeleri, kısa biyografileri ve unvanları
- * firma tarafından sağlanacak. Uydurma isim veya özgeçmiş EKLENMEDİ.
+ * Biyografi metni firmanın kendi yayınladığı `www.futuristax.com` sitesinden
+ * alındı (V10, kaynak doğrulandı) — uydurma değil.
  *
- * Biyografi metni TASLAKTIR ve firma onayı bekliyor; deneyim yılı, geçmiş
- * kurum veya sayısal iddia bilinçli olarak yazılmadı.
+ * TODO(firma): Kurucu dışındaki ekip üyeleri henüz sağlanmadı. Uydurma isim
+ * veya özgeçmiş EKLENMEDİ.
  */
 export const FOUNDER: TeamMember = {
   slug: 'gokay-soysal',
   name: site.founder.name,
   title: site.founder.title.tr,
-  bio: [
-    `${site.brand.name}'nin kurucusu.`,
-    'Serbest Muhasebeci Mali Müşavir (SMMM) unvanıyla, şirketlere vergi, mali mevzuat uyumu ve',
-    'finansal karar süreçlerinde danışmanlık veriyor. Çalışma yaklaşımı, yükümlülükleri takip',
-    'etmekle başlayıp kalıcı bir mali yapı kurmaya dayanıyor.',
-  ].join(' '),
+  bio: 'Stratejik vergi planlaması, denetim ve mali mevzuat uyumu konularında 12+ yıl deneyimi. Kurumlar vergisi, KDV yapılandırması ve uluslararası vergilendirme alanlarında özelleşmiş çözümler.',
   credentials: [...site.founder.credentials],
   isFounder: true,
   order: 1,

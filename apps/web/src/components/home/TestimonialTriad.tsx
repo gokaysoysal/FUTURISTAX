@@ -1,13 +1,15 @@
 import { Bento, BentoTile } from '@/components/home/Bento';
 import { SceneSection } from '@/components/home/SceneSection';
-import { placeholderTestimonials } from '@/lib/data/placeholder';
+import { publishableTestimonials } from '@/lib/data';
 
 /**
  * REFERANSLAR (V4-AKIS Bölüm 2 — referans sırası #8 · V6 bento)
  *
  * Asimetrik: ilk görüş `lg`+ ekranda 2×2 geniş alıntı (büyük tip); diğer ikisi
- * 3. sütunda yığılı. Avatar yerine soyut geometrik işaret; ad yerine
- * "Örnek Müşteri A · <sektör>". Metinler YER TUTUCU.
+ * 3. sütunda yığılı. Avatar yerine soyut geometrik işaret.
+ *
+ * V10: GERÇEK, yazılı yayın izinli görüşler (`lib/data/testimonials.ts`) —
+ * "Örnek Müşteri A" yer tutucularının yerini aldı.
  */
 const MARK = (
   <svg
@@ -24,7 +26,10 @@ const MARK = (
 );
 
 export function TestimonialTriad() {
-  const [hero, ...rest] = placeholderTestimonials;
+  const testimonials = publishableTestimonials();
+  const hero = testimonials[0];
+  if (!hero) return null;
+  const rest = testimonials.slice(1);
 
   return (
     <SceneSection
@@ -34,10 +39,6 @@ export function TestimonialTriad() {
       backdrop="geometric-shadow"
       wide
     >
-      <p className="mb-8 max-w-prose text-[length:var(--text-sm)] text-[var(--color-text-muted)]">
-        Aşağıdaki görüşler düzen amaçlı yer tutucudur. Gerçek müşteri görüşleri yalnızca yazılı
-        yayın izniyle, isimle birlikte eklenir.
-      </p>
       <Bento className="lg:grid-cols-3 lg:grid-rows-2">
         <BentoTile
           as="figure"
@@ -49,18 +50,20 @@ export function TestimonialTriad() {
             “{hero.quote}”
           </blockquote>
           <figcaption className="mt-auto text-[length:var(--text-sm)] text-[var(--color-text-secondary)]">
-            {hero.label} · {hero.sector}
+            {hero.authorName} · {hero.authorTitle}
+            {hero.company ? `, ${hero.company}` : ''}
           </figcaption>
         </BentoTile>
 
         {rest.map((t) => (
-          <BentoTile key={t.key} as="figure">
+          <BentoTile key={t.slug} as="figure">
             {MARK}
             <blockquote className="text-[length:var(--text-sm)] leading-relaxed text-[var(--color-text)]">
               “{t.quote}”
             </blockquote>
             <figcaption className="mt-auto text-[length:var(--text-xs)] text-[var(--color-text-secondary)]">
-              {t.label} · {t.sector}
+              {t.authorName} · {t.authorTitle}
+              {t.company ? `, ${t.company}` : ''}
             </figcaption>
           </BentoTile>
         ))}

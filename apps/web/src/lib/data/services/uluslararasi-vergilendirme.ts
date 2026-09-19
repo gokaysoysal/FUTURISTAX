@@ -1,16 +1,15 @@
 import type { ServiceRecord } from '../types';
 
-// TASLAK METİN — yayına almadan önce firma tarafından revize edilecek.
-// Somut oran, tutar veya mevzuat madde atfı bilinçli olarak yazılmadı.
+// GERÇEK İÇERİK — www.futuristax.com'dan (V10, kaynak doğrulandı).
 export const uluslararasiVergilendirme: ServiceRecord = {
   slug: 'uluslararasi-vergilendirme',
   title: 'Uluslararası vergilendirme',
   shortTitle: 'Uluslararası vergilendirme',
   summary:
-    'Sınır ötesi faaliyet, aynı kazancın birden fazla ülkede vergilenmesi riskini ve ek ' +
-    'belgelendirme yükümlülüklerini beraberinde getirir. Bu hizmette çifte vergilendirmeyi ' +
-    'önleme anlaşmalarının uygulanması, transfer fiyatlandırması dokümantasyonu ve yurt dışı ' +
-    'yapıların vergisel değerlendirmesi konularında yol gösteririz.',
+    'Yurt dışı yatırım ve işlemler için çifte vergilendirmeyi önleme anlaşmaları kapsamında ' +
+    'danışmanlık veriyoruz; transfer fiyatlandırması belgelendirme de kapsamdadır. Sınır ötesi ' +
+    'faaliyet, aynı kazancın birden fazla ülkede vergilenmesi riskini beraberinde getirir — ' +
+    'yurt dışı yapıların vergisel değerlendirmesinde de yol gösteririz.',
   sections: [
     {
       heading: 'Çifte vergilendirme',
@@ -21,9 +20,11 @@ export const uluslararasiVergilendirme: ServiceRecord = {
     {
       heading: 'Transfer fiyatlandırması',
       body:
-        'İlişkili kişilerle yapılan işlemlerde emsallere uygunluk analizini ve gerekli ' +
-        'dokümantasyonu hazırlarız. Amaç, bir incelemede fiyatlandırmanın gerekçesini belgeyle ' +
-        'gösterebilmektir.',
+        'Kurumların ilişkili kişilerle (ortaklar, bağlı şirketler, yöneticiler) gerçekleştirdiği ' +
+        'işlemleri emsallere uygunluk ilkesi çerçevesinde değerlendiririz. KVK Madde 13 uyarınca ' +
+        'yurt içi ilişkili kişi işlemlerinde yıllık 1 milyon TL, yurt dışı işlemlerde ise ' +
+        '500.000 TL üzerindeki tutarlar için belgeleme zorunludur; eksik veya hatalı ' +
+        'belgelendirme örtülü kazanç dağıtımı hükümlerini ve vergi ziyaı cezasını doğurabilir.',
     },
     {
       heading: 'Yapı değerlendirmesi',
@@ -53,8 +54,8 @@ export const uluslararasiVergilendirme: ServiceRecord = {
         'almasını sağlarız.',
     },
   ],
-  relatedServiceSlugs: ['vergi-danismanligi', 'kurumsal-yapilandirma', 'kurumsal-raporlama'],
-  relatedSectorSlugs: ['bilisim-ve-yazilim', 'imalat', 'lojistik'],
+  relatedServiceSlugs: ['vergi-danismanligi', 'stratejik-yapilandirma', 'kurumsal-raporlama'],
+  relatedSectorSlugs: ['teknoloji-ve-bilisim', 'uretim-ve-sanayi', 'finans-ve-sermaye-piyasalari'],
   seo: {
     title: 'Uluslararası vergilendirme',
     description:
@@ -67,7 +68,7 @@ export const uluslararasiVergilendirme: ServiceRecord = {
       'ÇVÖA',
     ],
   },
-  order: 6,
-  draft: true,
-  updatedAt: '2026-09-06',
+  order: 7,
+  draft: false,
+  updatedAt: '2026-09-19',
 };

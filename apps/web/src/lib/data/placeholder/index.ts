@@ -13,4 +13,3 @@ export {
   engagementModels,
   closingCta,
 } from './home';
-export { placeholderTestimonials } from './testimonials';

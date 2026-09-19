@@ -1,14 +1,15 @@
 import type { SectorRecord } from '../types';
 
-// TASLAK METİN — yayına almadan önce firma tarafından revize edilecek.
-// Somut oran, tutar veya mevzuat madde atfı bilinçli olarak yazılmadı.
-export const imalat: SectorRecord = {
-  slug: 'imalat',
-  title: 'İmalat',
+// GERÇEK İÇERİK — www.futuristax.com'dan (V10, kaynak doğrulandı).
+// Önceki adı "İmalat"tı; firma sitesinde "Üretim & Sanayi" olarak
+// yayınlanıyor, slug da buna göre güncellendi.
+export const uretimVeSanayi: SectorRecord = {
+  slug: 'uretim-ve-sanayi',
+  title: 'Üretim ve sanayi',
   summary:
-    'İmalat sanayisinde vergi ve mali yönetim; maliyet muhasebesinin doğruluğuna, stok ve ' +
-    'amortisman politikalarına ve yatırım kararlarının teşviklerle uyumuna bağlıdır. Üretim ' +
-    'yapan şirketlere maliyet takibinden teşvik yönetimine kadar bütünlüklü destek veririz.',
+    'Yatırım teşvik belgesi uygulamaları, KDV iadeleri ve ihracat vergi avantajlarının etkin ' +
+    'yönetimini sağlıyoruz. Vergi ve mali yönetim; maliyet muhasebesinin doğruluğuna, stok ve ' +
+    'amortisman politikalarına ve yatırım kararlarının teşviklerle uyumuna bağlıdır.',
   sections: [
     {
       heading: 'Maliyet ve stok',
@@ -50,15 +51,15 @@ export const imalat: SectorRecord = {
     },
   ],
   relatedServiceSlugs: ['yatirim-tesvik-yonetimi', 'kurumsal-raporlama', 'vergi-denetimi'],
-  relatedSectorSlugs: ['insaat-ve-gayrimenkul', 'lojistik'],
+  relatedSectorSlugs: ['gayrimenkul-ve-insaat', 'enerji-ve-cevre'],
   seo: {
-    title: 'İmalat sektörü için vergi ve mali danışmanlık',
+    title: 'Üretim ve sanayi sektörü için vergi ve mali danışmanlık',
     description:
-      'Maliyet muhasebesi, stok ve amortisman politikaları, yatırım teşvik yönetimi ve yönetim ' +
-      'raporlaması ile üretim şirketlerine destek.',
-    keywords: ['imalat vergi danışmanlığı', 'maliyet muhasebesi', 'üretim sektörü teşvik'],
+      'Yatırım teşvik belgesi, KDV iadeleri, maliyet muhasebesi ve yönetim raporlaması ile ' +
+      'üretim şirketlerine destek.',
+    keywords: ['imalat vergi danışmanlığı', 'yatırım teşvik belgesi', 'KDV iadesi'],
   },
-  order: 1,
-  draft: true,
-  updatedAt: '2026-09-06',
+  order: 2,
+  draft: false,
+  updatedAt: '2026-09-19',
 };

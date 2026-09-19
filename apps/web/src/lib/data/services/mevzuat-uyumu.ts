@@ -1,16 +1,14 @@
 import type { ServiceRecord } from '../types';
 
-// TASLAK METİN — yayına almadan önce firma tarafından revize edilecek.
-// Somut oran, tutar veya mevzuat madde atfı bilinçli olarak yazılmadı.
+// GERÇEK İÇERİK — www.futuristax.com'dan (V10, kaynak doğrulandı).
 export const mevzuatUyumu: ServiceRecord = {
   slug: 'mevzuat-uyumu',
   title: 'Mali mevzuat uyumu',
   shortTitle: 'Mevzuat uyumu',
   summary:
-    'Mali mevzuat sürekli değişir; uyum bir kerelik değil, izlenmesi gereken bir süreçtir. Bu ' +
-    'hizmette şirketinizi ilgilendiren düzenleme değişikliklerini takip eder, etkisini ' +
-    'operasyonel diline çevirir ve gerekli aksiyonu zamanında önümüze koyarız. Amaç, bir ' +
-    'değişikliği ceza yazısıyla değil, önceden öğrenmektir.',
+    'Değişen regülasyonlar karşısında şirketinizin güncel ve uyumlu kalmasını sağlayarak cezai ' +
+    'riskleri minimize ediyoruz. Mali mevzuat sürekli değişir; uyum bir kerelik değil, izlenmesi ' +
+    'gereken bir süreçtir — amaç, bir değişikliği ceza yazısıyla değil önceden öğrenmektir.',
   sections: [
     {
       heading: 'Değişiklik takibi',
@@ -54,7 +52,7 @@ export const mevzuatUyumu: ServiceRecord = {
     },
   ],
   relatedServiceSlugs: ['vergi-danismanligi', 'vergi-denetimi', 'kurumsal-raporlama'],
-  relatedSectorSlugs: ['saglik', 'lojistik', 'perakende-ve-e-ticaret'],
+  relatedSectorSlugs: ['saglik-ve-eczacilik', 'e-ticaret-ve-perakende', 'enerji-ve-cevre'],
   seo: {
     title: 'Mali mevzuat uyumu',
     description:
@@ -63,6 +61,6 @@ export const mevzuatUyumu: ServiceRecord = {
     keywords: ['mevzuat uyumu', 'vergi mevzuatı takibi', 'uyum takvimi', 'cezai risk'],
   },
   order: 4,
-  draft: true,
-  updatedAt: '2026-09-06',
+  draft: false,
+  updatedAt: '2026-09-19',
 };

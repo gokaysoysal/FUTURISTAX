@@ -1,16 +1,14 @@
 import type { ServiceRecord } from '../types';
 
-// TASLAK METİN — yayına almadan önce firma tarafından revize edilecek.
-// Somut oran, tutar veya mevzuat madde atfı bilinçli olarak yazılmadı.
+// GERÇEK İÇERİK — www.futuristax.com'dan (V10, kaynak doğrulandı).
 export const vergiDenetimi: ServiceRecord = {
   slug: 'vergi-denetimi',
-  title: 'Vergi denetimi ve risk analizi',
+  title: 'Vergi denetimi ve risk',
   shortTitle: 'Vergi denetimi',
   summary:
-    'Bir vergi incelemesine hazırlıklı girmek, incelemeyi yönetmekten daha ucuzdur. Bu hizmette ' +
-    'şirketinizin vergisel pozisyonlarını, bir denetçinin bakış açısıyla önceden gözden geçirir; ' +
-    'zayıf noktaları ve belgelendirme boşluklarını inceleme başlamadan kapatırız. İnceleme ' +
-    'süreci başladıysa, savunma ve uzlaşma aşamalarını yanınızda yürütürüz.',
+    'Olası mali riskleri önceden tespit eden, mevzuata tam uyumlu bir yapı oluşturuyoruz. Vergi ' +
+    'incelemelerine hazırlık ve itiraz süreçleri yönetimi bu hizmetin kapsamındadır — bir vergi ' +
+    'incelemesine hazırlıklı girmek, incelemeyi sonradan yönetmekten her zaman daha ucuzdur.',
   sections: [
     {
       heading: 'Risk analizi',
@@ -54,16 +52,16 @@ export const vergiDenetimi: ServiceRecord = {
         'idarenin takvimine bağlıdır; biz hazırlık ve yanıt aşamalarını hızlandırmaya odaklanırız.',
     },
   ],
-  relatedServiceSlugs: ['vergi-danismanligi', 'mevzuat-uyumu', 'bagimsiz-denetim-destegi'],
-  relatedSectorSlugs: ['imalat', 'perakende-ve-e-ticaret', 'insaat-ve-gayrimenkul'],
+  relatedServiceSlugs: ['vergi-danismanligi', 'mevzuat-uyumu', 'kurumsal-raporlama'],
+  relatedSectorSlugs: ['uretim-ve-sanayi', 'e-ticaret-ve-perakende', 'gayrimenkul-ve-insaat'],
   seo: {
-    title: 'Vergi denetimi ve risk analizi',
+    title: 'Vergi denetimi ve risk',
     description:
       'İnceleme öncesi risk taraması, inceleme hazırlığı, itiraz ve uzlaşma yönetimi. Zayıf ' +
       'noktaları denetim başlamadan kapatın.',
     keywords: ['vergi incelemesi', 'vergi risk analizi', 'uzlaşma', 'tarhiyat'],
   },
   order: 2,
-  draft: true,
-  updatedAt: '2026-09-06',
+  draft: false,
+  updatedAt: '2026-09-19',
 };

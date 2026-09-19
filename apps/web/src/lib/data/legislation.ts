@@ -234,3 +234,44 @@ export function getArticle(slug: string): LegislationArticle | undefined {
 export function articleSlugs(): string[] {
   return LEGISLATION_ARTICLES.map((article) => article.slug);
 }
+
+export interface LawLibraryEntry {
+  code: string;
+  name: string;
+  url: string;
+}
+
+/**
+ * Kanun bilgi bankası — mevzuat.gov.tr'ye giden doğrudan bağlantılar.
+ *
+ * GERÇEK İÇERİK — www.futuristax.com'dan (V10, kaynak doğrulandı). Editoryal
+ * makale değildir; yalnızca resmî mevzuat metnine giden bir bağlantı
+ * listesidir.
+ */
+export const LAW_LIBRARY: readonly LawLibraryEntry[] = [
+  {
+    code: '5520 Sayılı Kanun',
+    name: 'Kurumlar Vergisi Kanunu',
+    url: 'https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=5520&MevzuatTur=1&MevzuatTertip=5',
+  },
+  {
+    code: '193 Sayılı Kanun',
+    name: 'Gelir Vergisi Kanunu',
+    url: 'https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=193&MevzuatTur=1&MevzuatTertip=4',
+  },
+  {
+    code: '3065 Sayılı Kanun',
+    name: 'Katma Değer Vergisi Kanunu',
+    url: 'https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=3065&MevzuatTur=1&MevzuatTertip=5',
+  },
+  {
+    code: '213 Sayılı Kanun',
+    name: 'Vergi Usul Kanunu',
+    url: 'https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=213&MevzuatTur=1&MevzuatTertip=4',
+  },
+  {
+    code: '6102 Sayılı Kanun',
+    name: 'Türk Ticaret Kanunu',
+    url: 'https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=6102&MevzuatTur=1&MevzuatTertip=5',
+  },
+];

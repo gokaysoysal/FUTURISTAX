@@ -3,6 +3,7 @@ import { PageHero } from '@/components/content/PageHero';
 import { RequestCta } from '@/components/content/RequestCta';
 import { StatusPanel } from '@/components/ui/StatusPanel';
 import {
+  LAW_LIBRARY,
   LEGISLATION_ARTICLES,
   LEGISLATION_CATEGORY_LABELS,
   type LegislationCategory,
@@ -98,6 +99,41 @@ export default async function LegislationHubPage({
           </li>
         ))}
       </ul>
+
+      <section aria-labelledby="law-library" className="mt-14">
+        <div className="ledger-rule pb-3">
+          <p className="basis-ref uppercase">Kaynak</p>
+          <h2 id="law-library" className="mt-1 text-[length:var(--text-xl)]">
+            Kanun bilgi bankası
+          </h2>
+        </div>
+        <ul className="mt-5 grid gap-3 sm:grid-cols-2">
+          {LAW_LIBRARY.map((law) => (
+            <li key={law.code}>
+              <a
+                href={law.url}
+                target="_blank"
+                rel="noopener noreferrer nofollow"
+                className="card card-interactive flex items-center justify-between gap-4 p-4"
+              >
+                <span>
+                  <span className="basis-ref block uppercase">{law.code}</span>
+                  <span className="mt-1 block text-[length:var(--text-sm)] text-[var(--color-text)]">
+                    {law.name}
+                  </span>
+                </span>
+                <span
+                  aria-hidden="true"
+                  className="btn-arrow shrink-0 text-[var(--color-text-muted)]"
+                >
+                  →
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <p className="basis-ref mt-3">Bağlantılar mevzuat.gov.tr resmî kaynağına gider.</p>
+      </section>
 
       <section aria-labelledby="official-feed" className="mt-14">
         <div className="ledger-rule pb-3">

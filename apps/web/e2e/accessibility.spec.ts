@@ -17,7 +17,7 @@ const PAGES = [
   '/hizmetler',
   '/hizmetler/vergi-danismanligi',
   '/sektorler',
-  '/sektorler/imalat',
+  '/sektorler/uretim-ve-sanayi',
   '/araclar',
   '/araclar/kdv',
   '/araclar/kur-cevirici',

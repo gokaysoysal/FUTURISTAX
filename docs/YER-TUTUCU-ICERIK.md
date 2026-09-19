@@ -36,10 +36,10 @@
 | `…/home.ts` → `serviceGroups` | 9 hizmetin dört gruba toplanması + grup açıklamaları. `serviceSlugs` gerçek slug'lara bağlı. | Grup adları/açıklamaları; gruplama tercihi. |
 | `…/home.ts` → `engagementModels` | Çalışma modeli üç kart: tek seferlik / sürekli / proje. Her kartta 4 madde + CTA. **FİYAT YOK.** | Kapsam maddelerini firma netleştirir. Fiyat eklenmez (fiyat görüşmede). |
 | `…/home.ts` → `closingCta` | Kapanış CTA başlık / gövde / iki buton | Gerçek kapanış mesajı. |
-| `apps/web/src/lib/data/placeholder/testimonials.ts` → `placeholderTestimonials` | Üç referans: "Örnek Müşteri A/B/C · <sektör>" + yer tutucu alıntı. Avatar yerine geometrik işaret. | **Yazılı yayın izniyle** gerçek görüş + isim. Asıl kaynak `src/lib/data/testimonials.ts` (bilinçli boş) — oraya taşınır; bu dosya silinir. |
-| `apps/web/src/lib/data/legislation.ts` | 5 editoryal yazı, `draft: true`, genel başlıklı | Firma gözden geçirir; somut oran/tarih/madde eklerse kaynağıyla. Resmî duyuru taklidi ÜRETİLMEZ. |
+| ~~`apps/web/src/lib/data/placeholder/testimonials.ts` → `placeholderTestimonials`~~ | ✅ **V10'da tamamlandı.** 3 gerçek, yazılı yayın izinli referans `src/lib/data/testimonials.ts`'e eklendi (kaynak: www.futuristax.com); bu dosya silindi, `TestimonialTriad` artık `publishableTestimonials()` kullanıyor. | — |
+| `apps/web/src/lib/data/legislation.ts` | 5 editoryal yazı, `draft: true`, genel başlıklı | Firma gözden geçirir; somut oran/tarih/madde eklerse kaynağıyla. Resmî duyuru taklidi ÜRETİLMEZ. (V10: ayrıca gerçek "Kanun bilgi bankası" — 5 kanun linki — `LAW_LIBRARY` olarak eklendi, bu ayrı ve editoryal yazı değil.) |
 | `apps/web/src/components/home/BrandMarks.tsx` | 8 soyut SVG marka işareti (logo şeridi + referans işaretleri) | Gerçek logo İZİNLE gelirse `TreatedImage` ile değiştirilir; aksi hâlde kalır. |
-| `apps/web/src/lib/data/services/*`, `sectors/*` | Hizmet/sektör detay metinleri (V2'den, `draft: true`) | Firma revizyonu — bu koşu dokunmadı. |
+| `apps/web/src/lib/data/services/*`, `sectors/*` | ✅ **V10'da gerçek özet metinle güncellendi, `draft: false`.** 9 hizmet (isim/kapsam değişikliği: Stratejik yapılandırma, SGK ve işçi mevzuatı) ve 8 sektör (7 değil — imalat/bilişim-yazılım/sağlık yeniden adlandı, lojistik+hizmet-danışmanlık kaldırıldı, finans/tarım/enerji eklendi), kaynak www.futuristax.com. | Detaylı `sections`/`faqs` alanları hâlâ editoryal — firma isterse revize eder. |
 
 ## Gerçek veri KULLANAN yerler (yer tutucu DEĞİL)
 

@@ -10,7 +10,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Sık sorulan sorular',
   description:
-    'Çalışma biçimimiz, kapsam ve süre, gizlilik ve veri işleme hakkında sık sorulan sorular.',
+    'Vergi danışmanlığı, teşvik ve Ar-Ge, gizlilik ve veri işleme hakkında sık sorulan sorular.',
   alternates: { canonical: '/sss' },
   openGraph: { title: 'Sık sorulan sorular', url: '/sss', type: 'website' },
 };
@@ -27,7 +27,7 @@ export default function FaqPage() {
         title="Sık sorulan sorular"
         backdrop="light-field"
         breadcrumbs={<Breadcrumbs trail={[{ name: 'SSS', path: '/sss' }]} />}
-        lead="Çalışma biçimimiz, kapsam ve süre, gizlilik ve veri işleme hakkında en çok gelen sorular."
+        lead="Vergi danışmanlığı, teşvik ve Ar-Ge, gizlilik ve veri işleme hakkında en çok gelen sorular."
       />
 
       <Reveal className="mt-12">

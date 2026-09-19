@@ -1,15 +1,15 @@
 import type { SectorRecord } from '../types';
 
-// TASLAK METİN — yayına almadan önce firma tarafından revize edilecek.
-// Somut oran, tutar veya mevzuat madde atfı bilinçli olarak yazılmadı.
-export const perakendeVeETicaret: SectorRecord = {
-  slug: 'perakende-ve-e-ticaret',
-  title: 'Perakende ve e-ticaret',
-  shortTitle: 'Perakende ve e-ticaret',
+// GERÇEK İÇERİK — www.futuristax.com'dan (V10, kaynak doğrulandı).
+export const eTicaretVePerakende: SectorRecord = {
+  slug: 'e-ticaret-ve-perakende',
+  title: 'E-ticaret ve perakende',
+  shortTitle: 'E-ticaret ve perakende',
   summary:
-    'Perakende ve e-ticarette işlem hacmi yüksek, birim tutar düşüktür; bu da belge düzeni, ' +
-    'pazar yeri kesintileri, iade yönetimi ve stok doğruluğu gibi operasyonel kalemlerin ' +
-    'vergisel sonuç üzerinde büyük etki yaratması demektir.',
+    'Uluslararası vergilendirme, dijital hizmet vergisi ve lojistik maliyet analizi ' +
+    'sunuyoruz — marketplace komisyon vergilemesi dahil. İşlem hacmi yüksek, birim tutar ' +
+    'düşük olduğundan belge düzeni, pazar yeri kesintileri, iade yönetimi ve stok doğruluğu ' +
+    'gibi operasyonel kalemler vergisel sonuç üzerinde büyük etki yaratır.',
   sections: [
     {
       heading: 'Pazar yeri ve tahsilat',
@@ -51,15 +51,15 @@ export const perakendeVeETicaret: SectorRecord = {
     },
   ],
   relatedServiceSlugs: ['vergi-danismanligi', 'mevzuat-uyumu', 'kurumsal-raporlama'],
-  relatedSectorSlugs: ['lojistik', 'bilisim-ve-yazilim'],
+  relatedSectorSlugs: ['teknoloji-ve-bilisim', 'gayrimenkul-ve-insaat'],
   seo: {
-    title: 'Perakende ve e-ticaret için vergi danışmanlığı',
+    title: 'E-ticaret ve perakende için vergi danışmanlığı',
     description:
-      'Pazar yeri kesintileri, iade ve kampanya düzeltmeleri, çok kanallı stok ve maliyet ' +
-      'takibinin vergisel yönetimi.',
-    keywords: ['e-ticaret vergi danışmanlığı', 'pazar yeri muhasebe', 'perakende KDV'],
+      'Marketplace komisyon vergilemesi, dijital hizmet vergisi, iade ve kampanya ' +
+      'düzeltmeleri, çok kanallı stok ve maliyet takibinin vergisel yönetimi.',
+    keywords: ['e-ticaret vergi danışmanlığı', 'pazar yeri muhasebe', 'dijital hizmet vergisi'],
   },
-  order: 5,
-  draft: true,
-  updatedAt: '2026-09-06',
+  order: 3,
+  draft: false,
+  updatedAt: '2026-09-19',
 };
