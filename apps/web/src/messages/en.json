@@ -1,0 +1,12 @@
+{
+  "nav": {
+    "corporate": "About",
+    "services": "Services",
+    "sectors": "Sectors",
+    "tools": "Tools",
+    "legislation": "Legislation",
+    "faq": "FAQ",
+    "contact": "Contact"
+  },
+  "cta": { "requestMeeting": "Request a meeting", "submit": "Send request" }
+}

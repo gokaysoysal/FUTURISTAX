@@ -1,0 +1,93 @@
+/*
+ * Sanat yönetimi katmanı — V3 sunum.
+ *
+ * Görseller HAM kullanılmaz: `.treated` duotone (gri tonlama + palet rengi
+ * `mix-blend-mode: color`) + grain uygular. Böylece stok fotoğraflar markanın
+ * parçası gibi durur. Prosedürel `SceneBackdrop` (SVG) gerçek foto gelene
+ * kadar yerini tutar.
+ */
+
+@layer components {
+  /* ── Görsel işleme — TreatedImage ────────────────────────── */
+  .treated {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+  .treated :is(img) {
+    display: block;
+    filter: grayscale(1) contrast(1.08) brightness(0.96);
+  }
+  /* Duotone tint — gölge/orta tonları palet rengine çeker. */
+  .treated::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background-color: var(--color-accent-strong);
+    mix-blend-mode: color;
+    opacity: 0.82;
+  }
+  .treated--signal::after {
+    background-color: var(--color-signal);
+  }
+  .treated--neutral::after {
+    background-color: var(--color-rule-strong);
+    opacity: 0.6;
+  }
+  /* Grain — bantlaşmayı kırar, "dijital" hissi azaltır. */
+  .treated::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0.09;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) .treated :is(img) {
+      filter: grayscale(1) contrast(1.05) brightness(1.02);
+    }
+    :root:not([data-theme="dark"]) .treated::after {
+      opacity: 0.7;
+    }
+  }
+
+  /* ── Prosedürel sahne zemini — SceneBackdrop ─────────────── */
+  .scene-backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+    color: var(--color-accent);
+  }
+  .scene-backdrop > svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Site geneli kalıcı arka plan canvas'ı (V5 Bölüm 2) — sabit sarmalayıcıyı
+     tam doldurur; taşma yaratmaz. Sarmalayıcı `SiteBackdrop`'ta fixed + -z-10. */
+  .site-backdrop {
+    position: absolute !important;
+    inset: 0;
+  }
+
+  /* Bölüm arası görsel nefes — ince ışık ayracı. */
+  .scene-divider {
+    height: 1px;
+    border: 0;
+    background-image: linear-gradient(
+      to right,
+      transparent,
+      color-mix(in oklab, var(--color-accent) 40%, transparent) 50%,
+      transparent
+    );
+  }
+}
