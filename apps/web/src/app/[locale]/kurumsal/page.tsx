@@ -89,10 +89,9 @@ export default function CorporatePage() {
         <dl className="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-4">
           {unverifiedClaims.items.map((item) => (
             <div key={item.key}>
-              <dt className="sr-only">{item.key}</dt>
-              <dd className="font-[family-name:var(--font-display)] text-[length:var(--text-3xl)] text-[var(--color-accent)]">
+              <dt className="font-[family-name:var(--font-display)] text-[length:var(--text-3xl)] text-[var(--color-accent)]">
                 {item.value}
-              </dd>
+              </dt>
               <dd className="mt-1 text-[length:var(--text-xs)] text-[var(--color-text-secondary)]">
                 {UNVERIFIED_CLAIM_LABELS[item.key]}
               </dd>
