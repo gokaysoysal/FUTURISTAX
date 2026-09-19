@@ -3,220 +3,322 @@
 import { advanceScene, readScene, settleScene } from '@/lib/motion/backdrop-scene';
 import { subscribeFrame } from '@/lib/motion/raf';
 import { readColorToken } from '@/lib/webgl';
-import { ScreenQuad } from '@react-three/drei';
-import { Canvas, useThree } from '@react-three/fiber';
 import { useReducedMotion } from 'motion/react';
-import { useEffect, useMemo, useRef } from 'react';
-import * as THREE from 'three';
+import { Mesh, Program, Renderer, Triangle } from 'ogl';
+import { useEffect, useRef } from 'react';
 
 /**
- * Site geneli KALICI arka plan sahnesi — R3F shader alanı (V5 Bölüm 2,
- * sadeleştirildi V7 — tek odaklı küre; V8'de aydınlatılmış/hacimli küreye
- * yeniden çizildi — referans futureoffinance.peachweb.io'daki backlit
- * küre hissine yakınlaştırma, bkz. docs/PROJECT-STATUS.md §0-U).
+ * Site geneli KALICI arka plan sahnesi (V5 Bölüm 2, sadeleştirildi V7 — tek
+ * odaklı küre; V8'de aydınlatılmış/hacimli küreye yeniden çizildi; V9'da
+ * hazır bir bileşenden kurulduğu için TAMAMEN DEĞİŞTİ, bkz.
+ * docs/PROJECT-STATUS.md §0-T).
+ *
+ * V9: üç turdur elle yazılan shader'ı sıfırdan kurmak yerine, react-bits'in
+ * `Backgrounds/Orb` bileşeninin (MIT+Commons Clause, tek bağımlılık `ogl`)
+ * fragment shader'ı taban alındı — noise/ışık/renk matematiği ondan, yalnızca
+ * şunlar bizim: uCenter/uScale/uPresence (bölüm hedefli konum/boyut/opaklık,
+ * `backdrop-scene.ts`'ten) ve dış render döngüsü. Orijinal bileşenin kendi
+ * `requestAnimationFrame` döngüsü, mouse-hover çarpıtması ve dönme mantığı
+ * KALDIRILDI — bunun yerine V5'ten beri var olan TEK paylaşımlı rAF'a
+ * (`raf.ts`, sekme arka plandayken otomatik durur) ve `SceneRegion` hedef
+ * parametrelerine (`tone/density/depth/flow`) bağlandı; three.js/R3F/drei
+ * bağımlılığı tamamen kaldırıldı (yalnızca `ogl`, çok daha küçük).
  *
  * - `[locale]/layout.tsx` seviyesinde bir kez mount; rota değişiminde
  *   REMOUNT OLMAZ (App Router layout kalıcı).
- * - `frameloop="never"` — render TEK paylaşımlı rAF'tan (`raf.ts`) sürülür;
- *   Lenis scroll ilerlemesi 0..1 sahneye uniform geçer (`backdrop-scene.ts`).
- * - Sekme arka plandayken `raf.ts` durur → render durur.
+ * - Render TEK paylaşımlı rAF'tan sürülür (`raf.ts`); sekme arka plandayken
+ *   durur. `prefers-reduced-motion` altında hiç abone olmaz, TEK kare çizip
+ *   durur (`settleScene`).
  * - Bölüm parametreleri (tone/density/depth/flow) AYNI sönümlü lerp ile
- *   karışır (`backdrop-scene.ts` değişmedi) — `depth` zaten hero'da düşük
- *   (yakın/parlak), kapanışta yüksek (uzak/soluk) olacak şekilde
- *   kayıtlıydı; bu doğrudan kürenin konum/boyut/opaklığını sürüyor.
- * - V8: ekran-uzayı disk artık gerçek bir kürenin izdüşümü gibi gölgeleniyor
- *   (yüzey normali + tek fresnel kenar ışığı) — düz gaussian leke ve ayrık
- *   halka deseni kaldırıldı; net siluet + yumuşak dış sızıntı.
+ *   karışır (`backdrop-scene.ts` değişmedi) — `depth` küre boyutu/konumu/
+ *   opaklığını sürer (hero'da büyük/yakın/parlak, kapanışta küçük/uzak/soluk,
+ *   iz asla sıfıra inmez); `tone` renk sıcaklığını (hue döndürme), `flow`
+ *   iç zaman akış hızını sürer.
  * - Yedekler bu bileşenin DIŞINDA (`SiteBackdrop`): reduced-motion / WebGL yok /
- *   düşük performans → `SiteBackdropFallback`. Mobilde `complexity=0.5`
- *   (yüzey parıltısını kapatır).
+ *   düşük performans → `SiteBackdropFallback`. Mobilde `complexity=0.5` →
+ *   düşük devicePixelRatio tavanı.
  */
 
 const VERT = /* glsl */ `
+  attribute vec2 position;
+  attribute vec2 uv;
   varying vec2 vUv;
   void main() {
     vUv = uv;
-    gl_Position = vec4(position, 1.0);
+    gl_Position = vec4(position, 0.0, 1.0);
   }
 `;
 
+// Taban: react-bits Backgrounds/Orb (MIT+Commons Clause, davidhdev/react-bits)
+// fragment shader'ı — noise/ışık/renk matematiği değiştirilmedi. Eklenen
+// uniformlar: uCenter/uScale (SceneRegion depth'ten konum+boyut), uPresence
+// (depth'ten opaklık tabanı — asla sıfıra inmez), uHueShift (tone'dan).
 const FRAG = /* glsl */ `
   precision highp float;
+
+  uniform float iTime;
+  uniform vec3 iResolution;
+  uniform float hue;
+  uniform vec2 uCenter;
+  uniform float uScale;
+  uniform float uPresence;
+  uniform vec3 uAccent;
+  uniform vec3 uGlow;
   varying vec2 vUv;
-  uniform float uTime;
-  uniform float uAspect;
-  uniform float uTone;
-  uniform float uDensity;
-  uniform float uDepth;
-  uniform float uFlow;
-  uniform float uComplexity;
-  uniform vec2  uMouse;
-  uniform vec3  uAccent;
-  uniform vec3  uGlow;
 
-  float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+  vec3 rgb2yiq(vec3 c) {
+    float y = dot(c, vec3(0.299, 0.587, 0.114));
+    float i = dot(c, vec3(0.596, -0.274, -0.322));
+    float q = dot(c, vec3(0.211, -0.523, 0.312));
+    return vec3(y, i, q);
+  }
 
-  void main(){
-    vec2 uv = vUv;
-    uv.x *= uAspect;
-    vec2 mouse = (uMouse - 0.5) * 0.02;
+  vec3 yiq2rgb(vec3 c) {
+    float r = c.x + 0.956 * c.y + 0.621 * c.z;
+    float g = c.x - 0.272 * c.y - 0.647 * c.z;
+    float b = c.x - 1.106 * c.y + 1.703 * c.z;
+    return vec3(r, g, b);
+  }
 
-    // Küre konumu: hero'da üst-merkeze yakın; derinlik arttıkça yukarı/geriye
-    // kayar (parallax) — konum sıçramaz, depth zaten sönümlü.
-    vec2 center = vec2(0.5 * uAspect, mix(0.6, 0.94, uDepth)) + mouse;
-    float dist = length(uv - center);
-    float radius = mix(0.36, 0.15, uDepth) * mix(0.94, 1.05, uDensity);
+  vec3 adjustHue(vec3 color, float hueDeg) {
+    float hueRad = hueDeg * 3.14159265 / 180.0;
+    vec3 yiq = rgb2yiq(color);
+    float cosA = cos(hueRad);
+    float sinA = sin(hueRad);
+    float i = yiq.y * cosA - yiq.z * sinA;
+    float q = yiq.y * sinA + yiq.z * cosA;
+    yiq.y = i;
+    yiq.z = q;
+    return yiq2rgb(yiq);
+  }
 
-    // Ekran-uzayı diski gerçek bir kürenin izdüşümü gibi ele al: r2<1 içinde
-    // bir "yükseklik" (z) türet, bundan yüzey normali çıkar — referanstaki
-    // gibi hacimli/aydınlatılmış tek küre, düz bir gaussian leke değil.
-    vec2 p = (uv - center) / radius;
-    float r2 = dot(p, p);
-    float z = sqrt(max(0.0, 1.0 - r2));
-    vec3 normal = normalize(vec3(p, z + 0.0001));
+  vec3 hash33(vec3 p3) {
+    p3 = fract(p3 * vec3(0.1031, 0.11369, 0.13787));
+    p3 += dot(p3, p3.yxz + 19.19);
+    return -1.0 + 2.0 * fract(vec3(
+      p3.x + p3.y,
+      p3.x + p3.z,
+      p3.y + p3.z
+    ) * p3.zyx);
+  }
 
-    // Tek ışık kaynağı, sırttan/yukarıdan — kenar aydınlatması (fresnel),
-    // referanstaki backlit küre hissi. Çoklu ışık/parçacık yok.
-    vec3 lightDir = normalize(vec3(0.3, 0.6, -0.5));
-    float fresnel = pow(clamp(1.0 - z, 0.0, 1.0), 2.2);
-    float backLight = clamp(dot(normal, lightDir), 0.0, 1.0);
-    float innerGlow = exp(-r2 * 2.0);
+  float snoise3(vec3 p) {
+    const float K1 = 0.333333333;
+    const float K2 = 0.166666667;
+    vec3 i = floor(p + (p.x + p.y + p.z) * K1);
+    vec3 d0 = p - (i - (i.x + i.y + i.z) * K2);
+    vec3 e = step(vec3(0.0), d0 - d0.yzx);
+    vec3 i1 = e * (1.0 - e.zxy);
+    vec3 i2 = 1.0 - e.zxy * (1.0 - e);
+    vec3 d1 = d0 - (i1 - K2);
+    vec3 d2 = d0 - (i2 - K1);
+    vec3 d3 = d0 - 0.5;
+    vec4 h = max(0.6 - vec4(
+      dot(d0, d0),
+      dot(d1, d1),
+      dot(d2, d2),
+      dot(d3, d3)
+    ), 0.0);
+    vec4 n = h * h * h * h * vec4(
+      dot(d0, hash33(i)),
+      dot(d1, hash33(i + i1)),
+      dot(d2, hash33(i + i2)),
+      dot(d3, hash33(i + 1.0))
+    );
+    return dot(vec4(31.316), n);
+  }
 
-    // Yüzeyde hafif, çok yavaş kayan bir parıltı — katı doku değil.
-    float sheenN = hash(vec2(floor(uv.x * 26.0 + uv.y * 8.0), floor(uTime * (0.1 + uFlow * 0.08))));
-    float sheen = uComplexity > 0.5 ? (sheenN - 0.5) * 0.05 : 0.0;
+  vec4 extractAlpha(vec3 colorIn) {
+    float a = max(max(colorIn.r, colorIn.g), colorIn.b);
+    return vec4(colorIn.rgb / (a + 1e-5), a);
+  }
 
-    // Renk sıcaklığı: soğuk azur → sıcak (menekşe + hafif mercan ucu).
-    vec3 warm = mix(uGlow, vec3(1.0, 0.55, 0.42), 0.18);
-    vec3 rimColor = mix(uAccent, warm, clamp(uTone, 0.0, 1.0));
+  // Orb'un kendi sabit paletinin yerine site tema tokenları (--color-accent /
+  // --color-accent-glow) geçti — açık/koyu tema değişiminde güncellenir
+  // (bkz. render() içindeki matchMedia dinleyicisi). Üçüncü renk (en koyu
+  // karışım ucu) marka tokenı değil, iç gölgeleme çapası — Orb'daki gibi sabit.
+  const vec3 baseColor3 = vec3(0.062745, 0.078431, 0.600000);
+  const float innerRadius = 0.6;
+  const float noiseScale = 0.65;
 
-    float body = innerGlow * 0.62 + fresnel * 1.15 + backLight * 0.3 + sheen;
-    vec3 sphereCol = rimColor * body;
+  float light1(float intensity, float attenuation, float dist) {
+    return intensity / (1.0 + dist * attenuation);
+  }
 
-    // Kürenin kenarı belirgin/anti-alias'lı — referanstaki gibi net bir
-    // siluet, sınırsız yumuşak bulut değil.
-    float mask = 1.0 - smoothstep(0.86, 1.0, r2);
-    // Diskin hemen dışında yumuşak ambiyans sızıntısı — sert kesim olmasın.
-    float halo = exp(-pow(max(dist - radius, 0.0) / (radius * 0.85), 2.0)) * 0.24;
+  float light2(float intensity, float attenuation, float dist) {
+    return intensity / (1.0 + dist * dist * attenuation);
+  }
 
-    // Sahnenin görünürlüğü derinlikle düşer ama SIFIRA inmez — iz kalır.
-    float presence = mix(0.92, 0.2, uDepth) * mix(0.85, 1.0, uDensity);
+  vec4 draw(vec2 uv) {
+    vec3 color1 = adjustHue(uGlow, hue);
+    vec3 color2 = adjustHue(uAccent, hue);
+    vec3 color3 = adjustHue(baseColor3, hue);
 
-    vec3 col = sphereCol * mask * presence + rimColor * halo * presence * 0.55;
-    float a = clamp((0.55 * mask + 0.5 * fresnel * mask + halo * 0.4) * presence, 0.0, 0.85);
+    float len = length(uv);
+    float invLen = len > 0.0 ? 1.0 / len : 0.0;
 
-    // Bantlaşmayı kır — tek ince dither, yoğun doku değil.
-    col += (hash(gl_FragCoord.xy + uTime) - 0.5) * 0.012;
+    float n0 = snoise3(vec3(uv * noiseScale, iTime * 0.5)) * 0.5 + 0.5;
+    float r0 = mix(mix(innerRadius, 1.0, 0.4), mix(innerRadius, 1.0, 0.6), n0);
+    float d0 = distance(uv, (r0 * invLen) * uv);
+    float v0 = light1(1.0, 10.0, d0);
 
-    gl_FragColor = vec4(col, a);
+    v0 *= smoothstep(r0 * 1.05, r0, len);
+    v0 *= smoothstep(r0 * 0.8, r0 * 0.95, len);
+    float cl = cos(iTime * 2.0) * 0.5 + 0.5;
+
+    float a = iTime * -1.0;
+    vec2 pos = vec2(cos(a), sin(a)) * r0;
+    float d = distance(uv, pos);
+    float v1 = light2(1.5, 5.0, d);
+    v1 *= light1(1.0, 50.0, d0);
+
+    float v2 = smoothstep(1.0, mix(innerRadius, 1.0, n0 * 0.5), len);
+    float v3 = smoothstep(innerRadius, mix(innerRadius, 1.0, 0.5), len);
+
+    vec3 colBase = mix(color1, color2, cl);
+
+    vec3 darkCol = mix(color3, colBase, v0);
+    darkCol = (darkCol + v1) * v2 * v3;
+
+    // Orb'un orijinali içi boş, ince bir HALKA çiziyor (probe ile doğrulandı:
+    // innerRadius'u 0.6→0.95 aralığında değiştirmek görünüşü neredeyse hiç
+    // etkilemiyor — boşluk v2/v3 maskesinden geliyor, sabit değil). Referans
+    // dolu, merkezden kenara gradyanlı bir "backlit küre" gösteriyor — Orb'un
+    // ışık/gürültü matematiğini bozmadan, TEK ek terim olarak yumuşak bir
+    // gaussian çekirdek parıltısı eklendi. Kendi test ortamımızda gerçek
+    // rAF çalışmadığından bu ayarlama, shader kaynağını canlı canvas'a
+    // doğrudan derleyip enjekte eden bir problarla görsel olarak doğrulandı.
+    float core = exp(-len * len * 2.5);
+    darkCol += colBase * core * 0.9;
+    darkCol = clamp(darkCol, 0.0, 1.0);
+
+    return extractAlpha(darkCol);
+  }
+
+  void main() {
+    vec2 fragCoord = vUv * iResolution.xy;
+    vec2 center = iResolution.xy * uCenter;
+    float size = min(iResolution.x, iResolution.y) * uScale;
+    vec2 uv = (fragCoord - center) / size * 2.0;
+
+    vec4 col = draw(uv);
+    gl_FragColor = vec4(col.rgb * col.a * uPresence, col.a * uPresence);
   }
 `;
 
-function Driver({ complexity }: { complexity: number }) {
-  const reduce = useReducedMotion();
-  const advance = useThree((s) => s.advance);
-  const size = useThree((s) => s.size);
-  const pointer = useRef({ x: 0.5, y: 0.5 });
-
-  const uniforms = useMemo(
-    () => ({
-      uTime: { value: 0 },
-      uAspect: { value: 1 },
-      uTone: { value: 0.2 },
-      uDensity: { value: 0.5 },
-      uDepth: { value: 0.2 },
-      uFlow: { value: 0.4 },
-      uComplexity: { value: complexity },
-      uMouse: { value: new THREE.Vector2(0.5, 0.5) },
-      uAccent: { value: new THREE.Color('#4d7cff') },
-      uGlow: { value: new THREE.Color('#7b6bff') },
-    }),
-    [complexity],
-  );
-
-  // Palet — tokenlardan; tema değişiminde güncelle.
-  useEffect(() => {
-    const sync = () => {
-      uniforms.uAccent.value.set(readColorToken('--color-accent', '#4d7cff'));
-      uniforms.uGlow.value.set(readColorToken('--color-accent-glow', '#7b6bff'));
-    };
-    sync();
-    const mq = window.matchMedia('(prefers-color-scheme: dark)');
-    mq.addEventListener('change', sync);
-    return () => mq.removeEventListener('change', sync);
-  }, [uniforms]);
-
-  // İnce imleç etkisi — yalnızca ince işaretçi.
-  useEffect(() => {
-    if (window.matchMedia('(pointer: coarse)').matches) return;
-    const onMove = (e: PointerEvent) => {
-      pointer.current.x = e.clientX / window.innerWidth;
-      pointer.current.y = 1 - e.clientY / window.innerHeight;
-    };
-    window.addEventListener('pointermove', onMove, { passive: true });
-    return () => window.removeEventListener('pointermove', onMove);
-  }, []);
-
-  // TEK rAF — sahneyi ilerlet, uniformları yaz, bir kare render et.
-  // `uniforms` nesnesi doğrudan mutasyonla güncellenir (three referansla okur).
-  useEffect(() => {
-    if (reduce) {
-      settleScene();
-      const s = readScene();
-      uniforms.uTone.value = s.tone;
-      uniforms.uDensity.value = s.density;
-      uniforms.uDepth.value = s.depth;
-      advance(performance.now());
-      return;
-    }
-
-    const unsub = subscribeFrame((dt) => {
-      advanceScene(dt);
-      const s = readScene();
-      uniforms.uTime.value += dt * (0.15 + s.flow * 0.5);
-      uniforms.uTone.value = s.tone;
-      uniforms.uDensity.value = s.density;
-      uniforms.uDepth.value = s.depth;
-      uniforms.uFlow.value = s.flow;
-      const mv = uniforms.uMouse.value;
-      mv.set(
-        THREE.MathUtils.lerp(mv.x, pointer.current.x, 0.04),
-        THREE.MathUtils.lerp(mv.y, pointer.current.y, 0.04),
-      );
-      advance(performance.now());
-    });
-    return unsub;
-  }, [advance, reduce, uniforms]);
-
-  uniforms.uAspect.value = size.width / Math.max(1, size.height);
-
-  return (
-    <ScreenQuad>
-      <shaderMaterial
-        key={complexity}
-        uniforms={uniforms}
-        vertexShader={VERT}
-        fragmentShader={FRAG}
-        transparent
-        depthTest={false}
-        depthWrite={false}
-      />
-    </ScreenQuad>
-  );
+function hexToRgb(hex: string): [number, number, number] {
+  const trimmed = hex.trim();
+  if (!/^#[0-9a-f]{6}$/i.test(trimmed)) return [0.3, 0.49, 1];
+  const int = Number.parseInt(trimmed.slice(1), 16);
+  return [((int >> 16) & 255) / 255, ((int >> 8) & 255) / 255, (int & 255) / 255];
 }
 
 export default function SiteBackdropScene({ complexity = 1 }: { complexity?: number }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const renderer = new Renderer({ alpha: true, premultipliedAlpha: false, antialias: false });
+    const gl = renderer.gl;
+    gl.clearColor(0, 0, 0, 0);
+    container.appendChild(gl.canvas);
+    gl.canvas.style.position = 'absolute';
+    gl.canvas.style.inset = '0';
+    gl.canvas.style.width = '100%';
+    gl.canvas.style.height = '100%';
+
+    const geometry = new Triangle(gl);
+    const program = new Program(gl, {
+      vertex: VERT,
+      fragment: FRAG,
+      transparent: true,
+      uniforms: {
+        iTime: { value: 0 },
+        iResolution: { value: [gl.canvas.width, gl.canvas.height, 1] },
+        hue: { value: 0 },
+        uCenter: { value: [0.5, 0.42] },
+        uScale: { value: 0.9 },
+        uPresence: { value: 0.5 },
+        uAccent: { value: hexToRgb('#4d7cff') },
+        uGlow: { value: hexToRgb('#7b6bff') },
+      },
+    });
+    const mesh = new Mesh(gl, { geometry, program });
+
+    function resize() {
+      if (!container) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, complexity < 1 ? 1.5 : 2);
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      renderer.setSize(width * dpr, height * dpr);
+      program.uniforms.iResolution.value = [
+        gl.canvas.width,
+        gl.canvas.height,
+        gl.canvas.width / Math.max(1, gl.canvas.height),
+      ];
+    }
+    window.addEventListener('resize', resize, { passive: true });
+    resize();
+
+    const syncPalette = () => {
+      program.uniforms.uAccent.value = hexToRgb(readColorToken('--color-accent', '#4d7cff'));
+      program.uniforms.uGlow.value = hexToRgb(readColorToken('--color-accent-glow', '#7b6bff'));
+    };
+    syncPalette();
+    const themeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    themeQuery.addEventListener('change', syncPalette);
+
+    function render(
+      s: { tone: number; density: number; depth: number; flow: number },
+      time: number,
+    ) {
+      // depth: hero'da düşük (büyük/yakın/parlak) → kapanışta yüksek (küçük/uzak/soluk).
+      program.uniforms.uScale.value = 1.15 - s.depth * 0.75; // 1.15 → 0.40
+      program.uniforms.uCenter.value = [0.5, 0.38 + s.depth * 0.1];
+      program.uniforms.uPresence.value =
+        Math.max(0.16, 0.85 - s.depth * 0.6) * (0.85 + s.density * 0.3);
+      program.uniforms.hue.value = s.tone * 45; // hafif sıcak kayma — orb'un varsayılan mor/camgöbeği/lacivert ailesinde kalır
+      program.uniforms.iTime.value = time;
+      renderer.render({ scene: mesh });
+    }
+
+    if (reduce) {
+      settleScene();
+      const s = readScene();
+      render(s, 0);
+      return () => {
+        window.removeEventListener('resize', resize);
+        themeQuery.removeEventListener('change', syncPalette);
+        container.removeChild(gl.canvas);
+        gl.getExtension('WEBGL_lose_context')?.loseContext();
+      };
+    }
+
+    let simTime = 0;
+    const unsub = subscribeFrame((dt) => {
+      advanceScene(dt);
+      const s = readScene();
+      simTime += dt * (0.15 + s.flow * 0.5);
+      render(s, simTime);
+    });
+
+    return () => {
+      unsub();
+      window.removeEventListener('resize', resize);
+      themeQuery.removeEventListener('change', syncPalette);
+      container.removeChild(gl.canvas);
+      gl.getExtension('WEBGL_lose_context')?.loseContext();
+    };
+  }, [complexity, reduce]);
+
   return (
-    <Canvas
+    <div
+      ref={containerRef}
       className="site-backdrop"
-      frameloop="never"
-      dpr={[1, complexity < 1 ? 1.5 : 2]}
-      gl={{ antialias: false, alpha: true, powerPreference: 'high-performance' }}
-      camera={{ position: [0, 0, 1] }}
-      style={{ pointerEvents: 'none' }}
-      onCreated={({ gl }) => gl.setClearAlpha(0)}
-    >
-      <Driver complexity={complexity} />
-    </Canvas>
+      style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
+    />
   );
 }

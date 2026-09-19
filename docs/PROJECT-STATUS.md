@@ -2,20 +2,156 @@
 
 > **Her yeni oturumda önce bu dosyayı oku.** Kurallar ve mimari için `CLAUDE.md`.
 
-**Son güncelleme:** 2026-09-19 — V8 BACKDROP (`v8-backdrop` dalı, `v2`'den):
-kalıcı arka plan sahnesindeki tek küre, düz gaussian lekeden gerçek
-aydınlatılmış/hacimli küreye (yüzey normali + tek fresnel kenar ışığı)
-yeniden çizildi, referansa (futureoffinance.peachweb.io) daha yakın,
-**1/1 bölüm bitti**. Öncesinde: V7 ORB (`v7-orb` dalı, `v2`'den): kalıcı arka
-plan sahnesi çok-oktavlı bulut alanından tek odaklı küreye sadeleştirildi,
-2026-09-19. Öncesinde: ANA SAYFA bölüm ayraç "beyaz çizgileri" kaldırıldı
-(`v2`, küçük düzeltme, 2026-09-08). Öncesinde: V6 REFERANS CİLASI
-(`v6-referans` dalı, `v2`'den), **3/3 bölüm bitti**.
+**Son güncelleme:** 2026-09-19 — V9 HAZIR BİLEŞEN (`v9-hazir-bilesen` dalı,
+`v2`'den): kalıcı arka plan sahnesi artık elle yazılan bir shader değil —
+react-bits `Backgrounds/Orb` bileşeninin (MIT+Commons Clause, tek bağımlılık
+`ogl`) ışık/gürültü shader'ı taban alındı, three.js/@react-three/fiber/drei
+bağımlılığı tamamen kaldırıldı, **1/1 bölüm bitti**. Öncesinde: V8 BACKDROP
+(`v8-backdrop` dalı, `v2`'den): tek küre düz gaussian lekeden gerçek
+aydınlatılmış/hacimli küreye yeniden çizildi, 2026-09-19. Öncesinde: V7 ORB
+(`v7-orb` dalı, `v2`'den): kalıcı arka plan sahnesi çok-oktavlı bulut
+alanından tek odaklı küreye sadeleştirildi, 2026-09-19. Öncesinde: ANA SAYFA
+bölüm ayraç "beyaz çizgileri" kaldırıldı (`v2`, küçük düzeltme, 2026-09-08).
+Öncesinde: V6 REFERANS CİLASI (`v6-referans` dalı, `v2`'den), **3/3 bölüm
+bitti**.
 Önceki: V5-HERO (`v5-hero`, `v2`'ye merge) · V4-AKIS (`v4-akis`, merge) ·
 V3 SUNUM KATMANI (`v2-fx`, merge) · TASARIM YÖNÜ DEĞİŞİMİ (`v2-tasarim`, absorbe).
-**Depo:** github.com/gokaysoysal/FUTURISTAX — çalışma dalı `v2`, aktif koşu dalı `v8-backdrop`
+**Depo:** github.com/gokaysoysal/FUTURISTAX — çalışma dalı `v2`, aktif koşu dalı `v9-hazir-bilesen`
 **Önizleme:** deploy-preview-1--futuristax.netlify.app
 **Canlı site:** futuristax.com — hâlâ ESKİ sürüm (`main` dalı, `legacy/index.html`)
+
+---
+
+## 0-T. V9 HAZIR BİLEŞEN — 2026-09-19 (`v9-hazir-bilesen`, `v2`'den)
+
+Görev: `docs/V9-HAZIR-BILESEN.md`'deki otonom prompt — üç turdur (V7/V8, artı
+bu koşunun kendi ilk denemeleri) elle yazılan shader'ın scroll senkronizasyonu
+ve görsel doğrulamayla hep boğuşması üzerine, yön değiştirip olgun, açık
+kaynak bir bileşenden başlamak. **Kapsam: yalnızca
+`components/backdrop/SiteBackdropScene.tsx` + `apps/web/package.json`
+(bağımlılık değişimi).** tax-engine/API/DB/Vergi Yükü Panosu dokunulmadı.
+
+### ADIM 0-1 — Referans + aday araştırması
+
+Referans (futureoffinance.peachweb.io) gerçek tarayıcıyla incelendi: arka
+plan tek, keskin kenarlı, arkadan aydınlatılmış bir küre — V8'in vardığı
+sonuçla aynı, yeniden doğrulandı. Prompttaki aday listesi (Hyperspeed,
+Lightning, RippleGrid, Ballpit, ShapeBlur, Aurora, GradientBlinds) react-bits
+kataloğunun tamamına bakılmadan yazılmış tahminler çıktı — kataloğun
+tamamı (`src/constants/Information.js`, GitHub üzerinden) tarandığında
+`Backgrounds/Orb` ("Floating energy orb") bulundu: referansa doğrudan,
+harfiyen uyan tek aday. Lightswind UI (dokümandaki ikinci kaynak) da
+kontrol edildi — sphere/orb/globe kategorisinde hiç bileşeni yok.
+
+### ADIM 2 — Seçim kriterleri
+
+`Orb` kaynağı (react-bits, MIT+Commons Clause, tek bağımlılık `ogl` — three.js
+değil, çok daha küçük) okundu:
+
+| Kriter | Sonuç |
+|---|---|
+| rAF, visibilitychange/IO ile duraklıyor mu | ✗ kendi sürekli rAF'ı var, duraklamıyor |
+| prefers-reduced-motion kontrolü | ✗ yok |
+| unmount cleanup | ✓ rAF iptali, listener kaldırma, `WEBGL_lose_context` |
+| SSR uyumlu (`dynamic(ssr:false)`) | ✓ modül seviyesinde window/document erişimi yok |
+| Dışarıdan scroll ilerlemesi enjekte edilebiliyor mu | ✗ `iTime` tamamen içsel, dışa açık prop yok |
+
+3/5 kriter "olduğu gibi" geçmedi — ama react-bits **kopyala-yapıştır**
+modelinde (paket olarak değil, kaynak koda kopyalanır), yani bu üçü paketi
+elemek için değil, **kendi kopyamızda düzeltmek için** bir kontrol listesi.
+Aynen promptun reduced-motion için zaten izin verdiği gibi ("yoksa SEN
+ekleyeceksin") — visibilitychange/IO ve dış ilerleme enjeksiyonu için de
+aynı tavır uygulandı.
+
+### ADIM 3 — Kurulum ve uyarlama
+
+`SiteBackdropScene.tsx` **tamamen yeniden yazıldı** (R3F/three yerine ham
+`ogl`): Orb'un fragment shader'ının ışık/gürültü matematiği (`snoise3`,
+`light1`/`light2`, YIQ hue döndürme) **değiştirilmeden** taşındı. Değişen:
+
+- Orb'un kendi rAF döngüsü, mouse-hover çarpıtması, `rotateOnHover`/
+  `forceHoverState` kaldırıldı — bunun yerine V5'ten beri var olan TEK
+  paylaşımlı rAF'a (`lib/motion/raf.ts`, sekme arka plandayken otomatik
+  durur) ve `SceneRegion` hedef parametrelerine (`backdrop-scene.ts`'in
+  `tone/density/depth/flow`'u — **değiştirilmedi**) bağlandı.
+- `uCenter`/`uScale`/`uPresence` uniformları eklendi — `depth` küre
+  boyutu/konumu/opaklığını sürüyor (hero büyük/yakın/parlak, kapanış küçük/
+  uzak/soluk, iz asla sıfıra inmez) — V7/V8'deki AYNI tasarım kararı, yeni
+  shader'a taşındı.
+- Orb'un sabit `baseColor1`/`baseColor2` paleti kaldırıldı, yerine
+  `--color-accent`/`--color-accent-glow` tema tokenları (`uAccent`/`uGlow`,
+  `matchMedia('prefers-color-scheme: dark')` ile açık/koyu tema senkron) —
+  **CLAUDE.md'nin "Palet tokenlardan" kuralı** için gerekliydi, ilk taslakta
+  atlanmıştı, review'da yakalandı ve düzeltildi.
+- `prefers-reduced-motion`: `settleScene()` + TEK kare çiz, hiç abone olma
+  (V8 `Driver`'daki aynı desen).
+- Mobilde (`complexity<1`) devicePixelRatio tavanı 1.5 (masaüstü 2).
+
+### ADIM 4 — Eski sistem kaldırıldı
+
+`three`, `@react-three/fiber`, `@react-three/drei`, `@types/three`
+`apps/web/package.json`'dan çıkarıldı (repoda başka hiçbir yerde
+kullanılmıyorlardı — `grep` ile doğrulandı, yalnızca `lib/security/csp.ts`
+içinde eski bir yorum referans veriyordu, o da `ogl`'ye göre güncellendi:
+ham WebGL API kullanıyor, `new Function`/eval gerektirmiyor). `ogl@1.0.11`
+eklendi. İki paralel sahne yok — `SiteBackdropScene.tsx` tek dosya, tek
+implementasyon.
+
+### ADIM 5-6 — Doğrulama ve görsel iterasyon
+
+**Bu ortamda gerçek rAF'ın çalışmadığı netleşti** (V8'in "headless" notundan
+daha kesin): `document.hidden` otomasyon tarayıcısında `hasFocus()===true`
+iken bile `true` — ve bu özelliği JS'ten override edip `visibilitychange`
+tetiklemek de işe yaramadı (`requestAnimationFrame` sayacı 0 kaldı) —
+Chrome'un gerçek rAF zamanlamasının, sayfanın JS'ten okuduğu
+`document.hidden`'dan BAĞIMSIZ, kompozitör seviyesinde perde-arkası/
+görünmez sekmeleri kıstığı sonucuna varıldı. V8'in "shader kaynağını
+gerçek canvas'a doğrudan derleyip enjekte etme" numarası burada da
+uygulandı — ama bu kez paketlenmiş bir bileşenin kendi render mantığını
+izole edip ham WebGL2 ile canlı sayfa üstüne bindirerek.
+
+Bu probe sayesinde **gerçek bir bulgu** çıktı: Orb'un varsayılanı (referans
+alınan orijinal shader, `innerRadius=0.6`) referans gibi dolu bir küre değil,
+**içi boş, ince bir HALKA** çiziyor — ve `innerRadius`'u 0.6'dan 0.95'e kadar
+değiştirmek görünüşü neredeyse hiç etkilemiyor (üç değer yan yana
+karşılaştırıldı, farksız); boşluk `v2`/`v3` maskeleme teriminden geliyor,
+tek bir sabitle düzelmiyor. Orb'un ışık/gürültü matematiğini yeniden
+yazmadan (bu tam olarak V9'un kaçınmak istediği şey), TEK ek terim olarak
+yumuşak bir gaussian çekirdek parıltısı eklendi (`core = exp(-len²·2.5)`,
+`darkCol += colBase·core·0.9`) — dolu, merkezden kenara gradyanlı, referansa
+çok daha yakın bir "backlit küre" hissi elde edildi (probe ile üç yoğunluk
+denendi, 2.5 seçildi). Renk tokenlarının (`--color-accent`/`-glow`) doğru
+okunduğu ve gerçek ölçekte (hero derinliğinde) doğru boyut/konumda çizildiği
+de aynı probe yöntemiyle doğrulandı.
+
+**Doğrulanamayan:** gerçek tarayıcıda scroll sırasında canlı rAF/`SceneRegion`
+tetiklemesinin (yalnızca kod incelemesiyle doğru görünen, ama pixel'e
+dökülmüş hâli görülemeyen) sorunsuz çalışması, ve mobil (390px) görünüm —
+bu ortamda pencere/viewport yeniden boyutlandırma denendi ama tarayıcı
+penceresi gerçek genişliği değiştirmedi (`resize_window` çağrıldı, `window.
+innerWidth` 1536 olarak kaldı). Değişiklik yalnızca dekoratif, `position:
+absolute` arka plan canvas'ına dokunuyor — sayfa akışını/`scrollWidth`'i
+etkilemiyor, mobil regresyon riski düşük değerlendirildi ama **kullanıcı/CI
+tarayıcı QA'sında doğrulanmalı** (`docs/QA-KONTROL-LISTESI.md` güncellendi).
+
+### Doğrulama
+
+`apps/web`: `pnpm typecheck` + `pnpm lint` (biome) + `pnpm build` — hepsi
+yeşil. Ana sayfa ilk yük JS **181 kB** (değişmedi — backdrop zaten dinamik
+import, ilk yüke girmiyor). Dinamik backdrop chunk'ı artık **8.3 kB ham /
+~3.4 kB gzip** (`ogl` dahil) — önceki three/@react-three/fiber/drei
+yığınından belirgin küçük (tam öncesi-sonrası bayt karşılaştırması yok,
+dosya bu koşuda tamamen değiştirildiği için, ama `ogl`'nin tek başına npm
+paket boyutu three'nin küçük bir kesri). `packages/tax-engine`: typecheck +
+65/65 test yeşil, dokunulmadı. `packages/config`: typecheck yeşil. (Kök
+`pnpm typecheck/test/build` bu makinede bilinen `turbo.exe` Windows Uygulama
+Denetimi ilkesi engeli yüzünden çalışmıyor — paket başına doğrudan koşuldu,
+önceki turlarda olduğu gibi.)
+
+### Git
+
+`v9-hazir-bilesen` dalında commit edildi, `v2`'ye merge edilip
+`origin/v2`'ye push edildi.
 
 ---
 

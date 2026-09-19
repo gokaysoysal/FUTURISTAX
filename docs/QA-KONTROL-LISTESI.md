@@ -1,9 +1,12 @@
-# QA Kontrol Listesi — v8-backdrop → v2 merge sonrası
+# QA Kontrol Listesi — v9-hazir-bilesen → v2 merge sonrası
 
 > Bu liste `pnpm typecheck/test/build` yeşil olsa da tarayıcıda gözle
 > doğrulanması gereken maddeleri içerir (WebGL piksel doğrulaması bu ortamda
 > otomatik yapılamadı — ham WebGL probe ile dolaylı doğrulandı, bkz.
-> `docs/PROJECT-STATUS.md` §0-U).
+> `docs/PROJECT-STATUS.md` §0-T). Arka plan sahnesi artık elle yazılan bir
+> shader değil, vetted açık kaynak bir bileşenden (react-bits `Orb`, `ogl`)
+> uyarlandı — gerçek tarayıcıda scroll sırasında canlı davranışı hiç
+> görülemedi, bu yüzden aşağıdaki ilk madde özellikle önemli.
 
 - [ ] **Orb sahnesi:** Hero'da arka planda net kenarlı, tek bir küre
       görmelisin — gövdesi yumuşak koyu-mavi gradyanlı, kenarında belirgin,
