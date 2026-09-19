@@ -2,7 +2,13 @@
 
 > **Her yeni oturumda önce bu dosyayı oku.** Kurallar ve mimari için `CLAUDE.md`.
 
-**Son güncelleme:** 2026-09-19 — V9 HAZIR BİLEŞEN (`v9-hazir-bilesen` dalı,
+**Son güncelleme:** 2026-09-19 — V10 İÇERİK + ARKA PLAN (`v10-icerik-arkaplan`
+dalı, `v2`'den): üç iş tamamlandı — (1) arka plan sahnesine imlece duyarlı
+ikincil katman eklendi, (2) `document-grid` sahne varyantındaki sahte yatay
+ızgara çizgileri kaldırıldı, (3) tüm site www.futuristax.com'un yayınladığı
+GERÇEK içerikle dolduruldu (firma bilgileri, 9 hizmet, 8 sektör — önceki 7
+varsayımı yanlıştı —, SSS, kanun bilgi bankası, 3 gerçek referans).
+**3/3 iş bitti.** Öncesinde: V9 HAZIR BİLEŞEN (`v9-hazir-bilesen` dalı,
 `v2`'den): kalıcı arka plan sahnesi artık elle yazılan bir shader değil —
 react-bits `Backgrounds/Orb` bileşeninin (MIT+Commons Clause, tek bağımlılık
 `ogl`) ışık/gürültü shader'ı taban alındı, three.js/@react-three/fiber/drei
@@ -16,9 +22,108 @@ bölüm ayraç "beyaz çizgileri" kaldırıldı (`v2`, küçük düzeltme, 2026-
 bitti**.
 Önceki: V5-HERO (`v5-hero`, `v2`'ye merge) · V4-AKIS (`v4-akis`, merge) ·
 V3 SUNUM KATMANI (`v2-fx`, merge) · TASARIM YÖNÜ DEĞİŞİMİ (`v2-tasarim`, absorbe).
-**Depo:** github.com/gokaysoysal/FUTURISTAX — çalışma dalı `v2`, aktif koşu dalı `v9-hazir-bilesen`
+**Depo:** github.com/gokaysoysal/FUTURISTAX — çalışma dalı `v2`, aktif koşu dalı `v10-icerik-arkaplan`
 **Önizleme:** deploy-preview-1--futuristax.netlify.app
 **Canlı site:** futuristax.com — hâlâ ESKİ sürüm (`main` dalı, `legacy/index.html`)
+
+---
+
+## 0-S. V10 İÇERİK + ARKA PLAN — 2026-09-19 (`v10-icerik-arkaplan`, `v2`'den)
+
+Görev: `docs/V10-ICERIK-ARKAPLAN.md`'deki otonom prompt — üç iş, sırayla.
+**Kapsam:** backdrop imleç katmanı + `document-grid` düzeltmesi + site geneli
+gerçek içerik. tax-engine/API/DB/vergi oranları/Vergi Yükü Panosu dokunulmadı.
+
+### İş 1 — Arka planı imlece duyarlı yap
+
+`lib/motion/cursor.ts` (yeni): yalnızca gerçek mouse'ta (`pointer: fine`)
+`pointermove` izler, damped lerp (`backdrop-scene.ts`'teki aynı desen,
+kare hızından bağımsız) ile sönümler. `SiteBackdropScene`'de `uCenter`'a
+küçük bir ofset (`±0.035`) olarak eklendi — scroll'un sürdüğü ana hareketin
+ÜSTÜNE biner, onu ezmez. Dokunmatik cihazlarda `startCursorTracking()`
+no-op döner (katman etkisiz). `prefers-reduced-motion` altında zaten hiç
+çağrılmıyor (`reduce` dalı ayrı).
+
+**Doğrulanamayan (ortam sınırlaması, V7/V8/V9'da da aynı bulgu):** bu
+otomasyon ortamında sekme `hasFocus()===true` iken bile `document.hidden
+===true` raporlanıyor — `raf.ts` TASARIM GEREĞİ bu durumda hiç başlamıyor,
+yani gerçek pikselde imleç-tepkisi bu ortamda GÖZLE görülemedi. Kod
+mimarisi ve olay bağlanması doğrulandı (console'da cursor/backdrop/WebGL
+hatası yok); gerçek fare hareketiyle görsel doğrulama kullanıcı/CI
+tarayıcısında yapılmalı.
+
+### İş 2 — Sahte ızgara çizgileri kaldırıldı
+
+`components/media/SceneBackdrop.tsx` → `DocumentGrid`: tekrarlanan yatay
+çizgi deseni (`sb-doc-grid` pattern + dolgu `rect`) kaldırıldı, belge
+silüeti (bloklar + kenar çizgisi) korundu. Bu varyant `PageHero`
+üzerinden `/mevzuat`, `/mevzuat/[slug]`, `/hizmetler/[slug]`, `/araclar`
+sayfalarının TAMAMINDA kullanılıyordu — düzeltme hepsine yayıldı. Yerel
+`pnpm dev` ile `/mevzuat` ve `/hizmetler/sgk-ve-isci-mevzuati` başlıkları
+GÖZLE doğrulandı (çizgi yok).
+
+### İş 3 — Gerçek içerik
+
+`www.futuristax.com` firmanın kendi yayınladığı sitesi — `curl` ile ham
+HTML alınıp doğrulandı (WebFetch'in ilk özeti testimonial unvanlarında
+şüpheli bir tekrar gösterdiği için — Cenk Yavuz ve Esra Yıldız'ın ikisi de
+"CFO · Teknoloji A.Ş." — raw HTML'den birebir teyit edildi, gerçekten
+öyle).
+
+- `packages/config/src/site.ts`: kurucu unvanı/kimlik bilgileri (Vergi
+  Danışmanı · Kurucu, SMMM/Vergi Danışmanı/Mali Denetçi, 12+ yıl), adres
+  ("Gaziosmanpaşa Mah. Bülten Caddesi 72"), `unverifiedClaims` gerçek
+  rakamlarla (150+, %98, %28, %82) `publish: true` — yapı (CLAUDE.md
+  kuralı) korunuyor, sadece bu rakamlar onaylandı.
+- `/kurumsal`: gerçek zaman çizelgesi (2013/2016/2020/2023) ve onaylı
+  rakamlar bloğu eklendi; `FOUNDER.bio` gerçek metinle değiştirildi.
+- 9 hizmet kaydı gerçek özetle güncellendi (`draft: false`). İki isim/kapsam
+  değişikliği: "Kurumsal yapılandırma" → **"Stratejik yapılandırma"**
+  (slug da değişti, KVK Madde 19 vurgusu eklendi); "Bağımsız denetim
+  desteği" tamamen kaldırılıp **"SGK ve işçi mevzuatı"** ile değiştirildi —
+  firmanın gerçek 9. hizmeti bu, öbürü hiç yoktu.
+- Sektörler **7'den 8'e çıkarıldı** (önceki varsayım yanlıştı, `CLAUDE.md`
+  ve koddaki 7 sayısı artık geçersiz — kod tarafında `SECTORS.length`
+  zaten dinamikti, yalnızca veri eklendi): `imalat`→`uretim-ve-sanayi`,
+  `bilisim-ve-yazilim`→`teknoloji-ve-bilisim`,
+  `saglik`→`saglik-ve-eczacilik` yeniden adlandırıldı; `lojistik` ve
+  `hizmet-ve-danismanlik` KALDIRILDI (firmanın gerçek listesinde yok);
+  `finans-ve-sermaye-piyasalari`, `tarim-ve-gida`, `enerji-ve-cevre`
+  eklendi. Tüm çapraz referanslar (`relatedServiceSlugs`/
+  `relatedSectorSlugs`, e2e'deki `/sektorler/imalat`) güncellendi.
+- `/sss`: iki gerçek kategori (Vergi & Danışmanlık, Teşvik & Ar-Ge) —
+  gerçek soru/cevaplar, KVK/GVK madde atıfları ve tutarlar firmanın kendi
+  metninden. "Gizlilik ve veri" kategorisi (genel, taslak) korundu.
+- `/mevzuat`: yeni "Kanun bilgi bankası" bölümü — 5 kanun,
+  mevzuat.gov.tr'ye doğrudan bağlantı (`LAW_LIBRARY`, `legislation.ts`).
+- 3 gerçek, yazılı yayın izinli referans eklendi (`testimonials.ts`):
+  Cenk Yavuz, Esra Yıldız, Murat Kaya — isim/unvan/alıntı birebir kaynak
+  siteden. Ana sayfadaki "Örnek Müşteri A" yer tutucuları kaldırıldı;
+  `TestimonialTriad` artık `publishableTestimonials()` kullanıyor.
+  `lib/data/placeholder/testimonials.ts` gereksiz kaldığı için silindi.
+
+### Doğrulama
+
+`pnpm typecheck · lint · test (tax-engine 65) · build` — **kökten** (turbo)
+çalıştırıldı, hepsi yeşil (önceki oturumlardaki `turbo.exe` Windows Uygulama
+Denetimi engeli bu oturumda YAŞANMADI). `playwright --list`: 92 test / 7
+dosya, parse temiz. Yerel `pnpm dev` + claude-in-chrome ile GÖZLE doğrulandı:
+ana sayfa, `/hizmetler`, `/hizmetler/sgk-ve-isci-mevzuati`, `/sektorler`,
+`/kurumsal`, `/sss`, `/referanslar`, `/mevzuat` — 8 sektör doğru sırada,
+9 hizmet doğru içerikle, gerçek referanslar, Türkçe karakterler
+(İ ğ Ş ç ö ü) hiçbir yerde düşmüyor, ızgara çizgisi yok. Konsolda tek uyarı:
+önceden var olan, bu koşuyla ilgisiz dev-only CSP nonce hydration uyarısı
+(V8'den beri bilinen, kapsam dışı).
+
+**Doğrulanamayan (ortam sınırlaması):** WebGL sahnesinin gerçek pikselde
+imlece tepkisi (yukarıda İş 1) ve gerçek 390px mobil viewport (`resize_window`
+bu ortamda `window.innerWidth`'i değiştirmiyor — V7'de de aynı bulgu
+kaydedilmişti). **Kullanıcı/CI tarayıcı QA'sında doğrulanmalı.**
+
+### Sonraki adım
+
+- Kullanıcı/CI tarayıcı QA (imleç hareketi + mobil 390px) → `v10-icerik-arkaplan` → `v2` merge.
+- `main`'e ERKEN GEÇME.
 
 ---
 
