@@ -1,14 +1,17 @@
-# QA Kontrol Listesi — v7-orb → v2 merge sonrası
+# QA Kontrol Listesi — v8-backdrop → v2 merge sonrası
 
 > Bu liste `pnpm typecheck/test/build` yeşil olsa da tarayıcıda gözle
 > doğrulanması gereken maddeleri içerir (WebGL piksel doğrulaması bu ortamda
-> otomatik yapılamadı, bkz. `docs/PROJECT-STATUS.md` §0-V).
+> otomatik yapılamadı — ham WebGL probe ile dolaylı doğrulandı, bkz.
+> `docs/PROJECT-STATUS.md` §0-U).
 
-- [ ] **Orb sahnesi:** Hero'da arka planda dağınık/çok parçacıklı bir bulut
-      yerine tek, net odaklı bir küre ve onun etrafında ince, hafif dalgalı bir
-      halka görmelisin; scroll ettikçe küre yumuşakça küçülüp soluklaşmalı,
-      sıçrama olmamalı ve sayfa sonunda (kapanış bölümü) küre tamamen
-      kaybolmadan hafif bir iz olarak kalmalı.
+- [ ] **Orb sahnesi:** Hero'da arka planda net kenarlı, tek bir küre
+      görmelisin — gövdesi yumuşak koyu-mavi gradyanlı, kenarında belirgin,
+      parlak bir "sırt ışığı" (arkadan aydınlatılmış hissi) olmalı; dağınık
+      bulut, ayrık bir halka çizgisi veya birden çok parçacık GÖRMEMELİSİN.
+      Scroll ettikçe küre yumuşakça küçülüp yukarı kaymalı, ton soğuk maviden
+      sıcak menekşe/mercana dönmeli, sıçrama olmamalı; sayfa sonunda (kapanış
+      bölümü) küre çok küçük/soluk olsa da tamamen kaybolmamalı.
 - [ ] **Vergi Yükü Panosu tutarı:** Ana sayfadaki "Çözümler" bölümündeki canlı
       Vergi Yükü Panosu'nda grafik ve altındaki rakamlar (ekran okuyucu
       tablosuyla birlikte) boş/NaN/yer tutucu görünmeden gerçek hesaplanmış

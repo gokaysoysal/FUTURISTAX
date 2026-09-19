@@ -2,16 +2,134 @@
 
 > **Her yeni oturumda önce bu dosyayı oku.** Kurallar ve mimari için `CLAUDE.md`.
 
-**Son güncelleme:** 2026-09-19 — V7 ORB (`v7-orb` dalı, `v2`'den): kalıcı arka plan
-sahnesi çok-oktavlı bulut alanından tek odaklı küre/ince halkaya sadeleştirildi,
-**1/1 bölüm bitti**. Öncesinde: ANA SAYFA bölüm ayraç "beyaz çizgileri"
-kaldırıldı (`v2`, küçük düzeltme, 2026-09-08). Öncesinde: V6 REFERANS CİLASI
+**Son güncelleme:** 2026-09-19 — V8 BACKDROP (`v8-backdrop` dalı, `v2`'den):
+kalıcı arka plan sahnesindeki tek küre, düz gaussian lekeden gerçek
+aydınlatılmış/hacimli küreye (yüzey normali + tek fresnel kenar ışığı)
+yeniden çizildi, referansa (futureoffinance.peachweb.io) daha yakın,
+**1/1 bölüm bitti**. Öncesinde: V7 ORB (`v7-orb` dalı, `v2`'den): kalıcı arka
+plan sahnesi çok-oktavlı bulut alanından tek odaklı küreye sadeleştirildi,
+2026-09-19. Öncesinde: ANA SAYFA bölüm ayraç "beyaz çizgileri" kaldırıldı
+(`v2`, küçük düzeltme, 2026-09-08). Öncesinde: V6 REFERANS CİLASI
 (`v6-referans` dalı, `v2`'den), **3/3 bölüm bitti**.
 Önceki: V5-HERO (`v5-hero`, `v2`'ye merge) · V4-AKIS (`v4-akis`, merge) ·
 V3 SUNUM KATMANI (`v2-fx`, merge) · TASARIM YÖNÜ DEĞİŞİMİ (`v2-tasarim`, absorbe).
-**Depo:** github.com/gokaysoysal/FUTURISTAX — çalışma dalı `v2`, aktif koşu dalı `v7-orb`
+**Depo:** github.com/gokaysoysal/FUTURISTAX — çalışma dalı `v2`, aktif koşu dalı `v8-backdrop`
 **Önizleme:** deploy-preview-1--futuristax.netlify.app
 **Canlı site:** futuristax.com — hâlâ ESKİ sürüm (`main` dalı, `legacy/index.html`)
+
+---
+
+## 0-U. V8 BACKDROP — 2026-09-19 (`v8-backdrop`, `v2`'den)
+
+Görev: `docs/V8-BACKDROP-FINAL.md`'deki otonom prompt — kalıcı arka plan
+sahnesini (`components/backdrop/SiteBackdropScene.tsx`) referans siteye
+(futureoffinance.peachweb.io) görsel olarak yakınlaştırmak. **Kapsam: yalnızca
+bu dosya.** tax-engine/API/DB/vergi oranları/Vergi Yükü Panosu dokunulmadı.
+
+### ADIM 0 — Gözlem (claude-in-chrome, gerçek tarayıcı)
+
+Referans site incelendi: tek `<canvas>` (WebGL2, `pwb-scene` konteyneri —
+muhtemelen site builder'ın hazır arka plan bileşeni), **TEK büyük, net
+kenarlı bir küre** — matbir gövde + belirgin bir "sırt/kenar ışığı" (fresnel
+tarzı, sanki arkadan aydınlatılmış), sayfanın üst-sağında konumlanıyor,
+scroll'da büyüyüp küçülerek ve konum değiştirerek kamera hareketi hissi
+veriyor. (Sol tarafta görülen "pileli/yelpaze" desen de aynı tek WebGL
+sahnenin parçası — muhtemelen kürenin kendi yüzey dokusu/ikinci bir
+geometri; ADIM 2'nin "tek, karmaşık desensiz odak" kısıtı gereği bu ayrı
+desen KOPYALANMADI, yalnızca kürenin ışıklandırma kalitesi hedef alındı.)
+
+Kendi sitede (yerel `pnpm dev`, `localhost:3010`) aynı tur: **kod incelemesi
++ ADIM 1'deki bulgu nedeniyle piksel doğrulaması `document.hidden` engeliyle
+sınırlı** (aşağıya bakın) — bulgular canlı gözlemden değil kod okumasından ve
+"ham WebGL probe" tekniğinden (ADIM 5) geldi. Önceki sahne (V7): kürenin
+kendisi düz bir gaussian leke (`exp(-dist²)`) + kürenin 2 katı yarıçapta
+AYRIK, dekoratif ince bir halka — hacim/aydınlatma hissi yok, sınırsız
+yumuşak bulanıklık (net bir siluet değil). Referanstaki "gerçek, aydınlatılmış
+tek nesne" hissinden uzak.
+
+### ADIM 1 — Mimari teşhis: gerçek bir render engeli bulundu
+
+Sahne DOM'a doğru mount oluyor, canvas doğru boyutlanıyor, z-index/opaklık
+doğru (`fixed inset-0 -z-10` sarmalayıcı, `pointer-events:none`). **Ama**
+`gl.drawArrays`/`gl.clear` çağrılarını izleyen bir monkey-patch ile ölçüldü:
+sayfa birkaç saniye açık kalsa bile **sıfır** çizim çağrısı. Kök neden:
+`document.hidden === true` — claude-in-chrome'un yönettiği sekme, `hasFocus()`
+`true` olsa bile Page Visibility API'sine göre "gizli" raporlanıyor (otomasyon
+ortamının penceresi OS'ta öne alınmamış/occluded olabilir). `lib/motion/raf.ts`
+TASARIM GEREĞİ `document.hidden` iken rAF döngüsünü başlatmıyor (performans
+kuralı — CLAUDE.md/ADIM 4 "sekme arka plandayken render dur" ile birebir
+uyumlu, bu BİR HATA DEĞİL). Sonuç: otomatik/başsız (headless benzeri)
+tarayıcı oturumlarında sahne asla render edilmiyor — V7 notundaki "ortam
+sınırlaması" varsayımı doğrulandı, ama kökü ilk kez netleşti (yalnızca
+headless değil, spesifik olarak `document.hidden` bayrağı). **Kod mimarisi
+sağlam, düzeltme gerekmedi** — bu adım sadece teşhis.
+
+### ADIM 2 — Shader yeniden çizildi
+
+`SiteBackdropScene.tsx` FRAG shader'ı: ekran-uzayı disk artık gerçek bir
+kürenin izdüşümü gibi ele alınıyor — `r2 = |p|²` üzerinden bir yükseklik
+(`z = sqrt(1-r2)`) ve yüzey normali türetiliyor, TEK sabit ışık yönüyle
+(sırttan/yukarıdan) fresnel kenar aydınlatması (`pow(1-z, 2.2)`) + hafif
+yönlü gölgeleme (`dot(normal, lightDir)`) + iç yumuşak parıltı hesaplanıyor.
+Kürenin kenarı `smoothstep` ile net/anti-alias'lı bir siluet (`mask`) —
+sınırsız bulanıklık değil. Diskin dışına `halo` ile yumuşak, düşük yoğunluklu
+bir ambiyans sızıntısı eklendi (sert kesim hissi olmasın). **Ayrık halka deseni
+tamamen kaldırıldı** (referansta yoktu — ilk üst-sağ ekran görüntüsünde "halka"
+sanılan şey aslında ikinci, çok daha büyük bir kürenin/gezegenin kenarıydı).
+`tone`/`density`/`depth`/`flow` uniformlarının anlamı ve `backdrop-scene.ts`
+sönümlü lerp/bölüm-ağırlık mimarisi **değişmedi** — yalnızca bu 4 parametreden
+kürenin GÖRÜNÜMÜNÜN türetilme biçimi değişti. Bölüm hedef parametreleri
+(`Hero`/`SolutionsSection`/`PinnedCapabilities`/`StatsRow`/`ClosingCta`
+içindeki `<SceneRegion>` çağrıları) **dokunulmadı** — V7'de zaten dar bir
+bantta (density 0.56-0.78) kayıtlıydı, referansın "tek/sakin" isteğiyle
+çelişmiyor. `uComplexity` düşükken (mobil, bkz. not) yüzey parıltı animasyonu
+kapanıyor.
+
+### ADIM 5 — Görsel doğrulama (ham WebGL probe yöntemi)
+
+`document.hidden` engeli normal R3F render döngüsünü otomasyon ortamında
+imkânsız kıldığından, şu yöntemle doğrulandı: **aynı FRAG shader kaynağı**
+ham bir WebGL2 programına derlenip, GERÇEK arka plan `<canvas>`'ının (doğru
+z-index/opaklık/DOM konumunda, gerçek sayfa içeriğinin ARKASINDA) içine
+`gl.drawArrays` ile doğrudan çizildi — `advance()`/rAF'ı atlayarak ama gerçek
+DOM bileşimini kullanarak. Üç bölüm hedefiyle test edildi:
+
+- **Hero (depth=0.1, density=0.78, tone=0.12):** büyük, net kenarlı, parlak
+  fresnel'li küre; `.text-scrim` başlığın arkasında hâlâ tam kontrastlı
+  çalışıyor (V5'ten korunan mekanizma, dokunulmadı) — ekran görüntüsüyle
+  doğrulandı.
+- **Orta (depth=0.5, density=0.7, tone=0.55):** küre yukarı/küçük kayıyor,
+  ton ısınıyor — sönümlü geçiş beklendiği gibi yumuşak.
+- **ClosingCta (depth=0.9, density=0.78, tone=0.9):** küre üst kenara
+  yakın, çok küçük/soluk ama **tamamen kaybolmuyor** — iz sürekliliği
+  (`presence` alt sınırı) korunmuş.
+
+Bu üç nokta arası geçiş `mix()` fonksiyonlarıyla matematiksel olarak sürekli
+olduğundan aradaki `SceneRegion` hedefleri (SolutionsSection depth=0.36,
+PinnedCapabilities depth=0.62, StatsRow depth=0.72) ayrıca tek tek
+render edilmedi — güvenle enterpole olduğu kabul edildi.
+
+**Bu yöntem gerçek R3F/rAF entegrasyonunu doğrulamaz** (yalnızca shader
+matematiğini ve gerçek DOM bileşimini doğrular) — kullanıcının normal,
+odaklı bir tarayıcı sekmesinde gerçek scroll ile doğrulaması hâlâ gerekiyor
+(`docs/QA-KONTROL-LISTESI.md` "Orb sahnesi" maddesi).
+
+### Doğrulama
+
+`apps/web`: `pnpm typecheck` ve `pnpm build` yeşil (ana sayfa ilk yük JS
+**181 kB**, değişmedi — yalnızca metin, bayt eklemedi). `packages/tax-engine`:
+`pnpm typecheck` + `pnpm test` — 65/65 yeşil, dokunulmadı.
+`packages/config`: `pnpm typecheck` yeşil. (Not: kök `pnpm typecheck/test/build`
+bu makinede Windows Uygulama Denetimi ilkesi `turbo.exe`'yi engellediği için
+çalışmıyor — paket başına doğrudan çalıştırıldı, kod/kurulum sorunu değil.)
+Konsolda tek hata: önceden var olan, bu değişiklikle ilgisiz bir dev-only CSP
+nonce hydration uyarısı (kapsam dışı, dokunulmadı).
+
+### Sonraki adım — kullanıcı tarayıcı QA'sında doğrulanacak
+
+`docs/QA-KONTROL-LISTESI.md` güncellendi: "Orb sahnesi" maddesi artık net
+kenarlı/aydınlatılmış tek küre + kenar ışığı bekliyor (önceki "dağınık
+bulut yerine tek küre" ifadesinden daha spesifik).
 
 ---
 

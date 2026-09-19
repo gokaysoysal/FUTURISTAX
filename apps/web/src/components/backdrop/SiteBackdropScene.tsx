@@ -11,7 +11,9 @@ import * as THREE from 'three';
 
 /**
  * Site geneli KALICI arka plan sahnesi — R3F shader alanı (V5 Bölüm 2,
- * sadeleştirildi V7 — tek odaklı küre/orb).
+ * sadeleştirildi V7 — tek odaklı küre; V8'de aydınlatılmış/hacimli küreye
+ * yeniden çizildi — referans futureoffinance.peachweb.io'daki backlit
+ * küre hissine yakınlaştırma, bkz. docs/PROJECT-STATUS.md §0-U).
  *
  * - `[locale]/layout.tsx` seviyesinde bir kez mount; rota değişiminde
  *   REMOUNT OLMAZ (App Router layout kalıcı).
@@ -21,10 +23,13 @@ import * as THREE from 'three';
  * - Bölüm parametreleri (tone/density/depth/flow) AYNI sönümlü lerp ile
  *   karışır (`backdrop-scene.ts` değişmedi) — `depth` zaten hero'da düşük
  *   (yakın/parlak), kapanışta yüksek (uzak/soluk) olacak şekilde
- *   kayıtlıydı; V7'de bu doğrudan kürenin konum/boyut/opaklığını sürüyor.
+ *   kayıtlıydı; bu doğrudan kürenin konum/boyut/opaklığını sürüyor.
+ * - V8: ekran-uzayı disk artık gerçek bir kürenin izdüşümü gibi gölgeleniyor
+ *   (yüzey normali + tek fresnel kenar ışığı) — düz gaussian leke ve ayrık
+ *   halka deseni kaldırıldı; net siluet + yumuşak dış sızıntı.
  * - Yedekler bu bileşenin DIŞINDA (`SiteBackdrop`): reduced-motion / WebGL yok /
  *   düşük performans → `SiteBackdropFallback`. Mobilde `complexity=0.5`
- *   (ikinci halkayı ve iç sıcak çekirdeği kapatır).
+ *   (yüzey parıltısını kapatır).
  */
 
 const VERT = /* glsl */ `
@@ -60,36 +65,48 @@ const FRAG = /* glsl */ `
     // kayar (parallax) — konum sıçramaz, depth zaten sönümlü.
     vec2 center = vec2(0.5 * uAspect, mix(0.6, 0.94, uDepth)) + mouse;
     float dist = length(uv - center);
+    float radius = mix(0.36, 0.15, uDepth) * mix(0.94, 1.05, uDensity);
 
-    float radius = mix(0.3, 0.12, uDepth) * mix(0.92, 1.06, uDensity);
-    // Kürenin çekirdek opaklığı derinlikle düşer ama SIFIRA inmez — iz kalır.
-    float coreAlpha = mix(0.95, 0.18, uDepth) * mix(0.8, 1.0, uDensity);
+    // Ekran-uzayı diski gerçek bir kürenin izdüşümü gibi ele al: r2<1 içinde
+    // bir "yükseklik" (z) türet, bundan yüzey normali çıkar — referanstaki
+    // gibi hacimli/aydınlatılmış tek küre, düz bir gaussian leke değil.
+    vec2 p = (uv - center) / radius;
+    float r2 = dot(p, p);
+    float z = sqrt(max(0.0, 1.0 - r2));
+    vec3 normal = normalize(vec3(p, z + 0.0001));
 
-    // Tek, yumuşak iç ışıma — çok parçacık yok, tek odak noktası.
-    float core = exp(-pow(dist / radius, 2.0) * 2.6);
-    float hotCore = uComplexity > 0.5
-      ? exp(-pow(dist / (radius * 0.4), 2.0) * 3.0) * 0.55
-      : 0.0;
+    // Tek ışık kaynağı, sırttan/yukarıdan — kenar aydınlatması (fresnel),
+    // referanstaki backlit küre hissi. Çoklu ışık/parçacık yok.
+    vec3 lightDir = normalize(vec3(0.3, 0.6, -0.5));
+    float fresnel = pow(clamp(1.0 - z, 0.0, 1.0), 2.2);
+    float backLight = clamp(dot(normal, lightDir), 0.0, 1.0);
+    float innerGlow = exp(-r2 * 2.0);
 
-    // İnce halka deseni — hafif organik dalgalanma, katı bir CAD çemberi değil.
-    float angle = atan(uv.y - center.y, uv.x - center.x);
-    float wobble = (hash(vec2(floor(angle * 6.0), floor(uTime * 0.08))) - 0.5) * 0.01;
-    float ringR = radius * 2.05 + wobble + sin(uTime * (0.1 + uFlow * 0.12)) * radius * 0.012;
-    float ringWidth = 0.005 + radius * 0.012;
-    float ring = smoothstep(ringWidth, 0.0, abs(dist - ringR)) * 0.45;
-    float ring2 = uComplexity > 0.5
-      ? smoothstep(ringWidth * 0.7, 0.0, abs(dist - ringR * 1.5)) * 0.18
-      : 0.0;
+    // Yüzeyde hafif, çok yavaş kayan bir parıltı — katı doku değil.
+    float sheenN = hash(vec2(floor(uv.x * 26.0 + uv.y * 8.0), floor(uTime * (0.1 + uFlow * 0.08))));
+    float sheen = uComplexity > 0.5 ? (sheenN - 0.5) * 0.05 : 0.0;
 
     // Renk sıcaklığı: soğuk azur → sıcak (menekşe + hafif mercan ucu).
     vec3 warm = mix(uGlow, vec3(1.0, 0.55, 0.42), 0.18);
-    vec3 lightCol = mix(uAccent, warm, clamp(uTone, 0.0, 1.0));
+    vec3 rimColor = mix(uAccent, warm, clamp(uTone, 0.0, 1.0));
 
-    vec3 col = lightCol * (core + hotCore + ring + ring2);
-    float a = clamp((core * 0.85 + hotCore * 0.5 + ring + ring2) * coreAlpha, 0.0, 0.62);
+    float body = innerGlow * 0.62 + fresnel * 1.15 + backLight * 0.3 + sheen;
+    vec3 sphereCol = rimColor * body;
+
+    // Kürenin kenarı belirgin/anti-alias'lı — referanstaki gibi net bir
+    // siluet, sınırsız yumuşak bulut değil.
+    float mask = 1.0 - smoothstep(0.86, 1.0, r2);
+    // Diskin hemen dışında yumuşak ambiyans sızıntısı — sert kesim olmasın.
+    float halo = exp(-pow(max(dist - radius, 0.0) / (radius * 0.85), 2.0)) * 0.24;
+
+    // Sahnenin görünürlüğü derinlikle düşer ama SIFIRA inmez — iz kalır.
+    float presence = mix(0.92, 0.2, uDepth) * mix(0.85, 1.0, uDensity);
+
+    vec3 col = sphereCol * mask * presence + rimColor * halo * presence * 0.55;
+    float a = clamp((0.55 * mask + 0.5 * fresnel * mask + halo * 0.4) * presence, 0.0, 0.85);
 
     // Bantlaşmayı kır — tek ince dither, yoğun doku değil.
-    col += (hash(gl_FragCoord.xy + uTime) - 0.5) * 0.015;
+    col += (hash(gl_FragCoord.xy + uTime) - 0.5) * 0.012;
 
     gl_FragColor = vec4(col, a);
   }
