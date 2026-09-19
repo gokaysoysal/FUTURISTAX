@@ -87,8 +87,8 @@ export const serviceGroups = [
   {
     key: 'denetim',
     title: 'Denetim ve risk',
-    body: 'İnceleme hazırlığı, risk analizi ve bağımsız denetim desteği.',
-    serviceSlugs: ['vergi-denetimi', 'bagimsiz-denetim-destegi'],
+    body: 'İnceleme hazırlığı, risk analizi ve SGK/işçi mevzuatı uyumu.',
+    serviceSlugs: ['vergi-denetimi', 'sgk-ve-isci-mevzuati'],
   },
   {
     key: 'finans',
@@ -99,8 +99,8 @@ export const serviceGroups = [
   {
     key: 'yapi',
     title: 'Uyum ve yapılandırma',
-    body: 'Mevzuat uyumu, kurumsal yapılandırma ve yatırım teşvik yönetimi.',
-    serviceSlugs: ['mevzuat-uyumu', 'kurumsal-yapilandirma', 'yatirim-tesvik-yonetimi'],
+    body: 'Mevzuat uyumu, stratejik yapılandırma ve yatırım teşvik yönetimi.',
+    serviceSlugs: ['mevzuat-uyumu', 'stratejik-yapilandirma', 'yatirim-tesvik-yonetimi'],
   },
 ] as const;
 

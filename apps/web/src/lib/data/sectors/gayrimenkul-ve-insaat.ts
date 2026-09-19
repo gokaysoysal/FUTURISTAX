@@ -1,15 +1,15 @@
 import type { SectorRecord } from '../types';
 
-// TASLAK METİN — yayına almadan önce firma tarafından revize edilecek.
-// Somut oran, tutar veya mevzuat madde atfı bilinçli olarak yazılmadı.
-export const insaatVeGayrimenkul: SectorRecord = {
-  slug: 'insaat-ve-gayrimenkul',
-  title: 'İnşaat ve gayrimenkul',
-  shortTitle: 'İnşaat ve gayrimenkul',
+// GERÇEK İÇERİK — www.futuristax.com'dan (V10, kaynak doğrulandı).
+export const gayrimenkulVeInsaat: SectorRecord = {
+  slug: 'gayrimenkul-ve-insaat',
+  title: 'Gayrimenkul ve inşaat',
+  shortTitle: 'Gayrimenkul ve inşaat',
   summary:
-    'İnşaat ve gayrimenkul projelerinde vergisel sonuç; proje yapısına, hasılat paylaşımı veya ' +
-    'kat karşılığı modeline ve işin yıllara sâri niteliğine göre büyük farklılık gösterir. Proje ' +
-    'başında kurulan doğru yapı, teslim aşamasındaki sürprizleri önler.',
+    'Yıllara sâri inşaat onarım işleri, değer artış kazançları ve KDV istisnalarında proje ' +
+    'bazlı maliyet muhasebesi sunuyoruz. Vergisel sonuç; proje yapısına, hasılat paylaşımı ' +
+    'veya kat karşılığı modeline göre büyük farklılık gösterir — proje başında kurulan doğru ' +
+    'yapı, teslim aşamasındaki sürprizleri önler.',
   sections: [
     {
       heading: 'Proje yapısı',
@@ -50,16 +50,16 @@ export const insaatVeGayrimenkul: SectorRecord = {
         'söz konusuysa danışmanlık anlamlı olur.',
     },
   ],
-  relatedServiceSlugs: ['vergi-danismanligi', 'kurumsal-yapilandirma', 'mevzuat-uyumu'],
-  relatedSectorSlugs: ['imalat', 'hizmet-ve-danismanlik'],
+  relatedServiceSlugs: ['vergi-danismanligi', 'stratejik-yapilandirma', 'mevzuat-uyumu'],
+  relatedSectorSlugs: ['uretim-ve-sanayi', 'finans-ve-sermaye-piyasalari'],
   seo: {
-    title: 'İnşaat ve gayrimenkul için vergi danışmanlığı',
+    title: 'Gayrimenkul ve inşaat için vergi danışmanlığı',
     description:
       'Kat karşılığı ve hasılat paylaşımı modelleri, yıllara sâri işlerde gelir-maliyet ' +
-      'eşleştirmesi ve teslim süreçlerinin vergisel yönetimi.',
+      'eşleştirmesi ve KDV istisnalarının vergisel yönetimi.',
     keywords: ['inşaat vergi danışmanlığı', 'kat karşılığı inşaat', 'gayrimenkul projesi vergi'],
   },
-  order: 2,
-  draft: true,
-  updatedAt: '2026-09-06',
+  order: 4,
+  draft: false,
+  updatedAt: '2026-09-19',
 };

@@ -9,8 +9,9 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'Sektörler',
   description:
-    'İmalat, inşaat ve gayrimenkul, bilişim ve yazılım, sağlık, perakende ve e-ticaret, ' +
-    'lojistik, hizmet ve danışmanlık sektörlerine özel vergi ve mali danışmanlık.',
+    'Teknoloji ve bilişim, üretim ve sanayi, e-ticaret ve perakende, gayrimenkul ve inşaat, ' +
+    'finans ve sermaye piyasaları, sağlık ve eczacılık, tarım ve gıda, enerji ve çevre ' +
+    'sektörlerine özel vergi ve mali danışmanlık.',
   alternates: { canonical: '/sektorler' },
   openGraph: { title: 'Sektörler', url: '/sektorler', type: 'website' },
 };

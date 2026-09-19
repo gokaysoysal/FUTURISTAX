@@ -1,9 +1,9 @@
 import type { ServiceRecord } from '../types';
-import { bagimsizDenetimDestegi } from './bagimsiz-denetim-destegi';
 import { finansalDanismanlik } from './finansal-danismanlik';
 import { kurumsalRaporlama } from './kurumsal-raporlama';
-import { kurumsalYapilandirma } from './kurumsal-yapilandirma';
 import { mevzuatUyumu } from './mevzuat-uyumu';
+import { sgkVeIsciMevzuati } from './sgk-ve-isci-mevzuati';
+import { stratejikYapilandirma } from './stratejik-yapilandirma';
 import { uluslararasiVergilendirme } from './uluslararasi-vergilendirme';
 import { vergiDanismanligi } from './vergi-danismanligi';
 import { vergiDenetimi } from './vergi-denetimi';
@@ -19,10 +19,10 @@ export const SERVICES: readonly ServiceRecord[] = [
   finansalDanismanlik,
   mevzuatUyumu,
   kurumsalRaporlama,
+  stratejikYapilandirma,
   uluslararasiVergilendirme,
-  kurumsalYapilandirma,
+  sgkVeIsciMevzuati,
   yatirimTesvikYonetimi,
-  bagimsizDenetimDestegi,
 ].sort((a, b) => a.order - b.order);
 
 const BY_SLUG = new Map(SERVICES.map((s) => [s.slug, s]));

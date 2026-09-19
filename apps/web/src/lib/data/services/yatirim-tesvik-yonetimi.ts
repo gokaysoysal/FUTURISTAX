@@ -1,16 +1,15 @@
 import type { ServiceRecord } from '../types';
 
-// TASLAK METİN — yayına almadan önce firma tarafından revize edilecek.
-// Somut oran, tutar veya mevzuat madde atfı bilinçli olarak yazılmadı.
+// GERÇEK İÇERİK — www.futuristax.com'dan (V10, kaynak doğrulandı).
 export const yatirimTesvikYonetimi: ServiceRecord = {
   slug: 'yatirim-tesvik-yonetimi',
   title: 'Yatırım teşvik yönetimi',
   shortTitle: 'Yatırım teşvikleri',
   summary:
-    'Yatırım teşvik belgesi, doğru kurgulandığında yatırımın vergisel ve finansal yükünü ' +
-    'anlamlı ölçüde hafifletir; yanlış yönetildiğinde ise sağlanan desteklerin geri alınmasına ' +
-    'yol açar. Bu hizmette başvurudan kapamaya kadar tüm süreci planlar, yükümlülüklerin ' +
-    'zamanında yerine getirilmesini takip ederiz.',
+    'Hazine ve Maliye Bakanlığı teşvik belgelerinin alınması, uygulanması ve denetimi sürecini ' +
+    'yönetiyoruz — KDV istisnası, vergi indirimi ve sigorta primi desteği dahil. Doğru ' +
+    'kurgulandığında yatırımın vergisel ve finansal yükünü anlamlı ölçüde hafifletir; yanlış ' +
+    'yönetildiğinde ise sağlanan desteklerin geri alınmasına yol açar.',
   sections: [
     {
       heading: 'Uygunluk değerlendirmesi',
@@ -21,8 +20,11 @@ export const yatirimTesvikYonetimi: ServiceRecord = {
     {
       heading: 'Başvuru ve revizyon',
       body:
-        'Teşvik belgesi başvurusunu ve yatırım sürecinde ortaya çıkan değişiklikler için ' +
-        'revizyon taleplerini hazırlarız.',
+        'Sanayi ve Teknoloji Bakanlığı’na bağlı E-TUYS sistemi üzerinden başvuruyu hazırlarız. ' +
+        'Başlıca destekler: makine-teçhizat alımlarında KDV istisnası, ithal makinelerde gümrük ' +
+        'vergisi muafiyeti, kurumlar vergisi indirimi (yatırıma katkı oranına göre %40-100), SGK ' +
+        'işveren payı desteği ve faiz desteği. Bölgesel uygulamalarda (1-6. bölge) destek ' +
+        'oranları ile yatırım sürecindeki revizyon talepleri de bu kapsamdadır.',
     },
     {
       heading: 'İzleme ve kapama',
@@ -52,8 +54,8 @@ export const yatirimTesvikYonetimi: ServiceRecord = {
         'yükümlülüklerinin aksamasındadır; bu aşamayı bir takvimle yönetiriz.',
     },
   ],
-  relatedServiceSlugs: ['finansal-danismanlik', 'kurumsal-yapilandirma', 'mevzuat-uyumu'],
-  relatedSectorSlugs: ['imalat', 'saglik', 'lojistik'],
+  relatedServiceSlugs: ['finansal-danismanlik', 'stratejik-yapilandirma', 'sgk-ve-isci-mevzuati'],
+  relatedSectorSlugs: ['uretim-ve-sanayi', 'enerji-ve-cevre', 'tarim-ve-gida'],
   seo: {
     title: 'Yatırım teşvik yönetimi',
     description:
@@ -61,7 +63,7 @@ export const yatirimTesvikYonetimi: ServiceRecord = {
       'alınmasına yol açan yükümlülük aksamalarını önleyin.',
     keywords: ['yatırım teşvik belgesi', 'teşvik yönetimi', 'yatırım tamamlama vizesi'],
   },
-  order: 8,
-  draft: true,
-  updatedAt: '2026-09-06',
+  order: 9,
+  draft: false,
+  updatedAt: '2026-09-19',
 };

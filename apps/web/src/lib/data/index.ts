@@ -25,4 +25,5 @@ export { FAQ_CATEGORIES, GENERAL_FAQS } from './faq';
 export type { FaqCategory } from './faq';
 export { TEAM, FOUNDER } from './team';
 export { TESTIMONIALS, publishableTestimonials } from './testimonials';
-export { LEGISLATION_ARTICLES, getArticle, articleSlugs } from './legislation';
+export { LEGISLATION_ARTICLES, LAW_LIBRARY, getArticle, articleSlugs } from './legislation';
+export type { LawLibraryEntry } from './legislation';

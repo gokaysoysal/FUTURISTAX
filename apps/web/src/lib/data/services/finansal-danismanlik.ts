@@ -1,16 +1,15 @@
 import type { ServiceRecord } from '../types';
 
-// TASLAK METİN — yayına almadan önce firma tarafından revize edilecek.
-// Somut oran, tutar veya mevzuat madde atfı bilinçli olarak yazılmadı.
+// GERÇEK İÇERİK — www.futuristax.com'dan (V10, kaynak doğrulandı).
 export const finansalDanismanlik: ServiceRecord = {
   slug: 'finansal-danismanlik',
   title: 'Finansal danışmanlık',
   shortTitle: 'Finansal danışmanlık',
   summary:
-    'Finansal danışmanlık hizmetimiz, muhasebe verisini karar alınabilir bilgiye dönüştürür. ' +
-    'Nakit akışı, bütçe, maliyet yapısı ve fiyatlandırma kararlarını sayısal bir temele oturtur; ' +
-    'yönetimin geleceğe dönük senaryoları görebilmesini sağlarız. Rakamlar geçmişi anlatmakla ' +
-    'kalmaz, bir sonraki hamleyi de gösterir.',
+    'Karar alma süreçlerini güçlü bir analitik zemine oturtarak finansal operasyonlarda ' +
+    'verimliliği maksimize ediyoruz. Nakit akışı ve bütçe yönetimi dahil, muhasebe verisini ' +
+    'karar alınabilir bilgiye dönüştürürüz — rakamlar geçmişi anlatmakla kalmaz, bir sonraki ' +
+    'hamleyi de gösterir.',
   sections: [
     {
       heading: 'Nakit akışı ve bütçe',
@@ -58,8 +57,12 @@ export const finansalDanismanlik: ServiceRecord = {
         'senaryolar hem nakit hem vergi etkisiyle birlikte değerlendirilir.',
     },
   ],
-  relatedServiceSlugs: ['kurumsal-raporlama', 'kurumsal-yapilandirma', 'yatirim-tesvik-yonetimi'],
-  relatedSectorSlugs: ['bilisim-ve-yazilim', 'saglik', 'hizmet-ve-danismanlik'],
+  relatedServiceSlugs: ['kurumsal-raporlama', 'stratejik-yapilandirma', 'yatirim-tesvik-yonetimi'],
+  relatedSectorSlugs: [
+    'teknoloji-ve-bilisim',
+    'saglik-ve-eczacilik',
+    'finans-ve-sermaye-piyasalari',
+  ],
   seo: {
     title: 'Finansal danışmanlık',
     description:
@@ -68,6 +71,6 @@ export const finansalDanismanlik: ServiceRecord = {
     keywords: ['finansal danışmanlık', 'nakit akışı yönetimi', 'bütçe', 'kârlılık analizi'],
   },
   order: 3,
-  draft: true,
-  updatedAt: '2026-09-06',
+  draft: false,
+  updatedAt: '2026-09-19',
 };

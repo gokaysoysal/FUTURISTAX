@@ -9,9 +9,9 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'Hizmetler',
   description:
-    'Vergi danışmanlığı, vergi denetimi ve risk analizi, finansal danışmanlık, mevzuat uyumu, ' +
-    'kurumsal raporlama, uluslararası vergilendirme, kurumsal yapılandırma, yatırım teşvik ' +
-    'yönetimi ve bağımsız denetim desteği.',
+    'Vergi danışmanlığı, vergi denetimi ve risk, finansal danışmanlık, mali mevzuat uyumu, ' +
+    'kurumsal raporlama, stratejik yapılandırma, uluslararası vergilendirme, SGK ve işçi ' +
+    'mevzuatı, yatırım teşvik yönetimi.',
   alternates: { canonical: '/hizmetler' },
   openGraph: { title: 'Hizmetler', url: '/hizmetler', type: 'website' },
 };

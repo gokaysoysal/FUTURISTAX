@@ -1,17 +1,15 @@
 import type { ServiceRecord } from '../types';
 
-// TASLAK METİN — yayına almadan önce firma tarafından revize edilecek.
-// Somut oran, tutar veya mevzuat madde atfı bilinçli olarak yazılmadı.
+// GERÇEK İÇERİK — www.futuristax.com'dan (V10, kaynak doğrulandı).
 export const vergiDanismanligi: ServiceRecord = {
   slug: 'vergi-danismanligi',
   title: 'Vergi danışmanlığı',
   shortTitle: 'Vergi danışmanlığı',
   summary:
-    'Vergi danışmanlığı hizmetimiz, şirketinizin vergi yükünü mevzuata tam uyum içinde ' +
-    'yönetilebilir bir kaleme dönüştürmeyi amaçlar. Kurumlar vergisi, gelir vergisi ve dolaylı ' +
-    'vergiler arasındaki etkileşimi bütüncül değerlendirir; alacağınız kararların vergisel ' +
-    'sonuçlarını önceden görmenizi sağlarız. Amaç, cezayı sonradan yönetmek değil, yapıyı baştan ' +
-    'doğru kurmaktır.',
+    'İşletmenizin faaliyet yapısına ve sektör dinamiklerine uygun, teknik açıdan güçlü vergi ' +
+    'stratejileri sunuyoruz. Kurumlar vergisi, gelir vergisi ve KDV planlaması dahildir; ' +
+    'alacağınız kararların vergisel sonuçlarını önceden görmenizi sağlarız. Amaç, cezayı ' +
+    'sonradan yönetmek değil, yapıyı baştan doğru kurmaktır.',
   sections: [
     {
       heading: 'Ne yapıyoruz',
@@ -63,7 +61,7 @@ export const vergiDanismanligi: ServiceRecord = {
     },
   ],
   relatedServiceSlugs: ['vergi-denetimi', 'mevzuat-uyumu', 'uluslararasi-vergilendirme'],
-  relatedSectorSlugs: ['imalat', 'insaat-ve-gayrimenkul', 'bilisim-ve-yazilim'],
+  relatedSectorSlugs: ['uretim-ve-sanayi', 'gayrimenkul-ve-insaat', 'teknoloji-ve-bilisim'],
   seo: {
     title: 'Vergi danışmanlığı',
     description:
@@ -72,6 +70,6 @@ export const vergiDanismanligi: ServiceRecord = {
     keywords: ['vergi danışmanlığı', 'kurumlar vergisi planlaması', 'vergi optimizasyonu'],
   },
   order: 1,
-  draft: true,
-  updatedAt: '2026-09-06',
+  draft: false,
+  updatedAt: '2026-09-19',
 };

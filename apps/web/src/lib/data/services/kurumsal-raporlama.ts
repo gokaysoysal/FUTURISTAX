@@ -1,15 +1,14 @@
 import type { ServiceRecord } from '../types';
 
-// TASLAK METİN — yayına almadan önce firma tarafından revize edilecek.
-// Somut oran, tutar veya mevzuat madde atfı bilinçli olarak yazılmadı.
+// GERÇEK İÇERİK — www.futuristax.com'dan (V10, kaynak doğrulandı).
 export const kurumsalRaporlama: ServiceRecord = {
   slug: 'kurumsal-raporlama',
   title: 'Kurumsal raporlama',
   shortTitle: 'Kurumsal raporlama',
   summary:
-    'Ortaklara, kredi kuruluşlarına veya yurt dışı ana şirkete sunulan finansal tabloların ' +
-    'tutarlı, karşılaştırılabilir ve standartlara uygun olması gerekir. Bu hizmette raporlama ' +
-    'setinizi ilgili finansal raporlama çerçevesine göre kurar veya gözden geçirir; dönemsel ' +
+    'Uluslararası standartlarda (TFRS/IFRS) finansal raporlama ve detaylı değerlendirme ' +
+    'süreçleri sunuyoruz — paydaşlarınıza tam şeffaflık. Ortaklara, kredi kuruluşlarına veya ' +
+    'yurt dışı ana şirkete sunulan tabloların tutarlı ve karşılaştırılabilir olmasını, dönemsel ' +
     'kapanış ve konsolidasyon süreçlerini düzene sokarız.',
   sections: [
     {
@@ -51,19 +50,15 @@ export const kurumsalRaporlama: ServiceRecord = {
         'zorunluluğu getirmeyiz.',
     },
     {
-      question: 'Bağımsız denetim desteğiyle farkı ne?',
+      question: 'Mali mevzuat uyumu hizmetinden farkı ne?',
       answer:
-        'Kurumsal raporlama tabloları üretir; bağımsız denetim desteği ise bir denetçi ' +
-        'incelemesine hazırlık ve denetim sürecinin yönetimiyle ilgilenir. İkisi ardışık ' +
-        'çalışır.',
+        'Kurumsal raporlama finansal tabloları üretir; mali mevzuat uyumu ise yürürlükteki ' +
+        'yükümlülüklerin eksiksiz ve zamanında yerine getirilmesine odaklanır. İkisi birlikte ' +
+        'yürür.',
     },
   ],
-  relatedServiceSlugs: [
-    'finansal-danismanlik',
-    'bagimsiz-denetim-destegi',
-    'uluslararasi-vergilendirme',
-  ],
-  relatedSectorSlugs: ['imalat', 'bilisim-ve-yazilim', 'lojistik'],
+  relatedServiceSlugs: ['finansal-danismanlik', 'vergi-denetimi', 'uluslararasi-vergilendirme'],
+  relatedSectorSlugs: ['uretim-ve-sanayi', 'teknoloji-ve-bilisim', 'finans-ve-sermaye-piyasalari'],
   seo: {
     title: 'Kurumsal raporlama',
     description:
@@ -72,6 +67,6 @@ export const kurumsalRaporlama: ServiceRecord = {
     keywords: ['kurumsal raporlama', 'finansal tablolar', 'konsolidasyon', 'dönem sonu kapanış'],
   },
   order: 5,
-  draft: true,
-  updatedAt: '2026-09-06',
+  draft: false,
+  updatedAt: '2026-09-19',
 };

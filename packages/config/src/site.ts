@@ -23,7 +23,7 @@ export const site = {
     /** Ekranda gösterilecek biçim */
     phoneDisplay: '+90 545 289 98 38',
     address: {
-      street: 'Bülten Caddesi 72/7',
+      street: 'Gaziosmanpaşa Mah. Bülten Caddesi 72',
       district: 'Çankaya',
       city: 'Ankara',
       postalCode: '06680',
@@ -40,8 +40,11 @@ export const site = {
 
   founder: {
     name: 'Gökay Soysal',
-    title: { tr: 'Kurucu · SMMM', en: 'Founder · Certified Public Accountant' },
-    credentials: ['SMMM'],
+    title: {
+      tr: 'Vergi Danışmanı · Kurucu',
+      en: 'Tax Advisor · Founder',
+    },
+    credentials: ['SMMM', 'Vergi Danışmanı', 'Mali Denetçi'],
   },
 
   social: {
@@ -74,20 +77,22 @@ export const site = {
 export type Locale = (typeof site.locales)[number];
 
 /**
- * DOĞRULANMAMIŞ İDDİALAR — müşteri onayı bekliyor.
+ * FİRMA RAKAMLARI — V10'da onaylandı, `publish: true`.
  *
- * Mevcut sitede yer alan "%98 başarı oranı", "150+ aktif müşteri",
- * "%30 vergi optimizasyonu" gibi ifadelerin ölçüm metodolojisi yok.
- * TÜRMOB reklam/tanıtım kısıtları açısından da gözden geçirilmeleri gerekiyor.
- *
- * Bu değerler doğrulanana kadar `publish: false` kalır ve UI'da render edilmez.
+ * Bu değerler `www.futuristax.com` yayınlanmış sitesinden geliyor; firma
+ * sahibi (kurucu) kaynağı kendisi göstererek kullanılmasını onayladı
+ * (bkz. docs/PROJECT-STATUS.md V10 notu). Ölçüm metodolojisi hâlâ ayrı
+ * belgeli değil — bu yüzden yapı (`unverifiedClaims`) korunuyor, yalnızca
+ * `publish` `true` yapıldı; TÜRMOB tanıtım kısıtları açısından gerekirse
+ * tekrar `false`'a çekilebilir.
  */
 export const unverifiedClaims = {
-  publish: false,
+  publish: true,
   items: [
     { key: 'activeClients', value: '150+', needs: 'Sayının tanımı ve tarihi' },
     { key: 'successRate', value: '%98', needs: 'Ölçüm metodolojisi' },
-    { key: 'avgTaxOptimization', value: '%30', needs: 'Vaka örneklemi ve hesap yöntemi' },
+    { key: 'avgTaxOptimization', value: '%28', needs: 'Vaka örneklemi ve hesap yöntemi' },
+    { key: 'longTermRelationship', value: '%82', needs: 'Ölçüm metodolojisi (3+ yıl tanımı)' },
   ],
 } as const;
 

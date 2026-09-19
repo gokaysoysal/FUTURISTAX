@@ -15,6 +15,38 @@ export const metadata: Metadata = {
   openGraph: { title: 'Kurumsal', url: '/kurumsal', type: 'website' },
 };
 
+const UNVERIFIED_CLAIM_LABELS: Record<string, string> = {
+  activeClients: 'Aktif müşteri',
+  successRate: 'Başarı oranı',
+  avgTaxOptimization: 'Ortalama vergi optimizasyonu',
+  longTermRelationship: 'Uzun dönem ilişki (3+ yıl)',
+};
+
+// Kurumsal zaman çizelgesi — firmanın kendi yayınladığı gerçek içerik
+// (www.futuristax.com, V10'da kaynak doğrulandı).
+const TIMELINE = [
+  {
+    year: 2013,
+    title: 'Kuruluş',
+    text: "Ankara'da bağımsız vergi danışmanlığı ofisi olarak faaliyete başlandı. İlk müşteriler KOBİ segmentinden edindi.",
+  },
+  {
+    year: 2016,
+    title: 'Genişleme',
+    text: 'Kurumsal müşteri portföyü oluşturuldu. Finansal danışmanlık ve uyum hizmetleri portföye eklendi.',
+  },
+  {
+    year: 2020,
+    title: 'Dijital Dönüşüm',
+    text: 'Dijital vergi çözümleri ve uzaktan danışmanlık modeli hayata geçirildi. E-arşiv entegrasyon hizmetleri başlatıldı.',
+  },
+  {
+    year: 2023,
+    title: 'FuturistaX Markası',
+    text: 'Yeniden markalama süreciyle FuturistaX Advisory kimliği oluşturuldu. Kurumsal kimlik ve dijital varlık güçlendirildi.',
+  },
+];
+
 // TASLAK METİN — yayına almadan önce firma tarafından revize edilecek.
 const APPROACH = [
   {
@@ -49,15 +81,24 @@ export default function CorporatePage() {
       />
 
       {/*
-        DOĞRULANMAMIŞ İDDİALAR: "150+ aktif müşteri", "%98 başarı oranı" gibi ifadeler
-        unverifiedClaims.publish === false olduğu sürece HİÇBİR SAYFADA render edilmez.
-        Ölçüm yöntemi ve TÜRMOB tanıtım kısıtları açısından teyit bekliyor. İzin
-        verilene kadar bu sayfada sayısal iddia gösterilmez.
+        RAKAMLAR: firma kaynağıyla onaylandı (V10, bkz. packages/config/src/site.ts
+        unverifiedClaims notu) — unverifiedClaims.publish === false olsaydı burada
+        HİÇ render edilmezdi.
       */}
       {unverifiedClaims.publish ? (
-        <p className="mt-6 text-[length:var(--text-sm)] text-[var(--color-text-muted)]">
-          {/* İçerik firma onayından sonra eklenecek. */}
-        </p>
+        <dl className="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-4">
+          {unverifiedClaims.items.map((item) => (
+            <div key={item.key}>
+              <dt className="sr-only">{item.key}</dt>
+              <dd className="font-[family-name:var(--font-display)] text-[length:var(--text-3xl)] text-[var(--color-accent)]">
+                {item.value}
+              </dd>
+              <dd className="mt-1 text-[length:var(--text-xs)] text-[var(--color-text-secondary)]">
+                {UNVERIFIED_CLAIM_LABELS[item.key]}
+              </dd>
+            </div>
+          ))}
+        </dl>
       ) : null}
 
       <Reveal className="mt-12">
@@ -74,6 +115,31 @@ export default function CorporatePage() {
           ))}
         </div>
       </Reveal>
+
+      <section aria-label="Zaman çizelgesi" className="mt-14">
+        <div className="ledger-rule pb-3">
+          <p className="basis-ref uppercase">Yolculuğumuz</p>
+        </div>
+        <ol className="mt-5 space-y-6 border-l border-[var(--color-rule)] pl-6">
+          {TIMELINE.map((item) => (
+            <li key={item.year} className="relative">
+              <span
+                aria-hidden="true"
+                className="absolute top-1.5 -left-[29px] size-2.5 rounded-full bg-[var(--color-accent)]"
+              />
+              <p className="font-[family-name:var(--font-display)] text-[length:var(--text-lg)] text-[var(--color-accent)] tabular-nums">
+                {item.year}
+              </p>
+              <p className="mt-0.5 text-[length:var(--text-base)] text-[var(--color-text)]">
+                {item.title}
+              </p>
+              <p className="mt-1 max-w-prose text-[length:var(--text-sm)] leading-relaxed text-[var(--color-text-secondary)]">
+                {item.text}
+              </p>
+            </li>
+          ))}
+        </ol>
+      </section>
 
       <section aria-label="Ekip" className="mt-14">
         <div className="ledger-rule pb-3">
