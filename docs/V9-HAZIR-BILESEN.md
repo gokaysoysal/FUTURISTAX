@@ -5,6 +5,17 @@
 ---
 
 ```
+Önce küçük bir temizlik, sonra asıl iş.
+
+────────────────────────────────────────
+ÖN ADIM — .gitignore düzeltmesi
+
+.gitignore dosyasına .claude/ satırını ekle. Bu Claude Code'un kendi
+çalışma dosyaları (worktree'ler), projeye ait değil ve takip
+edilmemeli — commit denemelerinde "untracked files" uyarısına sebep
+oluyor. Ekle, commit et, push et. Sonra asıl işe geç.
+
+────────────────────────────────────────
 Üç turdur kendi shader'ımızı sıfırdan yazıp scroll senkronizasyonunda
 sorun yaşıyoruz. Yön değiştiriyoruz: olgunlaşmış, açık kaynak, ücretsiz
 bir bileşen kütüphanesinden başlayıp kendi ihtiyacımıza göre uyarlıyoruz.
