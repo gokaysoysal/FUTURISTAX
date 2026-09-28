@@ -274,27 +274,28 @@
     position: relative;
     isolation: isolate;
   }
+  /*
+   * V12 Bölüm 4: eskiden bu zemin kendi radyal gradyanının SOLUK ucuna
+   * ulaşamadan kutunun (inset) kenarına çarpıyordu — görünen kısım
+   * gradyanın hâlâ yoğun (%60-86 opak) ortasıydı, yani sonuç SERT kenarlı
+   * neredeyse-düz bir dikdörtgendi (ekran görüntüsünde görülen "sert
+   * dikdörtgen scrim" buydu). Artık zemin rengi DÜZ (tek ton), yumuşak kenar
+   * bir `mask-image` ile garanti ediliyor — maske her zaman kutunun
+   * kendi sınırında sıfıra iner, gradyan matematiğinden bağımsız.
+   */
   .text-scrim::before {
     content: "";
     position: absolute;
     z-index: -1;
-    inset: -1.25rem -1.75rem;
-    background: radial-gradient(
-      120% 130% at 50% 42%,
-      color-mix(in oklab, var(--color-canvas) 86%, transparent) 0%,
-      color-mix(in oklab, var(--color-canvas) 60%, transparent) 58%,
-      transparent 100%
-    );
+    inset: -1.5rem -2.25rem;
+    background: color-mix(in oklab, var(--color-canvas) 82%, transparent);
+    -webkit-mask-image: radial-gradient(120% 130% at 50% 42%, #000 42%, transparent 94%);
+    mask-image: radial-gradient(120% 130% at 50% 42%, #000 42%, transparent 94%);
     pointer-events: none;
   }
   @media (prefers-color-scheme: light) {
     :root:not([data-theme="dark"]) .text-scrim::before {
-      background: radial-gradient(
-        120% 130% at 50% 42%,
-        color-mix(in oklab, var(--color-canvas) 88%, transparent) 0%,
-        color-mix(in oklab, var(--color-canvas) 64%, transparent) 58%,
-        transparent 100%
-      );
+      background: color-mix(in oklab, var(--color-canvas) 85%, transparent);
     }
   }
 
@@ -336,4 +337,27 @@
     );
     filter: blur(36px);
   }
+}
+
+/*
+ * V12 Bölüm 6 hata avı — KATMANSIZ (bilerek `@layer` DIŞINDA).
+ *
+ * Kök neden: bu derlemede `@layer components` (yukarısı, `.btn-primary`
+ * dâhil) Tailwind'in `@layer base`'inden (preflight, `a{color:inherit}`)
+ * ÖNCE ilk kez açılıyor — CSS katman kuralı gereği SONRA açılan katman
+ * kazanır, yani `base`'in `a{color:inherit}` sıfırlaması `.btn-primary`'nin
+ * `color:#fff`'ini ÖZGÜLLÜKTEN TAMAMEN BAĞIMSIZ eziyordu (açık temada buton
+ * metni görünmez oluyordu — axe: 2.58:1, gerekli 4.5:1). Denendi ve
+ * ÇALIŞMADI: `@layer theme, base, components, utilities;` ile sırayı elle
+ * sabitlemek (bu derleme boru hattı ifadeyi görmezden geliyor, derlenmiş
+ * CSS'te hiç iz bırakmıyor); `.btn-primary.btn-primary` ile özgüllüğü
+ * ikiye katlamak (katman önceliği özgüllükten HER ZAMAN üstündür, spec
+ * gereği — hiçbir özgüllük bir üst katmanı yenemez).
+ *
+ * Katman kuralı: KATMANSIZ bir kural her zaman HER katmanlı kuralı yener,
+ * sıradan/özgüllükten bağımsız. Bu yüzden düzeltme bilerek burada, hiçbir
+ * `@layer` sarmalayıcısı olmadan.
+ */
+.btn-primary {
+  color: #fff;
 }

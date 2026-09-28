@@ -189,7 +189,7 @@
   h3,
   h4 {
     font-family: var(--font-display);
-    font-weight: 600; /* Syne — yarı kalın, iddialı display (V5 Bölüm 3) */
+    font-weight: 500; /* Syne — V12 Bölüm 3: 600'den bir kademe hafifletildi (premium, daha az "kalın vurgu") */
     line-height: 1.05; /* yakın satır aralığı — display hissi */
     letter-spacing: var(--tracking-tight); /* -0.03em — sıkı display tracking */
     text-wrap: balance;
@@ -268,7 +268,7 @@
   .basis-ref {
     font-family: var(--font-mono);
     font-size: var(--text-2xs);
-    letter-spacing: 0.02em;
+    letter-spacing: 0.14em; /* V12 Bölüm 3: mono etiket aralığı 0.02em→0.14em */
     color: var(--color-text-muted);
   }
 }
