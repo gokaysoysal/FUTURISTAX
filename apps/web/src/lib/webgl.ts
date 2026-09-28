@@ -22,3 +22,11 @@ export function readColorToken(name: string, fallback: string): string {
   const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
   return value || fallback;
 }
+
+/** `#rrggbb` → WebGL üniforma verilecek 0..1 RGB üçlüsü. Geçersizse fallback lacivert. */
+export function hexToRgb(hex: string): [number, number, number] {
+  const trimmed = hex.trim();
+  if (!/^#[0-9a-f]{6}$/i.test(trimmed)) return [0.04, 0.05, 0.15];
+  const int = Number.parseInt(trimmed.slice(1), 16);
+  return [((int >> 16) & 255) / 255, ((int >> 8) & 255) / 255, (int & 255) / 255];
+}
