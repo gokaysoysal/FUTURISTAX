@@ -40,13 +40,21 @@ type Keyframe = {
 };
 
 // p, küçük küre (x,y,r), büyük küre (x,y,r), ışık — bkz. dosya üstü not.
+//
+// Büyük küre YARIÇAPI ekran yüksekliğinin katları (Bölüm 1: "ekran
+// yüksekliğinin birkaç katı") olduğu için (x,y) merkezini gözle tahmin etmek
+// yanıltıcı — merkez ekranın çok dışında kalıyor ve neredeyse tüm görünür
+// alan "içeride" okunup silüet kenarı hiç görünmüyor. Bunun yerine her
+// karede silüetin EKRANA GİRDİĞİ/ÇIKTIĞI iki nokta (üst kenar x, alt kenar
+// x, genişlik oranı) referans karelerden okunup iki noktadan + seçilen
+// yarıçaptan çember merkezi hesaplandı (bkz. docs/qa/karsilastirma.md).
 export const PATH_KEYFRAMES: readonly Keyframe[] = [
-  { p: 0.0, small: [0.78, 0.23, 0.34], big: [0.87, 1.35, 1.7], light: 0.04 },
-  { p: 0.2, small: [0.6, -0.1, 0.34], big: [0.8, 1.1, 1.75], light: 0.0 },
-  { p: 0.4, small: [0.2, 0.31, 0.3], big: [0.95, 1.6, 1.9], light: 0.25 },
-  { p: 0.6, small: [0.18, 0.64, 0.31], big: [1.05, 1.7, 2.0], light: 0.6 },
-  { p: 0.8, small: [0.34, 0.92, 0.3], big: [0.75, 1.15, 1.8], light: 0.87 },
-  { p: 1.0, small: [0.62, -0.25, 0.3], big: [0.7, 1.05, 1.75], light: 1.0 },
+  { p: 0.0, small: [0.78, 0.23, 0.34], big: [1.5643, 1.0591, 1.7], light: 0.04 },
+  { p: 0.2, small: [0.6, -0.1, 0.34], big: [1.5004, 0.9675, 1.75], light: 0.0 },
+  { p: 0.4, small: [0.2, 0.31, 0.3], big: [1.9246, 0.8492, 1.9], light: 0.25 },
+  { p: 0.6, small: [0.18, 0.64, 0.31], big: [1.4414, -0.513, 1.9], light: 0.6 },
+  { p: 0.8, small: [0.34, 0.92, 0.3], big: [1.373, -0.0461, 1.6], light: 0.87 },
+  { p: 1.0, small: [0.62, -0.25, 0.3], big: [1.4484, -0.0653, 1.65], light: 1.0 },
 ] as const;
 
 function catmullRom(p0: number, p1: number, p2: number, p3: number, t: number): number {

@@ -63,7 +63,11 @@ export function SiteBackdrop() {
   }, [reduce]);
 
   return (
-    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10">
+    <div
+      aria-hidden="true"
+      data-testid="site-backdrop"
+      className="pointer-events-none fixed inset-0 -z-10"
+    >
       <SiteBackdropFallback />
       {mode === 'scene' ? <SiteBackdropScene complexity={complexity} /> : null}
     </div>

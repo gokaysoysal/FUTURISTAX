@@ -138,8 +138,13 @@ export default function SiteBackdropScene({ complexity = 1 }: { complexity?: num
     const themeQuery = window.matchMedia('(prefers-color-scheme: dark)');
     themeQuery.addEventListener('change', syncPalette);
 
-    function paint(state: ReturnType<typeof backdropPathAt>, time: number, p: number) {
-      const cursor = readCursor();
+    function paint(
+      state: ReturnType<typeof backdropPathAt>,
+      time: number,
+      p: number,
+      cursorOverride?: { x: number; y: number },
+    ) {
+      const cursor = cursorOverride ?? readCursor();
       const { small, big } = sceneToUniforms(state, cursor);
       program.uniforms.uSmall.value = small;
       program.uniforms.uBig.value = big;
@@ -162,12 +167,11 @@ export default function SiteBackdropScene({ complexity = 1 }: { complexity?: num
       const p = Number.parseFloat(debugParams.get('p') ?? '0.2');
       const mx = Number.parseFloat(debugParams.get('mx') ?? '0.5');
       const my = Number.parseFloat(debugParams.get('my') ?? '0.5');
-      // Fare no-op; doğrulama tek kareyi belirlenimci (p, mx, my) çizer.
-      paint(backdropPathAt(p), 0, p);
+      // Belirlenimci tek kare: (p, mx, my) → fare hiçbir sönümlemeden geçmeden
+      // doğrudan cursorOverride olarak uygulanır (rAF/cursor.ts devre dışı).
+      paint(backdropPathAt(p), 0, p, { x: mx * 2 - 1, y: my * 2 - 1 });
       gl.canvas.style.transition = 'none';
       gl.canvas.style.opacity = '1';
-      void mx;
-      void my;
       (window as Window & { __sceneReady?: boolean }).__sceneReady = true;
       return cleanupBase;
     }

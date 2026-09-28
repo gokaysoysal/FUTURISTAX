@@ -79,9 +79,9 @@ export const FRAG = /* glsl */ `
 
     float stripStepUv = max(uStripStepPx / iResolution.y, 0.006);
 
-    // Panel kenarı — çoğunlukla sabit, satır başına hafif organik dalgalanma
-    // (referans karelerde kenar mükemmel düz DEĞİL, hafif pürüzlü).
-    float edgeWobble = (hash2(vec2(floor(uv.y * 40.0), 0.0)) - 0.5) * stripStepUv * 0.6;
+    // Panel kenarı — çoğunlukla sabit, sürekli (bloksuz) çift-frekans dalgalanma
+    // (referans karelerde kenar mükemmel düz DEĞİL, hafif pürüzlü — ama BASAMAKSIZ).
+    float edgeWobble = (sin(uv.y * 23.0) * 0.35 + sin(uv.y * 7.0 + 1.7) * 0.65) * stripStepUv * 0.4;
     float panelEdge = uPanelEdgeFrac * aspect + edgeWobble;
 
     vec3 col;
@@ -109,8 +109,11 @@ export const FRAG = /* glsl */ `
       col = mix(col, uGrooveDark, groove * 0.85);
 
       // Kenar/hilal ışığı: dik basamak (dome silüeti) + gerçekten yükseklik var.
-      float sil = smoothstep(0.35, 1.1, abs(domeSlope)) * step(0.004, hC);
-      col += uEdgeLight * sil * 0.85;
+      // Geniş smoothstep aralığı + düşük yoğunluk: referans karelerdeki İNCE
+      // turkuaz çizgi, düz beyazımsı blok DEĞİL (dar aralık düz bir blok gibi
+      // okunuyordu — özellikle kürenin ekran kenarında kesildiği yerlerde).
+      float sil = smoothstep(0.6, 2.4, abs(domeSlope)) * step(0.004, hC);
+      col += uEdgeLight * sil * 0.5;
 
       // 1. karedeki çapraz ışık huzmesi — yalnızca koyu evrede belirgin.
       float beam = sin((uv.x * 3.1 - uv.y * 2.2) * 3.0) * 0.5 + 0.5;
