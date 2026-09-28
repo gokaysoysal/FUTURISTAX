@@ -119,6 +119,21 @@
   /* Hover parıltısı — buton ve kartlarda; layout tetiklemez. */
   --shadow-glow: 0 0 0 1px color-mix(in oklab, var(--color-accent) 38%, transparent), 0 14px 36px
     -14px color-mix(in oklab, var(--color-accent) 55%, transparent);
+
+  /* ── Cam sistemi — 3 kademe (V12 Bölüm 4) ─────────────────
+     Dolgu + blur birlikte artar: 1 en hafif (yüzen kart, scroll % göstergesi,
+     üst menü dinlenme hâli) → 3 en güçlü (komut paleti, iletişim formu kartı,
+     üst menü kaydırılmış hâli). Kenar + üst iç ışık + hafif iç gölge her
+     kademede aynı — yalnızca yoğunluk değişir. */
+  --glass-fill-1: 35%;
+  --glass-fill-2: 50%;
+  --glass-fill-3: 65%;
+  --glass-blur-1: 12px;
+  --glass-blur-2: 18px;
+  --glass-blur-3: 28px;
+  --glass-border: color-mix(in srgb, white 9%, transparent);
+  --glass-edge-light: inset 0 1px 0 0 color-mix(in srgb, white 14%, transparent);
+  --glass-inner-shadow: inset 0 -1px 12px 0 rgb(0 0 0 / 0.18);
 }
 
 /* ── Açık tema ──────────────────────────────────────────────
@@ -189,7 +204,7 @@
   h3,
   h4 {
     font-family: var(--font-display);
-    font-weight: 600; /* Syne — yarı kalın, iddialı display (V5 Bölüm 3) */
+    font-weight: 500; /* Syne — V12 Bölüm 3: 600'den bir kademe hafifletildi (premium, daha az "kalın vurgu") */
     line-height: 1.05; /* yakın satır aralığı — display hissi */
     letter-spacing: var(--tracking-tight); /* -0.03em — sıkı display tracking */
     text-wrap: balance;
@@ -268,7 +283,7 @@
   .basis-ref {
     font-family: var(--font-mono);
     font-size: var(--text-2xs);
-    letter-spacing: 0.02em;
+    letter-spacing: 0.14em; /* V12 Bölüm 3: mono etiket aralığı 0.02em→0.14em */
     color: var(--color-text-muted);
   }
 }

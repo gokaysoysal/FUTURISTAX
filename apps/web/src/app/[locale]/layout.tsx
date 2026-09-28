@@ -2,6 +2,7 @@ import { SiteBackdrop } from '@/components/backdrop/SiteBackdrop';
 import { CookieConsent } from '@/components/consent/CookieConsent';
 import { SiteFooter } from '@/components/layout/SiteFooter';
 import { SiteHeader } from '@/components/layout/SiteHeader';
+import { CardGlow } from '@/components/motion/CardGlow';
 import { RouteTransition } from '@/components/motion/RouteTransition';
 import { ScrollPercent } from '@/components/motion/ScrollPercent';
 import { ScrollProgress } from '@/components/motion/ScrollProgress';
@@ -112,6 +113,7 @@ export default async function LocaleLayout({
           <SmoothScroll />
           <ScrollProgress />
           <ScrollPercent />
+          <CardGlow />
           <RouteTransition />
           <SiteHeader />
           <main id="main">{children}</main>

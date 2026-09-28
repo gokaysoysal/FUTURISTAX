@@ -1,7 +1,7 @@
 'use client';
 
 import { backdropPathAt } from '@/lib/motion/backdrop-path';
-import { dampScenePath, sceneToUniforms } from '@/lib/motion/backdrop-runtime';
+import { dampScenePath, sceneToUniforms, wobbleRadius } from '@/lib/motion/backdrop-runtime';
 import { getScrollProgress } from '@/lib/motion/backdrop-scene';
 import { advanceCursor, readCursor, startCursorTracking } from '@/lib/motion/cursor';
 import { subscribeFrame } from '@/lib/motion/raf';
@@ -143,9 +143,17 @@ export default function SiteBackdropScene({ complexity = 1 }: { complexity?: num
       time: number,
       p: number,
       cursorOverride?: { x: number; y: number },
+      wobble = false,
     ) {
       const cursor = cursorOverride ?? readCursor();
       const { small, big } = sceneToUniforms(state, cursor);
+      if (wobble) {
+        // Bölüm 2.4: çok yavaş, düşük genlikli silüet dalgalanması —
+        // yalnızca canlı rAF döngüsünde (reduced-motion/doğrulama modunda
+        // `time` hep 0 kalır, wobbleRadius kendiliğinden sabitlenir).
+        small[2] = wobbleRadius(small[2], time, 14, 0.025, 0);
+        big[2] = wobbleRadius(big[2], time, 18, 0.015, 1.7);
+      }
       program.uniforms.uSmall.value = small;
       program.uniforms.uBig.value = big;
       program.uniforms.uLight.value = state.light;
@@ -201,7 +209,7 @@ export default function SiteBackdropScene({ complexity = 1 }: { complexity?: num
         const k = 1 - Math.exp(-DAMP_RATE * Math.max(dt, 0.0001));
         current = dampScenePath(current, target, k);
         simTime += dt;
-        paint(current, simTime, getScrollProgress());
+        paint(current, simTime, getScrollProgress(), undefined, true);
       });
       reveal();
     };

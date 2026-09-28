@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { backdropPathAt } from './backdrop-path';
-import { dampScenePath, sceneToUniforms } from './backdrop-runtime';
+import { dampScenePath, sceneToUniforms, wobbleRadius } from './backdrop-runtime';
 
 describe('dampScenePath', () => {
   it('k=0 iken mevcut durumu değiştirmez', () => {
@@ -48,5 +48,27 @@ describe('sceneToUniforms', () => {
     const { small, big } = sceneToUniforms(state, { x: -1, y: 1 });
     expect(small[2]).toBe(state.smallSphere.r);
     expect(big[2]).toBe(state.bigSphere.r);
+  });
+});
+
+describe('wobbleRadius', () => {
+  it('time=0 iken hiç sapma olmaz (reduced-motion/doğrulama modu doğal olarak durur)', () => {
+    expect(wobbleRadius(0.3, 0, 14, 0.025)).toBe(0.3);
+  });
+
+  it('genlik sınırını aşmaz (±ampFrac)', () => {
+    const r = 0.3;
+    const amp = 0.025;
+    for (let t = 0; t <= 40; t += 0.5) {
+      const w = wobbleRadius(r, t, 14, amp, 1.1);
+      expect(w).toBeGreaterThanOrEqual(r * (1 - amp) - 1e-9);
+      expect(w).toBeLessThanOrEqual(r * (1 + amp) + 1e-9);
+    }
+  });
+
+  it('periyodiktir (periodSec sonra aynı değere döner)', () => {
+    const a = wobbleRadius(0.3, 3.3, 14, 0.02, 0.7);
+    const b = wobbleRadius(0.3, 3.3 + 14, 14, 0.02, 0.7);
+    expect(a).toBeCloseTo(b, 9);
   });
 });

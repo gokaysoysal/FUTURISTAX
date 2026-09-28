@@ -49,3 +49,20 @@ export function sceneToUniforms(state: ScenePathState, cursor: { x: number; y: n
     ] as [number, number, number],
   };
 }
+
+/**
+ * V12 Bölüm 2.4 — silüette çok yavaş, düşük genlikli yarıçap dalgalanması
+ * (yarıçapın %1.5-3'ü, periyot 12-20sn). Saf fonksiyon: `time` saniyede,
+ * ilerlemez kalırsa (reduced-motion/doğrulama modunda `time` hep 0'dır)
+ * `sin(phase)` sabitlenir — dalgalanma kendiliğinden durur, ayrı bir
+ * reduced-motion bayrağı gerekmez.
+ */
+export function wobbleRadius(
+  r: number,
+  time: number,
+  periodSec: number,
+  ampFrac: number,
+  phase = 0,
+): number {
+  return r * (1 + Math.sin(((time / periodSec) * Math.PI * 2 + phase) % (Math.PI * 2)) * ampFrac);
+}
