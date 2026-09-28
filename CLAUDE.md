@@ -103,6 +103,20 @@ Parlak azur bir buton **zemini** olarak kullanılırsa üstüne koyu metin gelir
 (`--color-on-accent`), beyaz değil. Açık tema `tokens.css`'te korundu
 (azur `#2C5BE0`), tüm oranları orada doğrulandı.
 
+### Kalıcı arka plan sahnesi — oluklu panel + küreler (V11)
+
+Site genelinde sabit `-z-10` katmanda WebGL sahnesi (`components/backdrop/`):
+solda ince dikey şeritlerden oluşan bir panel, sert kenarla düz bir duvara
+açılır; panel içindeki bir küre şeritleri kubbe gibi kaldırır (hilal/mercek
+biçimleri, kuantize yükseklik alanından emergent — elle çizilmedi), duvarda
+devasa ikinci bir küre yalnızca silüet kenarıyla görünür. Scroll'a
+(`lib/motion/backdrop-path.ts`, Catmull-Rom) ve fareye (hafif, ezmeyen bir
+ikincil katman) tepki verir. Palet `--scene-groove-dark/ground-dark/
+ground-bright/edge-light` (`tokens.css`, `docs/qa/palet.md`'de ölçüldü) —
+menekşe KULLANILMAZ. `prefers-reduced-motion` / WebGL yok / düşük performans
+→ aynı paletle CSS yedeği (`SiteBackdropFallback`). Ayrıntı:
+`docs/PROJECT-STATUS.md` §0-U, uygulama yorumları `SiteBackdropScene.tsx`.
+
 ### Derinlik — ışık kaynağı gibi, dekorasyon değil
 
 - **Gradyanlar** kartın bir kenarından gelen yumuşak parıltı gibi; her yüzeye

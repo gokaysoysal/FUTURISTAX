@@ -2,13 +2,19 @@
 
 > **Her yeni oturumda önce bu dosyayı oku.** Kurallar ve mimari için `CLAUDE.md`.
 
-**Son güncelleme:** 2026-09-19 — V10 İÇERİK + ARKA PLAN (`v10-icerik-arkaplan`
-dalı, `v2`'den): üç iş tamamlandı — (1) arka plan sahnesine imlece duyarlı
-ikincil katman eklendi, (2) `document-grid` sahne varyantındaki sahte yatay
-ızgara çizgileri kaldırıldı, (3) tüm site www.futuristax.com'un yayınladığı
-GERÇEK içerikle dolduruldu (firma bilgileri, 9 hizmet, 8 sektör — önceki 7
-varsayımı yanlıştı —, SSS, kanun bilgi bankası, 3 gerçek referans).
-**3/3 iş bitti.** Öncesinde: V9 HAZIR BİLEŞEN (`v9-hazir-bilesen` dalı,
+**Son güncelleme:** 2026-09-28 — V11 SAHNE (`v11-sahne` dalı, `v2`'den):
+kalıcı arka plan sahnesi bir kez daha TAMAMEN DEĞİŞTİ — V9'dan beri kullanılan
+react-bits Orb shader'ı (tek odaklı ışıklı küre) kaldırıldı, yerine altı
+referans kareye (`docs/referans/1..6.png`, commit edilmedi) benzeyen ÖZGÜN
+"oluklu panel + iki küre" sahnesi geldi (kuantize yükseklik alanı, raymarching
+yok). Scroll yolu saf/testli bir modülde (`lib/motion/backdrop-path.ts`,
+Catmull-Rom). **Tamamlandı**, ayrıntı §0-U. Öncesinde: V10 İÇERİK + ARKA PLAN
+(`v10-icerik-arkaplan` dalı, `v2`'den): üç iş tamamlandı — (1) arka plan
+sahnesine imlece duyarlı ikincil katman eklendi, (2) `document-grid` sahne
+varyantındaki sahte yatay ızgara çizgileri kaldırıldı, (3) tüm site
+www.futuristax.com'un yayınladığı GERÇEK içerikle dolduruldu (firma bilgileri,
+9 hizmet, 8 sektör — önceki 7 varsayımı yanlıştı —, SSS, kanun bilgi bankası,
+3 gerçek referans). **3/3 iş bitti.** Öncesinde: V9 HAZIR BİLEŞEN (`v9-hazir-bilesen` dalı,
 `v2`'den): kalıcı arka plan sahnesi artık elle yazılan bir shader değil —
 react-bits `Backgrounds/Orb` bileşeninin (MIT+Commons Clause, tek bağımlılık
 `ogl`) ışık/gürültü shader'ı taban alındı, three.js/@react-three/fiber/drei
@@ -22,9 +28,106 @@ bölüm ayraç "beyaz çizgileri" kaldırıldı (`v2`, küçük düzeltme, 2026-
 bitti**.
 Önceki: V5-HERO (`v5-hero`, `v2`'ye merge) · V4-AKIS (`v4-akis`, merge) ·
 V3 SUNUM KATMANI (`v2-fx`, merge) · TASARIM YÖNÜ DEĞİŞİMİ (`v2-tasarim`, absorbe).
-**Depo:** github.com/gokaysoysal/FUTURISTAX — çalışma dalı `v2`, aktif koşu dalı `v10-icerik-arkaplan`
+**Depo:** github.com/gokaysoysal/FUTURISTAX — çalışma dalı `v2`, aktif koşu dalı `v11-sahne`
 **Önizleme:** deploy-preview-1--futuristax.netlify.app
 **Canlı site:** futuristax.com — hâlâ ESKİ sürüm (`main` dalı, `legacy/index.html`)
+
+---
+
+## 0-U. V11 SAHNE — 2026-09-28 (`v11-sahne`, `v2`'den)
+
+Görev: `docs/V11-SAHNE-PROMPT.md`'deki otonom prompt — arka plan sahnesini
+altı referans kareye (`docs/referans/1..6.png`) benzeyen özgün bir WebGL
+sahnesiyle değiştirmek. **Kapsam:** yalnızca kalıcı arka plan sahnesi;
+tax-engine/API/DB/main dalı/Vergi Yükü Panosu dokunulmadı.
+
+### Referans kareler — .gitignore'a alındı
+
+`docs/referans/1..6.png` (başka bir sitenin ekran görüntüleri) daha önce
+`v2` dalına commit edilmiş bulundu (761d0ad). `.gitignore`'a eklendi ve
+`git rm --cached` ile takipten çıkarıldı, ama **geçmişte (761d0ad, origin/v2)
+hâlâ duruyor** — bu depo `history rewrite`/`BFG` YAPILMADI (yıkıcı, geri
+dönüşü zor işlem; kullanıcı onayı gerektirir). Depo public ise bu görsellerin
+tarihçede kaldığı kullanıcıya ayrıca raporlandı.
+
+### Palet — ölçüldü, doc'un tahmininden 1 yerde farklı çıktı
+
+`docs/qa/palet.md`: Playwright + `canvas.getImageData` ile referans
+karelerden 4 ton örneklendi (`--scene-groove-dark/ground-dark/ground-bright/
+edge-light`, `tokens.css`'e eklendi). **Işık evresi düzeltmesi:** doc
+"koyu→parlak→koyu" tahmin ediyordu; altı karenin ölçülen ortalama parlaklığı
+neredeyse MONOTON ARTAN çıktı (2. kare en koyu, 6. en parlak) — talimat
+Bölüm 0.3 gereği ("çelişki varsa karelere güven") ölçülen eğri kullanıldı.
+
+### Sahne modeli — "kuantize yükseklik alanı"
+
+- `lib/motion/backdrop-path.ts` (yeni, saf, birim testli — `backdrop-path.
+  test.ts`): scroll ilerlemesi (Lenis, 0..1) → altı anahtar karede
+  Catmull-Rom ile küçük/büyük küre (x,y,r) + ışık evresi.
+- `lib/motion/backdrop-runtime.ts` (yeni, birim testli): kare-başına sönümlü
+  lerp (~0.06/kare) + fare ofseti — `backdrop-path.ts` saf kalsın diye ayrı.
+- `components/backdrop/backdrop-shader.ts` (yeni): GLSL kaynağı ayrı dosyada
+  (`SiteBackdropScene.tsx` 300 satırı aşmasın diye, CLAUDE.md kural 6).
+  Şerit indeksi x'te kuantize (strip merkezinden örneklenir), küre
+  yüksekliği y'de sürekli → basamak/hilal/mercek biçimleri ELLE ÇİZİLMEDİ,
+  emergent. Duvardaki küreler düz (kuantize olmayan) Fresnel/Lambert.
+- `SiteBackdropScene.tsx`: V9'dan beri kullanılan react-bits Orb shader'ı ve
+  tone/density/depth/flow parametre modeli TAMAMEN KALDIRILDI. ogl + Lenis +
+  paylaşımlı rAF (`raf.ts`) ve fare katmanı (`cursor.ts`, V10) KORUNDU.
+- `SiteBackdropFallback.tsx`: CSS yedeği de oluklu panele güncellendi
+  (`repeating-linear-gradient` + gren + vinyet, `--scene-*` tokenlarıyla).
+- `SiteBackdrop.tsx`: `mode==='scene'` iken CSS yedeği DE altta kalıyor;
+  sahne kendi canvas'ını idle sonrası 600ms crossfade ile gösteriyor (Bölüm
+  6) — mount anında boş kare riski kalmadı.
+
+### Okunabilirlik (Bölüm 5, ESNEMEZ)
+
+Sahnenin en parlak ölçülen tonu (`--scene-ground-bright` #5a789b, rel.
+luminance ≈0.19) mevcut `.text-scrim` (depth.css, `--color-canvas` ≥%55-86
+opaklıkla bindirme) altında ≈13:1 kontrast veriyor — 4.5:1 tabanının çok
+üzerinde, ek kısıtlama gerekmedi. Hesap `SiteBackdropScene.tsx` yorumunda.
+
+### Doğrulama döngüsü (Bölüm 7)
+
+A adımına gerek kalmadı — B/C/D ilk denemede çalıştı. `NEXT_PUBLIC_
+SCENE_DEBUG=1` derlemesi + Playwright chromium (`--use-angle=swiftshader`)
+ile `?scene-debug=1&p&mx&my` altı karede tek deterministik kare çizdirdi,
+1920×988 ekran görüntüsü alındı (`docs/qa/karsilastirma-p{0..1}.png`,
+commit edildi). Yan yana karşılaştırma (referans + üretilen) yalnızca
+YEREL incelemede kullanıldı, commit EDİLMEDİ (referans kare pikseli
+içeriyor, aynı lisans sebebiyle). Öz değerlendirme tablosu ve bilinen
+sapmalar: `docs/qa/karsilastirma.md`. 4 iterasyon: büyük küre hiç
+görünmüyordu (merkez/yarıçap gözle tahmini iki sınır noktasından çember
+uydurmaya çevrildi) → panel kenarı bloklu görünüyordu (hash-tabanlı
+basamak yerine sürekli çift-frekans dalga) → rim ışığı bir karede blok gibi
+okunuyordu (smoothstep aralığı genişletildi, yoğunluk düşürüldü) → doğrulama
+modunda mx/my parametreleri uygulanmıyordu (düzeltildi).
+
+### Doğrulama
+
+`pnpm typecheck · lint · test` (yeni `apps/web` vitest, 11 test) yeşil.
+`NEXT_PUBLIC_SCENE_DEBUG` OLMADAN `next build`: ana sayfa ilk yük JS 180kB
+(<220kB bütçesi), yeni bağımlılık yok (yalnızca dev-only `vitest`).
+`playwright test backdrop-scene.spec.ts` (yeni, canvas + data-backdrop-state
++ reduced-motion'da canvas yok) 4/4 yeşil (desktop+mobile).
+
+**Tam e2e paketinde 40 test kırmızı** (`accessibility.spec.ts` 15 sayfa,
+`tax-calendar.spec.ts`, `tools-workspace.spec.ts`, `v4-home.spec.ts`'in
+bazı axe testleri) — `git worktree` ile `v2-oncesi-v11` etiketine (bu işten
+ÖNCEKİ hâl) geçilip AYNI testler çalıştırıldı, AYNI hatalar (ör. `.btn-
+primary` kontrast 2.58, beklenen 4.5:1 — light-theme buton rengi sorunu;
+tax-calendar paneli ana sayfada bulunamıyor) BİREBİR tekrarlandı. **Bu iş
+BAĞIMSIZ, önceden var olan hatalar** — düzeltilmedi (kapsam dışı,
+"§5 Açık teknik borçlar" madde 2'deki "bu ortamda ÇALIŞTIRILAMADI" notuyla
+tutarlı: bu koşu ilk kez tam paketi ÇALIŞTIRABİLDİ ve önceden bilinmeyen bu
+kırmızıları ortaya çıkardı). Ayrı bir işte ele alınmalı.
+
+**Görsel doğrulama notu (dürüstlük kuralı, Bölüm 7):** bu oturumda ekran
+görüntüsü alma BAŞARILI oldu (önceki V7-V10 oturumlarındaki "bu ortamda
+WebGL/RAF görülemedi" sorunu bu kez YAŞANMADI — B adımı ilk denemede
+çalıştı). Yine de bunlar `swiftshader` YAZILIMSAL render; gerçek GPU'da
+küçük renk/AA farkları olabilir. Kullanıcı `pnpm dev` ile yerelde, scroll
+sırasında `p=0,.2,.4,.6,.8,1` civarını GÖZLE de kontrol etmeli.
 
 ---
 
