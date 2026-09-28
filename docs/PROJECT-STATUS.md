@@ -2,7 +2,16 @@
 
 > **Her yeni oturumda önce bu dosyayı oku.** Kurallar ve mimari için `CLAUDE.md`.
 
-**Son güncelleme:** 2026-09-28 — V11 SAHNE (`v11-sahne` dalı, `v2`'den):
+**Son güncelleme:** 2026-09-29 — V12 PREMIUM (`v12-premium` dalı, `v2`'den):
+iki iş — (A) arka plan sahnesinin keskin kenarları yumuşatıldı (kök neden:
+küre silüetleri AA'sız `d>=r` ikili kesmeydi + gren hash'i büyük
+koordinatlarda bozuluyordu), (B) tipografi/yüzeyler premium seviyeye
+çıkarıldı (3 kademeli cam sistemi, sert dikdörtgen scrim düzeltmesi, imleç-
+izleyen kart parıltısı). Yol boyunca **önceden var olan, sitedeki HER
+sayfayı etkileyen bir axe kontrast hatası bulundu ve düzeltildi**
+(`.btn-primary` metin rengi CSS katman önceliği yüzünden Tailwind
+preflight'ı tarafından eziliyordu) — tam e2e paketi 39 kırmızı → 16 kırmızı.
+**Tamamlandı**, ayrıntı §0-V. Öncesinde: V11 SAHNE (`v11-sahne` dalı, `v2`'den):
 kalıcı arka plan sahnesi bir kez daha TAMAMEN DEĞİŞTİ — V9'dan beri kullanılan
 react-bits Orb shader'ı (tek odaklı ışıklı küre) kaldırıldı, yerine altı
 referans kareye (`docs/referans/1..6.png`, commit edilmedi) benzeyen ÖZGÜN
@@ -28,9 +37,89 @@ bölüm ayraç "beyaz çizgileri" kaldırıldı (`v2`, küçük düzeltme, 2026-
 bitti**.
 Önceki: V5-HERO (`v5-hero`, `v2`'ye merge) · V4-AKIS (`v4-akis`, merge) ·
 V3 SUNUM KATMANI (`v2-fx`, merge) · TASARIM YÖNÜ DEĞİŞİMİ (`v2-tasarim`, absorbe).
-**Depo:** github.com/gokaysoysal/FUTURISTAX — çalışma dalı `v2`, aktif koşu dalı `v11-sahne`
+**Depo:** github.com/gokaysoysal/FUTURISTAX — çalışma dalı `v2`, aktif koşu dalı `v12-premium`
 **Önizleme:** deploy-preview-1--futuristax.netlify.app
 **Canlı site:** futuristax.com — hâlâ ESKİ sürüm (`main` dalı, `legacy/index.html`)
+
+---
+
+## 0-V. V12 PREMIUM — 2026-09-29 (`v12-premium`, `v2`'den)
+
+Görev: `docs/V12-PREMIUM-PROMPT.md`'deki otonom prompt — (A) arka plan
+sahnesinin keskin kenarlarını yumuşat, (B) tipografi/yüzeyleri premium
+seviyeye çıkar. **Kapsam:** yalnızca sunum; içerik/sayfa yapısı/tax-engine/
+API/DB dokunulmadı. Dört skill (design-dna, frontend-design,
+design-taste-frontend, scrollcraft) okundu, ilkeleri elle uygulandı — hiçbir
+skill script'i çalıştırılmadı (`docs/TASARIM-KARARLARI.md`).
+
+### A — Sahne kenarları (Bölüm 2)
+
+Kök nedenler: (1) küre silüetleri `d>=r` ikili kesmeyle çiziliyordu, AA yok
+— basamaklı/pikselli kenarın asıl nedeni; artık sabit ~2.5px ekran-pikseli
+genişliğinde smoothstep besleme (fwidth() DENENDİ, bu ortamın SwiftShader
+derlemesi `GL_OES_standard_derivatives` desteklemiyor — derleme hatası,
+iResolution'dan hesaplanan sabit genişliğe geçildi). (2) Gren hash'i
+sin()-tabanlıydı, büyük piksel koordinatlarında hassasiyet çöküp bloklu/
+bantlı desen üretiyordu — fract-tabanlı hash'e geçildi. Ayrıca: kenar ışığı
+genişletildi + ~%25 kısıldı, iki kürenin silüetine çok yavaş/düşük genlikli
+yarıçap dalgalanması (`lib/motion/backdrop-runtime.ts` `wobbleRadius`, saf/
+testli, `time=0`'da reduced-motion'da kendiliğinden durur), 3 sabit yumuşak
+çapraz (-25°) ışık huzmesi (toplam opaklık ≤0.10) eklendi.
+
+### B — Tipografi ve yüzeyler (Bölüm 3-4)
+
+- Display başlık ağırlığı 600→500, mono etiket aralığı 0.02em→0.14em.
+  Gövde ölçüsü (`max-w-prose`≈65ch), satır aralığı (1.65), `text-wrap:
+  balance` zaten uyumluydu — DOKUNULMADI (font ailesi de DEĞİŞMEDİ: Syne +
+  Familjen Grotesk + IBM Plex Mono, zaten Türkçe glif doğrulanmış).
+- **SERT DİKDÖRTGEN SCRIM düzeltildi:** `.text-scrim::before` kendi radyal
+  gradyanının soluk ucuna hiç ulaşamıyordu (kutu sınırı gradyanın hâlâ %60-
+  86 opak olduğu yerde kesiyordu) — artık düz bir zemin + `mask-image` ile
+  garantili yumuşak kenar (kutu sınırında HER ZAMAN sıfıra iner).
+- **3 kademeli cam sistemi** (`tokens.css` `--glass-fill/blur-1/2/3`):
+  dolgu 35/50/65%, blur 12/18/28px. Üst menü dinlenme=tier1, kaydırılmış=
+  tier3 (mevcut `is-scrolled` korunuyor); komut paleti ve iletişim formu
+  kartı tier3.
+- **İmleci izleyen kart parıltısı:** TEK global `pointermove` dinleyicisi
+  (`lib/motion/card-glow.ts`), `--mx`/`--my` doğrudan DOM'a yazılır (React
+  state DEĞİL). Yalnızca `pointer:fine`.
+- **Reveal güvenlik ağı** (hata avı, Bölüm 6): `Reveal`/`RevealGroup`/
+  `RevealItem`'ın `whileInView`'i hiç tetiklenmezse içerik kalıcı
+  `opacity:0`'da kalabiliyordu (rapor: ana sayfa Cenk Yavuz referans kartı
+  "boş" görünüyordu) — 1.5sn sonra zorla `animate="shown"` devreye giren bir
+  güvenlik ağı eklendi; başarı yolunda davranış/hız DEĞİŞMEDİ (doğrulandı).
+
+### Beklenmedik bulgu — sitedeki en yaygın axe hatasının kök nedeni
+
+`.btn-primary`'nin metin rengi (`color:#fff`) Tailwind'in preflight
+`a{color:inherit}` kuralı tarafından eziliyordu: bu derlemede `@layer
+components` (bizim kurallarımız), Tailwind'in `@layer base`'inden ÖNCE ilk
+kez açılıyor — CSS katman kuralı gereği SONRA açılan katman kazanır, yani
+katman önceliği özgüllükten TAMAMEN bağımsız olarak `inherit`i
+kazandırıyordu (açık temada buton metni okunmuyordu, axe: 2.58:1, gerekli
+4.5:1). Denendi/işe yaramadı: `@layer theme,base,components,utilities;` ile
+elle sıralama (bu derleme boru hattı ifadeyi görmezden geliyor), özgüllüğü
+`.btn-primary.btn-primary` ile ikiye katlamak (katman önceliği özgüllükten
+HER ZAMAN üstün). Çözüm: katmansız (bilerek `@layer` DIŞINDA) küçük bir
+`.btn-primary{color:#fff}` kuralı — katmansız kurallar her zaman katmanlı
+kuralları yener. **Bu üst menüde her sayfada olduğu için tek düzeltme 23
+e2e testi kırmızıdan yeşile çevirdi.**
+
+### Doğrulama
+
+`pnpm typecheck · lint · test` (14 test, web) yeşil. `next build`: ana
+sayfa ilk yük JS 180kB (<220kB), yeni bağımlılık yok. Tam e2e paketi
+(paralel) **39 kırmızı → 16 kırmızı**; kalanın 7'si axe analiz zaman aşımı
+(`--workers=1` ile 18/18 yeşil — gerçek ihlal değil, ortam kaynak
+çekişmesi), 9'u `v2-oncesi-v12` ile bu işten bağımsız doğrulanmış önceden
+var olan hatalar (tax-calendar/tools-workspace/v4-home). Görsel doğrulama:
+`docs/qa/onceki/` + `docs/qa/sonraki/` + `docs/qa/premium-karsilastirma*.png`
++ `docs/qa/v12-karsilastirma.md` (kontrast sayıları, en kötü evre ≈11.9:1).
+
+**Doğrulanamayan (dürüstlük notu):** gerçek GPU/DPR 2.0/dokunmatik cihaz bu
+ortamda denenmedi (yalnızca Playwright + swiftshader + `matchMedia` taklidi).
+Kullanıcı yerelde `pnpm dev` ile gerçek fare/dokunmatik/DPR ile son bir göz
+atmalı — özellikle kart hover parıltısı ve sahne kenar yumuşatması.
 
 ---
 

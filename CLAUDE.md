@@ -114,18 +114,45 @@ devasa ikinci bir küre yalnızca silüet kenarıyla görünür. Scroll'a
 ikincil katman) tepki verir. Palet `--scene-groove-dark/ground-dark/
 ground-bright/edge-light` (`tokens.css`, `docs/qa/palet.md`'de ölçüldü) —
 menekşe KULLANILMAZ. `prefers-reduced-motion` / WebGL yok / düşük performans
-→ aynı paletle CSS yedeği (`SiteBackdropFallback`). Ayrıntı:
-`docs/PROJECT-STATUS.md` §0-U, uygulama yorumları `SiteBackdropScene.tsx`.
+→ aynı paletle CSS yedeği (`SiteBackdropFallback`). Küre silüetleri analitik
+AA ile yumuşatılıyor (V12) — `fwidth()` bu depoda çalışmıyor (SwiftShader
+`GL_OES_standard_derivatives` desteklemiyor), sabit ~2.5px ekran-piksel
+genişliği kullanılıyor. Ayrıntı: `docs/PROJECT-STATUS.md` §0-U/§0-V,
+uygulama yorumları `SiteBackdropScene.tsx` / `backdrop-shader.ts`.
 
 ### Derinlik — ışık kaynağı gibi, dekorasyon değil
 
 - **Gradyanlar** kartın bir kenarından gelen yumuşak parıltı gibi; her yüzeye
   değil, seçici. Işık kaynağı mantığı — süsleme değil.
-- **Cam efekti** (`backdrop-blur` + ince kenarlık) yalnızca üst üste binen
-  katmanlarda: sticky header, açılır paneller, veri kartları.
+- **Cam sistemi, 3 kademe** (V12, `tokens.css` `--glass-fill/blur-1/2/3`):
+  `.glass`/`.glass-1` en hafif (yüzen kart, üst menü dinlenme) → `.glass-3`
+  en güçlü (komut paleti, iletişim formu kartı, üst menü kaydırılmış hâli).
+  Yalnızca üst üste binen katmanlarda; tek başına yüzeyde kullanma.
+- **Metin perdesi (`.text-scrim`):** zemin DÜZ bir ton, yumuşak kenar
+  `mask-image` ile garanti edilir (radyal gradyanın kendi kutusuna
+  sığmaması "sert dikdörtgen scrim" hatasına yol açmıştı — V12'de
+  düzeltildi). Yeni bir scrim eklerken AYNI deseni kullan: renk +
+  `mask-image`, tek başına `radial-gradient` DEĞİL.
 - **Gren/noise dokusu** (SVG `feTurbulence`, düşük opaklık) düz koyu
   yüzeylerde bantlaşmayı kırar.
 - **Bölüm geçişlerinde** yumuşak ışık huzmeleri.
+- **Kart hover parıltısı** imleci izler (`lib/motion/card-glow.ts`, TEK
+  global `pointermove`, `--mx`/`--my` doğrudan DOM'a — React state değil),
+  yalnızca `pointer:fine`.
+
+### ÖNEMLİ CSS tuzağı — `@layer` önceliği özgüllükten üstündür
+
+Bu derleme boru hattında (Next.js + Tailwind v4) `@layer components`
+(bizim `depth.css`/`tokens.css` kurallarımız) bazen Tailwind'in `@layer
+base`'inden (preflight) ÖNCE ilk kez açılıyor — CSS spec'i gereği SONRA
+açılan katman, ÖZGÜLLÜKTEN TAMAMEN BAĞIMSIZ kazanır. `.btn-primary{color:
+#fff}` bu yüzden Tailwind'in `a{color:inherit}`'i tarafından eziliyordu
+(V12'de bulundu — sitedeki en yaygın axe kontrast hatasının kök nedeniydi).
+`@layer theme,base,components,utilities;` ile elle sıralamak bu derlemede
+İŞE YARAMIYOR (ifade sessizce yok sayılıyor). **Bir kuralın Tailwind
+preflight'ını KESİNLİKLE ezmesi gerekiyorsa, o kuralı bilerek `@layer`
+DIŞINDA (katmansız) yaz** — katmansız kurallar her zaman katmanlı kuralları
+yener. Örnek: `depth.css` sonundaki `.btn-primary{color:#fff}`.
 
 ### Korunan iki detay (siteyi jenerik fintech'ten ayırır)
 
@@ -137,11 +164,13 @@ menekşe KULLANILMAZ. `prefers-reduced-motion` / WebGL yok / düşük performans
 - **Display:** **Syne** (değişken, 400–800) — geniş, geometrik, çağdaş; hero'da
   büyük ve iddialı (`--text-hero` = `clamp(2.75rem, 7vw, 6rem)`), sıkı tracking
   (`-0.03em`), yakın satır aralığı (başlık 1.05 / hero 0.95). Başlık ağırlığı
-  600. **V5 Bölüm 3'te Space Grotesk'in yerini aldı** (kullanıcı onayı
+  **500** (V12'de 600'den bir kademe hafifletildi — premium, daha az "kalın
+  vurgu"). **V5 Bölüm 3'te Space Grotesk'in yerini aldı** (kullanıcı onayı
   2026-09-08); Space Grotesk "sıradan" bulundu.
 - **Gövde:** **Familjen Grotesk** (değişken) — sakin, yüksek x-height, uzun
   Türkçe metinde okunaklı; display'den net ayrışır. **DEĞİŞMEDİ.**
-- **Mono:** IBM Plex Mono — kanun maddesi göndermeleri. **DEĞİŞMEDİ.**
+- **Mono:** IBM Plex Mono — kanun maddesi göndermeleri + eyebrow/etiketler,
+  aralık `0.14em` (V12'de 0.02em'den genişletildi). **DEĞİŞMEDİ** (aile).
 - Türkçe glif doğrulaması (ı İ ğ Ğ ş Ş ç Ç ö Ö ü Ü): Syne'nin Google Fonts
   CSS2 `unicode-range`'i incelendi — `latin` alt kümesi ı + ç/Ç/ö/Ö/ü/Ü'yü,
   `latin-ext` (U+0100–02BA) İ + Ğ/ğ + Ş/ş'yi kapsıyor. 12 glifin tamamı var.
