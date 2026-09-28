@@ -1,0 +1,15 @@
+node_modules
+.next
+dist
+.turbo
+.env
+.env.local
+coverage
+playwright-report
+test-results
+*.tsbuildinfo
+.claude/
+
+# V11 sahne referans kareleri — başka bir sitenin ekran görüntüleri,
+# yalnızca yerel karşılaştırma için; depo public olduğu için asla commit edilmez.
+docs/referans/

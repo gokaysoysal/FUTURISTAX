@@ -1,0 +1,15 @@
+# Tüm metin dosyaları depoda ve çalışma kopyasında LF.
+# Bu, iç içe klonun CRLF ile checkout edip biome'u kırmasını önler.
+* text=auto eol=lf
+
+# İkili dosyalar dokunulmaz.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.pdf binary
+*.zip binary

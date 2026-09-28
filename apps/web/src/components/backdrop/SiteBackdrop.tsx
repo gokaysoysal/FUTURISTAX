@@ -1,0 +1,75 @@
+'use client';
+
+import { hasWebGL } from '@/lib/webgl';
+import { useReducedMotion } from 'motion/react';
+import dynamic from 'next/dynamic';
+import { useEffect, useState } from 'react';
+import { SiteBackdropFallback } from './SiteBackdropFallback';
+
+/**
+ * Site geneli arka plan — KARAR KATMANI (V5 Bölüm 2, V11 Bölüm 6).
+ *
+ * `[locale]/layout.tsx`'te bir kez render edilir; rota değişiminde layout
+ * kalıcı olduğu için REMOUNT OLMAZ. Sabit `fixed inset-0 -z-10` sarmalayıcı
+ * her zaman DOM'da (layout kaymaz); yalnızca içi değişir:
+ *
+ *   canlı sahne  ⟺  masaüstü (≥768px) + WebGL + reduced-motion yok + cihaz
+ *                   düşük performanslı değil
+ *   statik yedek ⟺  aksi hâlde (Bölüm 6)
+ *
+ * `mode==='scene'` iken CSS yedeği DE altta kalır — `SiteBackdropScene`
+ * kendi canvas'ını opaklık 0'dan başlatıp idle sonrası 600ms'de 1'e
+ * crossfade eder (Bölüm 6); yedek o süre boyunca görünür kalmalı, yoksa
+ * mount anında kısa bir "boş" kare görünür. Sahne `dynamic(ssr:false)` —
+ * ogl ilk yük JS'ine girmez.
+ */
+const SiteBackdropScene = dynamic(() => import('./SiteBackdropScene'), { ssr: false });
+
+/** Kaba bir düşük-performans sezgisi — çekirdek sayısı / RAM. */
+function isLowPerfDevice(): boolean {
+  const cores = navigator.hardwareConcurrency;
+  const mem = (navigator as Navigator & { deviceMemory?: number }).deviceMemory;
+  if (typeof cores === 'number' && cores > 0 && cores <= 4) return true;
+  if (typeof mem === 'number' && mem > 0 && mem <= 4) return true;
+  return false;
+}
+
+export function SiteBackdrop() {
+  const reduce = useReducedMotion();
+  const [mode, setMode] = useState<'scene' | 'fallback'>('fallback');
+  const [complexity, setComplexity] = useState(1);
+
+  useEffect(() => {
+    if (reduce) {
+      setMode('fallback');
+      return;
+    }
+    let frame = 0;
+    const decide = () => {
+      const wide = window.innerWidth >= 768;
+      setComplexity(window.innerWidth < 768 ? 0.5 : 1);
+      setMode(wide && hasWebGL() && !isLowPerfDevice() ? 'scene' : 'fallback');
+    };
+    const onResize = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(decide);
+    };
+    decide();
+    window.addEventListener('resize', onResize, { passive: true });
+    return () => {
+      window.removeEventListener('resize', onResize);
+      cancelAnimationFrame(frame);
+    };
+  }, [reduce]);
+
+  return (
+    <div
+      aria-hidden="true"
+      data-testid="site-backdrop"
+      className="pointer-events-none fixed inset-0 -z-10"
+    >
+      <SiteBackdropFallback />
+      {mode === 'scene' ? <SiteBackdropScene complexity={complexity} /> : null}
+    </div>
+  );
+}

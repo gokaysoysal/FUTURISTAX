@@ -1,0 +1,167 @@
+'use client';
+
+import { MagneticButton } from '@/components/motion/MagneticButton';
+import { CMDK_OPEN_EVENT } from '@/components/search/CommandPalette';
+import { site } from '@futuristax/config';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
+
+/**
+ * Ana navigasyon.
+ *
+ * Eski sitede navigasyon `<button onclick="switchTab(...)">` ile yapılıyordu:
+ * derin link yoktu, geri tuşu çalışmıyordu, bağlantı paylaşılamıyordu.
+ * Artık gerçek <Link> — her sayfa kendi URL'sinde.
+ *
+ * V6: sayfa kaydırılınca header sıkışır ve cam/gölge güçlenir
+ * (`.site-header.is-scrolled`, depth.css). rAF throttle'lı passive dinleyici;
+ * reduced-motion altında geçiş yok ama durum yine değişir.
+ */
+const NAV = [
+  { href: '/kurumsal', label: 'Kurumsal' },
+  { href: '/hizmetler', label: 'Hizmetler' },
+  { href: '/sektorler', label: 'Sektörler' },
+  { href: '/araclar', label: 'Araçlar' },
+  { href: '/mevzuat', label: 'Mevzuat' },
+  { href: '/sss', label: 'SSS' },
+];
+
+export function SiteHeader() {
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    let raf = 0;
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        setScrolled(window.scrollY > 8);
+      });
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  return (
+    <header
+      className={`site-header glass sticky top-0 z-40 border-x-0 border-t-0 ${
+        scrolled ? 'is-scrolled' : ''
+      }`}
+    >
+      <div
+        className={`mx-auto flex max-w-7xl items-center justify-between gap-6 px-5 transition-[padding] duration-200 ${
+          scrolled ? 'py-2.5' : 'py-4'
+        }`}
+      >
+        <Link
+          href="/"
+          className={`font-[family-name:var(--font-display)] text-[var(--color-text)] transition-[font-size] duration-200 ${
+            scrolled ? 'text-[length:var(--text-base)]' : 'text-[length:var(--text-lg)]'
+          }`}
+        >
+          {site.brand.shortName}
+        </Link>
+
+        <nav aria-label="Ana menü" className="hidden md:block">
+          <ul className="flex items-center gap-6">
+            {NAV.map((item) => {
+              const active = pathname.startsWith(item.href);
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    aria-current={active ? 'page' : undefined}
+                    className={`link-underline text-[length:var(--text-sm)] ${
+                      active
+                        ? 'text-[var(--color-text)]'
+                        : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text)]'
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new Event(CMDK_OPEN_EVENT))}
+            className="flex items-center gap-2 border border-[var(--color-rule)] px-2.5 py-1.5 text-[length:var(--text-xs)] text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-text)]"
+            aria-label="Site içinde ara"
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.8" />
+              <path
+                d="m20 20-3.5-3.5"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+              />
+            </svg>
+            <span className="hidden lg:inline">Ara</span>
+            <kbd className="hidden font-[family-name:var(--font-mono)] lg:inline">⌘K</kbd>
+          </button>
+
+          <MagneticButton className="hidden sm:inline-flex">
+            <Link
+              href="/iletisim"
+              className="btn btn-primary px-4 py-2 text-[length:var(--text-xs)]"
+            >
+              Görüşme talep et
+            </Link>
+          </MagneticButton>
+
+          <button
+            type="button"
+            className="md:hidden"
+            aria-expanded={open}
+            aria-controls="mobile-nav"
+            onClick={() => setOpen((value) => !value)}
+          >
+            <span className="sr-only">{open ? 'Menüyü kapat' : 'Menüyü aç'}</span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d={open ? 'M6 6l12 12M18 6L6 18' : 'M4 7h16M4 12h16M4 17h16'}
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {open && (
+        <nav
+          id="mobile-nav"
+          aria-label="Mobil menü"
+          className="border-t border-[var(--color-rule)] md:hidden"
+        >
+          <ul className="mx-auto max-w-6xl px-5 py-2">
+            {NAV.map((item) => (
+              <li key={item.href} className="ledger-rule last:border-b-0">
+                <Link
+                  href={item.href}
+                  onClick={() => setOpen(false)}
+                  className="block py-3 text-[length:var(--text-sm)] text-[var(--color-text-secondary)]"
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
+    </header>
+  );
+}
