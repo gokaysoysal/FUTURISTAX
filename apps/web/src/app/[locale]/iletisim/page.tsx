@@ -98,7 +98,7 @@ export default function ContactPage() {
           </dl>
         </Reveal>
 
-        <Reveal delay={0.08} className="card surface-glow p-6 sm:p-8">
+        <Reveal delay={0.08} className="glass-3 surface-glow rounded-[var(--radius-lg)] p-6 sm:p-8">
           <ContactForm turnstileSiteKey={turnstileSiteKey} />
         </Reveal>
       </div>
