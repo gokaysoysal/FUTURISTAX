@@ -1,0 +1,12 @@
+{
+  "nav": {
+    "corporate": "Kurumsal",
+    "services": "Hizmetler",
+    "sectors": "Sektörler",
+    "tools": "Araçlar",
+    "legislation": "Mevzuat",
+    "faq": "SSS",
+    "contact": "İletişim"
+  },
+  "cta": { "requestMeeting": "Görüşme talep et", "submit": "Talebi gönder" }
+}
